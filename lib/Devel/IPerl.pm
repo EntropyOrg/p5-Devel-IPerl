@@ -8,7 +8,8 @@ use Devel::IPerl::Kernel;
 
 sub main {
 	if ( @ARGV >= 1 ) {
-		Devel::IPerl::Kernel->new( connection_file => $ARGV[1] );
+		my $kernel = Devel::IPerl::Kernel->new( connection_file => $ARGV[0] );
+		$kernel->run;
 	}
 }
 
