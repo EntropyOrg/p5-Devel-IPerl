@@ -1,0 +1,5 @@
+#!/bin/sh
+# PODNAME: iperl
+# ABSTRACT: start ipython notebook with perl profile
+
+ipython notebook --profile perl
