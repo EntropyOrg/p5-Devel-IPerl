@@ -8,15 +8,31 @@ use Moo;
 use ZMQ::LibZMQ3;
 use ZMQ::Constants
 	qw( ZMQ_PUB ZMQ_REP ZMQ_ROUTER
-	    ZMQ_FD ZMQ_RCVMORE );
+	    ZMQ_FD ZMQ_RCVMORE
+	    ZMQ_FORWARDER );
 use JSON::MaybeXS;
 use Path::Class;
 use IO::Async::Loop;
 use IO::Async::Handle;
 use IO::Handle;
+use Devel::IPerl::Kernel::Callback::DevelREPL;
 
-has zmq => ( is => 'lazy' );
+has callback => (
+		is => 'rw',
+		default => sub {
+			Devel::IPerl::Kernel::Callback::DevelREPL->new;
+		},
+	);
+
+# the ZeroMQ context (not fork/thread-safe)
+has zmq => ( is => 'lazy', clearer => 1 );
 sub _build_zmq { zmq_init(); }
+after clear_zmq => sub {
+	my ($self) = @_;
+	for my $clear_fn ( \&clear_heartbeat, \&clear_shell, \&clear_control, \&clear_stdin, \&clear_iopub ) {
+		$self->$clear_fn();
+	}
+};
 
 # Loop {{{
 has _loop => ( is => 'lazy' );
@@ -37,10 +53,11 @@ sub _build_connection_data {
 	my ($self) = @_;
 	# read JSON file
 	my $data = decode_json file($self->connection_file)->slurp;
-	$self->_after_connection_data( $data );
+	$self->_connection_data_config( $data );
 	$data;
 }
-sub _after_connection_data {
+# set configuration attributes using the connection data
+sub _connection_data_config {
 	my ($self, $data) = @_;
 	my $conf_dispatch = {
 		ip => \&ip,
@@ -65,7 +82,7 @@ has key => ( is => 'rw' );
 # Heartbeat {{{
 # REP socket
 has hb_port => ( is => 'rw' );
-has heartbeat => ( is => 'lazy' );
+has heartbeat => ( is => 'lazy', clearer => 1 );
 sub _build_heartbeat {
 	my ($self) = @_;
 	$self->_create_and_bind_socket( ZMQ_REP, $self->hb_port);
@@ -74,7 +91,7 @@ sub _build_heartbeat {
 # Shell {{{
 # ROUTER socket
 has shell_port => ( is => 'rw' );
-has shell => ( is => 'lazy' );
+has shell => ( is => 'lazy', clearer => 1 );
 sub _build_shell {
 	my ($self) = @_;
 	$self->_create_and_bind_socket( ZMQ_ROUTER, $self->shell_port);
@@ -83,7 +100,7 @@ sub _build_shell {
 # Control {{{
 # ROUTER socket
 has control_port => ( is => 'rw' );
-has control =>  ( is => 'lazy' );
+has control =>  ( is => 'lazy', clearer => 1 );
 sub _build_control {
 	my ($self) = @_;
 	$self->_create_and_bind_socket( ZMQ_ROUTER, $self->control_port);
@@ -92,7 +109,7 @@ sub _build_control {
 # Stdin {{{
 # ROUTER socket
 has stdin_port => ( is => 'rw' );
-has stdin => ( is => 'lazy' );
+has stdin => ( is => 'lazy', clearer => 1 );
 sub _build_stdin {
 	my ($self) = @_;
 	$self->_create_and_bind_socket( ZMQ_ROUTER, $self->stdin_port);
@@ -101,17 +118,20 @@ sub _build_stdin {
 # IOPub {{{
 # PUB socket
 has iopub_port => ( is => 'rw' );
-has iopub => ( is => 'lazy' );
+has iopub => ( is => 'lazy', clearer => 1 );
 sub _build_iopub {
 	my ($self) = @_;
 	$self->_create_and_bind_socket( ZMQ_PUB, $self->iopub_port);
 }
 #}}}
 
+# Helper functions {{{
 sub _create_and_bind_socket {
 	my ($self, $type, $port) = @_;
+	die "type of socket not given" unless $type;
+	die "port not given" unless $port;
+
 	my $socket = zmq_socket( $self->zmq, $type );
-	# TODO check this
 	my $transport = $self->transport;
 	my $ip = $self->ip;
 	my $bind_address = "${transport}://${ip}:${port}";
@@ -135,30 +155,52 @@ sub _assign_ports_from_data {
 }
 #}}}
 #}}}
+#}}}
 
-sub run {
+sub run {#{{{
 	my ($self) = @_;
 	STDOUT->autoflush(1);
-	my @socket_funcs = ( \&heartbeat, \&shell, \&control, \&stdin, \&iopub );
+
+	$self->_setup_heartbeat;
+
+	my @socket_funcs = ( \&shell, \&control, \&stdin, \&iopub );
+	my $wire_protocol = Devel::IPerl::Kernel::Message::ZMQ->new;
 	for my $socket_fn (@socket_funcs) {
 		my $socket = $self->$socket_fn();
 		my $socket_fd = zmq_getsockopt( $socket, ZMQ_FD );
-		my $io_handle_r = IO::Handle->new_from_fd( $socket_fd, 'r' );
-		my $io_handle_w = IO::Handle->new_from_fd( $socket_fd, 'w' );
+		my $io_handle = IO::Handle->new_from_fd( $socket_fd, 'r' );
 		my $handle =  IO::Async::Handle->new(
-			read_handle => $io_handle_r,
-			write_handle => $io_handle_w,
+			handle => $io_handle,
 			on_read_ready => sub {
+				my @blobs;
 				while ( my $recvmsg = zmq_recvmsg( $socket, ZMQ_RCVMORE ) ) {
 					my $msg = zmq_msg_data($recvmsg);
-					print $msg, "\n";
+					push @blobs, $msg;
+					print "|$msg|", "\n";
 				}
-			}
+
+			},
+			on_write_ready => sub { },
 		);
 		$self->_loop->add( $handle );
 	}
 	$self->_loop->loop_forever;
 }
+
+sub _setup_heartbeat {
+	my ($self) = @_;
+	# heartbeat socket is just an echo server
+	$self->_loop->spawn_child(
+		code => sub {
+			$self->clear_zmq; # need to create new context for this process
+			zmq_device( ZMQ_FORWARDER, $self->heartbeat, $self->heartbeat );
+		},
+		on_exit => sub { },
+	);
+}
+
+
+#}}}
 
 1;
 # vim: fdm=marker
