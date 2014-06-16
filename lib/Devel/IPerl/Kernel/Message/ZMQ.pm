@@ -29,10 +29,17 @@ sub message_from_zmq_blobs {
 	#   ...
 	my $blobs_rest = @$blobs[7..$number_of_blobs-1];
 	# ]
+	use DDP; p $header;
+	use DDP; p $parent_header;
+	use DDP; p $metadata;
+	use DDP; p $content;
 	Devel::IPerl::Kernel::Message->new(
-		header =>
-
-	)
+		header => decode_json($header),
+		parent_header => decode_json($parent_header),
+		metadata => decode_json($metadata),
+		content => decode_json($content),
+		blobs => [ map { decode_json $_ } @$blobs_rest ]
+	);
 }
 
 sub zmq_blobs_from_message {

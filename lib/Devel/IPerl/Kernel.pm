@@ -16,6 +16,7 @@ use IO::Async::Loop;
 use IO::Async::Handle;
 use IO::Handle;
 use Devel::IPerl::Kernel::Callback::DevelREPL;
+use Devel::IPerl::Kernel::Message::ZMQ;
 
 has callback => (
 		is => 'rw',
@@ -178,7 +179,10 @@ sub run {#{{{
 					push @blobs, $msg;
 					print "|$msg|", "\n";
 				}
-
+				if( @blobs ) {
+					my $msg = $wire_protocol->message_from_zmq_blobs(\@blobs);
+					use DDP; p $msg;
+				}
 			},
 			on_write_ready => sub { },
 		);

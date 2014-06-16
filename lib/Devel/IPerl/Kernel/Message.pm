@@ -20,16 +20,7 @@ has msg_type => ( is => 'rw' );
 has version => ( is => 'ro', default => sub { '5.0' } );
 #}}}
 # header: HashRef {{{
-sub header {
-	my ($self) = @_;
-	{
-		msg_id => $self->msg_id,
-                username =>  $self->username,
-                session  => $self->session,
-                msg_type  => $self->msg_type,
-                version => $self->version,
-	};
-}
+has header => ( is => 'rw' );
 #}}}
 #}}}
 
