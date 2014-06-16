@@ -3,6 +3,8 @@ package Devel::IPerl::Kernel::Message;
 
 use strict;
 use Moo;
+use MooX::HandlesVia;
+
 # Header fields {{{
 # msg_id: UUID {{{
 has msg_id => ( is => 'rw' );
@@ -14,7 +16,14 @@ has username => ( is => 'rw' );
 has session => ( is => 'rw' );
 #}}}
 # msg_type: Str {{{
-has msg_type => ( is => 'rw' );
+#has msg_type => ( is => 'rw' );
+sub msg_type {
+	my ($self, $data) = @_;
+	if( $data ) {
+		$self->header->{msg_type} = $data;
+	}
+	$self->header->{msg_type}
+}
 #}}}
 # version: Str {{{
 has version => ( is => 'ro', default => sub { '5.0' } );
