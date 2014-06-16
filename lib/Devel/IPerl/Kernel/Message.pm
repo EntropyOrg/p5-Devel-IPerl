@@ -11,11 +11,11 @@ has header => (
 	handles_via => 'Hash',
 	# Header fields {{{
 	handles => {
-		msg_id  => [ accesor   => 'msg_id'   ], # msg_id   : UUID
-		session => [ accessor  => 'session'  ], # session  : UUID
+		msg_id   => [ accesor  => 'msg_id'   ], # msg_id   : UUID
+		session  => [ accessor => 'session'  ], # session  : UUID
 		msg_type => [ accessor => 'msg_type' ], # msg_type :  Str
 		username => [ accessor => 'username' ], # username :  Str
-		version => [ accessor  => 'version'  ], # version  :  Str
+		version  => [ accessor => 'version'  ], # version  :  Str
 	}, #}}}
 );
 #}}}
