@@ -5,34 +5,20 @@ use strict;
 use Moo;
 use MooX::HandlesVia;
 
-# Header fields {{{
-# msg_id: UUID {{{
-has msg_id => ( is => 'rw' );
-#}}}
-# username: Str {{{
-has username => ( is => 'rw' );
-#}}}
-# session: UUID {{{
-has session => ( is => 'rw' );
-#}}}
-# msg_type: Str {{{
-#has msg_type => ( is => 'rw' );
-sub msg_type {
-	my ($self, $data) = @_;
-	if( $data ) {
-		$self->header->{msg_type} = $data;
-	}
-	$self->header->{msg_type}
-}
-#}}}
-# version: Str {{{
-has version => ( is => 'ro', default => sub { '5.0' } );
-#}}}
 # header: HashRef {{{
-has header => ( is => 'rw' );
+has header => (
+	is => 'rw',
+	handles_via => 'Hash',
+	# Header fields {{{
+	handles => {
+		msg_id  => [ accesor   => 'msg_id'   ], # msg_id   : UUID
+		session => [ accessor  => 'session'  ], # session  : UUID
+		msg_type => [ accessor => 'msg_type' ], # msg_type :  Str
+		username => [ accessor => 'username' ], # username :  Str
+		version => [ accessor  => 'version'  ], # version  :  Str
+	}, #}}}
+);
 #}}}
-#}}}
-
 # parent_header: HashRef {{{
 has parent_header => ( is => 'rw' );
 #}}}
