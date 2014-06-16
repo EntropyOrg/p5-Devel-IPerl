@@ -1,4 +1,14 @@
-http://andrew.gibiansky.com/blog/ipython/ipython-kernels/
-https://github.com/JuliaLang/IJulia.jl
-https://github.com/gibiansky/IHaskell
-https://github.com/robbielynch/ierlang
+TODO
+	message types
+		kernel_info_request -> kernel_info_reply
+		execute_request ->
+			kernel_status [busy]
+			execute_reply [ok, error, abort]
+			display_data / pyout
+			kernel_status [idle]
+Implementations
+	http://andrew.gibiansky.com/blog/ipython/ipython-kernels/
+	https://github.com/JuliaLang/IJulia.jl
+	https://github.com/gibiansky/IHaskell
+	https://github.com/robbielynch/ierlang
+	https://github.com/mattpap/IAldor
