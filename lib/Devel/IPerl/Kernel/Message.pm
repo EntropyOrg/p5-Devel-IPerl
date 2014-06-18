@@ -2,12 +2,15 @@ package Devel::IPerl::Kernel::Message;
 # ABSTRACT: implements the IPython message specification version 5.0
 
 use strict;
+use namespace::autoclean;
 use Moo;
 use MooX::HandlesVia;
+use UUID::Tiny ':std';
 
 # header: HashRef {{{
 has header => (
 	is => 'rw',
+	default => sub { {} },
 	handles_via => 'Hash',
 	# Header fields {{{
 	handles => {
@@ -20,13 +23,13 @@ has header => (
 );
 #}}}
 # parent_header: HashRef {{{
-has parent_header => ( is => 'rw' );
+has parent_header => ( is => 'rw', default => sub { {} }, );
 #}}}
 # metadata: HashRef {{{
-has metadata => ( is => 'rw' );
+has metadata => ( is => 'rw', default => sub { {} }, );
 #}}}
 # content: HashRef {{{
-has content => ( is => 'rw' );
+has content => ( is => 'rw', default => sub { {} }, );
 #}}}
 # blobs: ArrayRef {{{
 # extra raw data buffers

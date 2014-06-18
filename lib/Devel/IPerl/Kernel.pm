@@ -2,13 +2,15 @@ package Devel::IPerl::Kernel;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Moo;
 
 use ZMQ::LibZMQ3;
 use ZMQ::Constants
 	qw( ZMQ_PUB ZMQ_REP ZMQ_ROUTER
-	    ZMQ_FD ZMQ_RCVMORE
+	    ZMQ_FD
+	    ZMQ_RCVMORE ZMQ_SNDMORE
 	    ZMQ_FORWARDER );
 use JSON::MaybeXS;
 use Path::Class;
@@ -34,6 +36,11 @@ after clear_zmq => sub {
 		$self->$clear_fn();
 	}
 };
+
+has zmq_wire_protocol => (
+	is => 'ro',
+	default => sub { Devel::IPerl::Kernel::Message::ZMQ->new; },
+);
 
 # Loop {{{
 has _loop => ( is => 'lazy' );
@@ -165,7 +172,6 @@ sub run {#{{{
 	$self->_setup_heartbeat;
 
 	my @socket_funcs = ( \&shell, \&control, \&stdin, \&iopub );
-	my $wire_protocol = Devel::IPerl::Kernel::Message::ZMQ->new;
 	for my $socket_fn (@socket_funcs) {
 		my $socket = $self->$socket_fn();
 		my $socket_fd = zmq_getsockopt( $socket, ZMQ_FD );
@@ -180,8 +186,7 @@ sub run {#{{{
 					print "|$msg|", "\n";
 				}
 				if( @blobs ) {
-					my $msg = $wire_protocol->message_from_zmq_blobs(\@blobs);
-					use DDP; p $msg;
+					$self->route_message(\@blobs);
 				}
 			},
 			on_write_ready => sub { },
@@ -189,6 +194,23 @@ sub run {#{{{
 		$self->_loop->add( $handle );
 	}
 	$self->_loop->loop_forever;
+}
+
+sub route_message {
+	my ($self, $blobs) = @_;
+	my $msg = $self->zmq_wire_protocol->message_from_zmq_blobs($blobs);
+	my $fn = "msg_" . $msg->msg_type;
+	if( $self->callback->can( $fn ) ) {
+		$self->callback->$fn( $self, $blobs, $msg );
+	}
+}
+
+sub send_message {
+	my ($self, $socket, $message, $uuid) = @_;
+	my $blobs = $self->zmq_wire_protocol->zmq_blobs_from_message($message, $uuid);
+
+	zmq_msg_send($_, $socket, ZMQ_SNDMORE) for @$blobs[0..@$blobs-2];
+	zmq_msg_send($blobs->[-1], $socket, 0); # done
 }
 
 sub _setup_heartbeat {
