@@ -2,7 +2,6 @@ package Devel::IPerl::Kernel::Callback::DevelREPL;
 
 use strict;
 use Moo;
-use UUID::Tiny ':std';
 
 extends qw(Devel::IPerl::Kernel::Callback);
 
@@ -15,13 +14,8 @@ sub msg_execute_request {
 
 	# send kernel status : busy
 	my $status_busy = Devel::IPerl::Kernel::Message->new(
-		header => {
-			msg_type => 'status',
-			msg_id => create_uuid_as_string(),
-			session => $msg->session,
-			username => $msg->username,
-		},
-		parent_header => $msg->header,
+		msg_type => 'status',
+		reply_to => $msg,
 		content => {
 			execution_state => 'busy',
 		},
@@ -30,13 +24,8 @@ sub msg_execute_request {
 
 	$self->execute( $msg );
 	my $execute_reply = Devel::IPerl::Kernel::Message->new(
-		header => {
-			msg_type => 'execute_reply',
-			msg_id => create_uuid_as_string(),
-			session => $msg->session,
-			username => $msg->username,
-		},
-		parent_header => $msg->header,
+		msg_type => 'execute_reply',
+		reply_to => $msg,
 		content => {
 			status => 'ok',
 			execution_count => $self->execution_count,
@@ -49,13 +38,8 @@ sub msg_execute_request {
 
 	# TODO send display_data / pyout
 	my $output = Devel::IPerl::Kernel::Message->new(
-		header => {
-			msg_type => 'pyout', # this changes in v5.0 of protocol
-			msg_id => create_uuid_as_string(),
-			session => $msg->session,
-			username => $msg->username,
-		},
-		parent_header => $msg->header,
+		msg_type => 'pyout', # this changes in v5.0 of protocol
+		reply_to => $msg,
 		content => {
 			execution_count => $self->execution_count,
 			data => {
@@ -69,13 +53,8 @@ sub msg_execute_request {
 
 	# TODO send kernel status : idle
 	my $status_idle = Devel::IPerl::Kernel::Message->new(
-		header => {
-			msg_type => 'status',
-			msg_id => create_uuid_as_string(),
-			session => $msg->session,
-			username => $msg->username,
-		},
-		parent_header => $msg->header,
+		msg_type => 'status',
+		reply_to => $msg,
 		content => {
 			execution_state => 'idle',
 		},

@@ -6,11 +6,14 @@ use namespace::autoclean;
 use Moo;
 use MooX::HandlesVia;
 use UUID::Tiny ':std';
+use MooseX::HandlesConstructor;
 
 # header: HashRef {{{
 has header => (
 	is => 'rw',
-	default => sub { {} },
+	default => sub { {
+		msg_id => create_uuid_as_string(),
+	} },
 	handles_via => 'Hash',
 	# Header fields {{{
 	handles => {
@@ -39,7 +42,11 @@ has blobs => ( is => 'rw', default => sub { [] } );
 # isa Devel::IPerl::Kernel::Message
 has reply_to => ( is => 'rw', trigger => 1 );
 sub _trigger_reply_to {
-
+	my ($self) = @_;
+	my $msg = $self->reply_to;
+	$self->parent_header( $msg->header );
+	$self->session( $msg->session );
+	$self->username( $msg->username );
 }
 
 1;
