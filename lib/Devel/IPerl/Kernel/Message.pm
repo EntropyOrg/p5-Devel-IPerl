@@ -36,5 +36,11 @@ has content => ( is => 'rw', default => sub { {} }, );
 has blobs => ( is => 'rw', default => sub { [] } );
 #}}}
 
+# isa Devel::IPerl::Kernel::Message
+has reply_to => ( is => 'rw', trigger => 1 );
+sub _trigger_reply_to {
+
+}
+
 1;
 # vim: fdm=marker
