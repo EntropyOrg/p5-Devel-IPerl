@@ -49,5 +49,11 @@ sub _trigger_reply_to {
 	$self->username( $msg->username );
 }
 
+sub new_reply_to {
+	my $msg = shift;
+	my $class = ref $msg;
+	$class->new( reply_to => $msg, @_ );
+}
+
 1;
 # vim: fdm=marker

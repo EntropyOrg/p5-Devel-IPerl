@@ -27,6 +27,8 @@ has callback => (
 		},
 	);
 
+has _heartbeat_child => ( is => 'rw' );
+
 # the ZeroMQ context (not fork/thread-safe)
 has zmq => ( is => 'lazy', clearer => 1 );
 sub _build_zmq { zmq_init(); }
@@ -37,9 +39,9 @@ after clear_zmq => sub {
 	}
 };
 
-has zmq_wire_protocol => (
+has message_format => (
 	is => 'ro',
-	default => sub { Devel::IPerl::Kernel::Message::ZMQ->new; },
+	default => sub { 'Devel::IPerl::Kernel::Message::ZMQ'; },
 );
 
 # Loop {{{
@@ -165,6 +167,7 @@ sub _assign_ports_from_data {
 #}}}
 #}}}
 
+my @io_handles;
 sub run {#{{{
 	my ($self) = @_;
 	STDOUT->autoflush(1);
@@ -196,18 +199,27 @@ sub run {#{{{
 	$self->_loop->loop_forever;
 }
 
+sub stop {
+	my ($self) = @_;
+	kill 1, $self->_heartbeat_child;
+
+	# TODO find out why this gives the error
+	# "Bad file descriptor (epoll.cpp:67)"
+	$self->_loop->loop_stop;
+}
+
 sub route_message {
 	my ($self, $blobs) = @_;
-	my $msg = $self->zmq_wire_protocol->message_from_zmq_blobs($blobs);
+	my $msg = $self->message_format->message_from_zmq_blobs($blobs);
 	my $fn = "msg_" . $msg->msg_type;
 	if( $self->callback->can( $fn ) ) {
-		$self->callback->$fn( $self, $blobs, $msg );
+		$self->callback->$fn( $self, $msg );
 	}
 }
 
 sub send_message {
-	my ($self, $socket, $message, $uuid) = @_;
-	my $blobs = $self->zmq_wire_protocol->zmq_blobs_from_message($message, $uuid);
+	my ($self, $socket, $message) = @_;
+	my $blobs = $message->zmq_blobs_from_message;
 
 	zmq_msg_send($_, $socket, ZMQ_SNDMORE) for @$blobs[0..@$blobs-2];
 	zmq_msg_send($blobs->[-1], $socket, 0); # done
@@ -216,13 +228,17 @@ sub send_message {
 sub _setup_heartbeat {
 	my ($self) = @_;
 	# heartbeat socket is just an echo server
-	$self->_loop->spawn_child(
+	my $child = $self->_loop->spawn_child(
 		code => sub {
 			$self->clear_zmq; # need to create new context for this process
 			zmq_device( ZMQ_FORWARDER, $self->heartbeat, $self->heartbeat );
 		},
-		on_exit => sub { },
+		on_exit => sub {
+			zmq_close( $self->heartbeat );
+			zmq_term( $self->zmq );
+		},
 	);
+	$self->_heartbeat_child( $child );
 }
 
 

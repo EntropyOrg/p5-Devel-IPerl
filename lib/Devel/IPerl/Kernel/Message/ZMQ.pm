@@ -4,11 +4,13 @@ use strict;
 use namespace::autoclean;
 use Moo;
 use JSON::MaybeXS;
-use Devel::IPerl::Kernel::Message;
+
+extends qw(Devel::IPerl::Kernel::Message);
 
 use constant DELIMITER => '<IDS|MSG>';
 
-has shared_key => ( is => 'rw', predicate => 1 );
+has zmq_uuids => ( is => 'rw', default => sub { [] } );
+has shared_key => ( is => 'rw', predicate => 1 ); # has_shared_key
 
 # reads in message from ZMQ wire protocol
 # see spec: <http://ipython.org/ipython-doc/dev/development/messaging.html#the-wire-protocol>
@@ -31,7 +33,8 @@ sub message_from_zmq_blobs {
 	my $blobs_rest = @$blobs[7..$number_of_blobs-1];
 	# ]
 	# TODO check the signature
-	Devel::IPerl::Kernel::Message->new(
+	$self->new(
+		zmq_uuids => [ $uuid ],
 		header => decode_json($header),
 		parent_header => decode_json($parent_header),
 		metadata => decode_json($metadata),
@@ -41,21 +44,28 @@ sub message_from_zmq_blobs {
 }
 
 sub zmq_blobs_from_message {
-	my ($self, $msg, $uuid) = @_;
+	my ($self) = @_;
 
 	# TODO implement HMAC signature
 	my $hmac_signature = ( $self->has_shared_key ? 'TODO' : '' ); # if auth is disabled, signature is empty string
 
 	[
-		$uuid,
+		@{$self->zmq_uuids},
 		DELIMITER,
 		$hmac_signature,
-		encode_json($msg->header),
-		encode_json($msg->parent_header),
-		encode_json($msg->metadata),
-		encode_json($msg->content),
-		( map { encode_json($_) } @{ $msg->blobs } ),
+		encode_json($self->header),
+		encode_json($self->parent_header),
+		encode_json($self->metadata),
+		encode_json($self->content),
+		( map { encode_json($_) } @{ $self->blobs } ),
 	];
 }
+
+around new_reply_to => sub {
+	my $orig = shift;
+	my $ret = $orig->(@_);
+	$ret->zmq_uuids( $ret->reply_to->zmq_uuids );
+	$ret;
+};
 
 1;

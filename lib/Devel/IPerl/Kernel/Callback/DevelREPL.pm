@@ -2,44 +2,28 @@ package Devel::IPerl::Kernel::Callback::DevelREPL;
 
 use strict;
 use Moo;
+use Devel::IPerl::ExecutionResult;
+use Devel::IPerl::Kernel::Message::Helper;
 
 extends qw(Devel::IPerl::Kernel::Callback);
 
-has execution_count => ( is => 'rw', default => sub { 0 } );
+with qw(Devel::IPerl::Kernel::Callback::Role::REPL);
 
-sub msg_execute_request {
-	my ($self, $kernel, $blobs, $msg ) = @_;
+has repl => ( is => 'rw', lazy => 1 );
+sub _build_repl {
+	# TODO
+}
 
-	my $uuid = $blobs->[0];
+sub execute {
+	my ($self, $kernel, $msg) = @_;
+	my $exec_result = Devel::IPerl::ExecutionResult->new();
 
-	# send kernel status : busy
-	my $status_busy = Devel::IPerl::Kernel::Message->new(
-		msg_type => 'status',
-		reply_to => $msg,
-		content => {
-			execution_state => 'busy',
-		},
-	);
-	$kernel->send_message( $kernel->iopub, $status_busy, $uuid );
-
-	$self->execute( $msg );
-	my $execute_reply = Devel::IPerl::Kernel::Message->new(
-		msg_type => 'execute_reply',
-		reply_to => $msg,
-		content => {
-			status => 'ok',
-			execution_count => $self->execution_count,
-			payload => [],
-			user_variables => {},
-			user_expressions => {},
-		}
-	);
-	$kernel->send_message( $kernel->shell, $execute_reply, $uuid );
+	# TODO: set $exec_result->status
+	$exec_result->status_ok;
 
 	# TODO send display_data / pyout
-	my $output = Devel::IPerl::Kernel::Message->new(
+	my $output = $msg->new_reply_to(
 		msg_type => 'pyout', # this changes in v5.0 of protocol
-		reply_to => $msg,
 		content => {
 			execution_count => $self->execution_count,
 			data => {
@@ -48,24 +32,35 @@ sub msg_execute_request {
 			metadata => {},
 		}
 	);
-	$kernel->send_message( $kernel->iopub, $output, $uuid );
+	$kernel->send_message( $kernel->iopub, $output );
 
+	$exec_result;
+}
 
-	# TODO send kernel status : idle
-	my $status_idle = Devel::IPerl::Kernel::Message->new(
-		msg_type => 'status',
-		reply_to => $msg,
+sub msg_execute_request {
+	my ($self, $kernel, $msg ) = @_;
+
+	# send kernel status : busy
+	my $status_busy = Devel::IPerl::Kernel::Message::Helper->kernel_status( $msg, 'busy' );
+	$kernel->send_message( $kernel->iopub, $status_busy );
+
+	my $exec_result = $self->execute( $kernel, $msg );
+	my $execute_reply = $msg->new_reply_to(
+		msg_type => 'execute_reply',
 		content => {
-			execution_state => 'idle',
-		},
+			status => $exec_result->status,
+			execution_count => $self->execution_count,
+			payload => [],
+			user_variables => {},
+			user_expressions => {},
+		}
 	);
-	$kernel->send_message( $kernel->iopub, $status_idle, $uuid );
+	$kernel->send_message( $kernel->shell, $execute_reply );
+
+	# send kernel status : idle
+	my $status_idle = Devel::IPerl::Kernel::Message::Helper->kernel_status( $msg, 'idle' );
+	$kernel->send_message( $kernel->iopub, $status_idle );
 }
 
-sub execute {
-	my ($self, $execute_request) = @_;
-	$self->execution_count( $self->execution_count +  1 );
-	# TODO
-}
 
 1;

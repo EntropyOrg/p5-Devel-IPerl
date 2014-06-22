@@ -5,12 +5,10 @@ use namespace::autoclean;
 use Moo;
 
 sub msg_kernel_info_request {
-	my ($self, $kernel, $blobs, $msg ) = @_;
+	my ($self, $kernel, $msg ) = @_;
 
-	my $uuid = $blobs->[0];
-	my $reply = Devel::IPerl::Kernel::Message->new(
+	my $reply = $msg->new_reply_to(
 		msg_type => 'kernel_info_reply',
-		reply_to => $msg,
 		content => {
 			protocol_version => '5.0',
 			implementation => 'iperl',
@@ -20,7 +18,19 @@ sub msg_kernel_info_request {
 			banner => 'IPerl!'
 		}
 	);
-	$kernel->send_message( $kernel->shell, $reply, $uuid );
+	$kernel->send_message( $kernel->shell, $reply );
+}
+
+sub msg_shutdown_request {
+	my ($self, $kernel, $msg) = @_;
+	my $shutdown_reply = $msg->new_reply_to(
+		msg_type => 'shutdown_reply',
+		content => {
+			restart => 0, # TODO take $msg->restart into account
+		}
+	);
+	$kernel->send_message( $kernel->shell, $shutdown_reply );
+	$kernel->stop;
 }
 
 1;
