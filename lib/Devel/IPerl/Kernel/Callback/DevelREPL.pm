@@ -64,14 +64,15 @@ sub execute {
 	# TODO: set $exec_result->status
 	$exec_result->status_ok;
 
-	my ($stdout, $stderr, $string);
 	my $exception;
-	try {
-		($stdout, $stderr, $string) = $self->run_repl(  $msg->content->{code} );
-	} catch {
-		$exception = $_;
+	my ($stdout, $stderr, $string) = $self->run_repl(  $msg->content->{code} );
+	if( defined $self->repl->error ) {
+		$exception = $self->repl->error;
 		$exec_result->status_error;
-	};
+		$exec_result->exception_name( $exception->type );
+		$exec_result->exception_value( $exception->message );
+		$exec_result->exception_traceback( [$exception->message] ); # TODO
+	}
 
 	# send display_data / pyout
 	my $output = $msg->new_reply_to(
@@ -87,7 +88,16 @@ sub execute {
 	$kernel->send_message( $kernel->iopub, $output );
 
 	if( defined $exception ) {
-		# TODO send back exception
+		# send back exception
+		my $err = $msg->new_reply_to(
+			msg_type => 'pyerr', # this changes in v5.0 of protocol
+			content => {
+				ename => $exec_result->exception_name,
+				evalue => $exec_result->exception_value,
+				traceback => $exec_result->exception_traceback,
+			}
+		);
+		$kernel->send_message( $kernel->iopub, $err );
 	}
 
 
@@ -102,14 +112,26 @@ sub msg_execute_request {
 	$kernel->send_message( $kernel->iopub, $status_busy );
 
 	my $exec_result = $self->execute( $kernel, $msg );
+	my %extra_fields;
+	if( $exec_result->is_status_ok ) {
+		%extra_fields = ( 
+			payload => [],
+			user_variables => {},
+			user_expressions => {},
+		);
+	} elsif( $exec_result->is_status_error ) {
+		%extra_fields = ( 
+			ename => $exec_result->exception_name,
+			evalue => $exec_result->exception_value,
+			traceback => $exec_result->exception_traceback,
+		);
+	}
 	my $execute_reply = $msg->new_reply_to(
 		msg_type => 'execute_reply',
 		content => {
 			status => $exec_result->status,
 			execution_count => $self->execution_count,
-			payload => [],
-			user_variables => {},
-			user_expressions => {},
+			%extra_fields,
 		}
 	);
 	$kernel->send_message( $kernel->shell, $execute_reply );

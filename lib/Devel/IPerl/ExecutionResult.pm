@@ -16,4 +16,8 @@ sub is_status_ok    { $_[0]->status eq 'ok'    }
 sub is_status_error { $_[0]->status eq 'error' }
 sub is_status_abort { $_[0]->status eq 'abort' }
 
+has exception_name => ( is => 'rw' );
+has exception_value => ( is => 'rw' );
+has exception_traceback => ( is => 'rw' );
+
 1;
