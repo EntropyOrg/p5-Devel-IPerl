@@ -7,6 +7,7 @@ use Devel::IPerl::Kernel::Message::Helper;
 use Devel::REPL;
 use Devel::IPerl::ReadLine::String;
 use Capture::Tiny ':all';
+use Try::Tiny;
 
 extends qw(Devel::IPerl::Kernel::Callback);
 
@@ -63,9 +64,16 @@ sub execute {
 	# TODO: set $exec_result->status
 	$exec_result->status_ok;
 
-	my ($stdout, $stderr, $string) = $self->run_repl(  $msg->content->{code} );
+	my ($stdout, $stderr, $string);
+	my $exception;
+	try {
+		($stdout, $stderr, $string) = $self->run_repl(  $msg->content->{code} );
+	} catch {
+		$exception = $_;
+		$exec_result->status_error;
+	};
 
-	# TODO send display_data / pyout
+	# send display_data / pyout
 	my $output = $msg->new_reply_to(
 		msg_type => 'pyout', # this changes in v5.0 of protocol
 		content => {
@@ -77,6 +85,11 @@ sub execute {
 		}
 	);
 	$kernel->send_message( $kernel->iopub, $output );
+
+	if( defined $exception ) {
+		# TODO send back exception
+	}
+
 
 	$exec_result;
 }
