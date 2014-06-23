@@ -186,7 +186,7 @@ sub run {#{{{
 				while ( my $recvmsg = zmq_recvmsg( $socket, ZMQ_RCVMORE ) ) {
 					my $msg = zmq_msg_data($recvmsg);
 					push @blobs, $msg;
-					print "|$msg|", "\n"; #DEBUG
+					#print "|$msg|", "\n"; #DEBUG
 				}
 				if( @blobs ) {
 					$self->route_message(\@blobs);
