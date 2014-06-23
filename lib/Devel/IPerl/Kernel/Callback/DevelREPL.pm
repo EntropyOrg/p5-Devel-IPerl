@@ -8,6 +8,7 @@ use Devel::REPL;
 use Devel::IPerl::ReadLine::String;
 use Capture::Tiny ':all';
 use Try::Tiny;
+use MIME::Base64;
 
 extends qw(Devel::IPerl::Kernel::Callback);
 
@@ -71,12 +72,14 @@ sub execute {
 		$exec_result->status_error;
 		$exec_result->exception_name( $exception->type );
 		$exec_result->exception_value( $exception->message );
-		$exec_result->exception_traceback( [$exception->message] ); # TODO
+
+		# TODO get an actual traceback
+		$exec_result->exception_traceback( [$exception->message] );
 	}
 
 	# send display_data / pyout
 	my $output = $msg->new_reply_to(
-		msg_type => 'pyout', # this changes in v5.0 of protocol
+		msg_type => 'pyout', # TODO this changes in v5.0 of protocol
 		content => {
 			execution_count => $self->execution_count,
 			data => {
@@ -87,10 +90,18 @@ sub execute {
 	);
 	$kernel->send_message( $kernel->iopub, $output );
 
+	my $stream_stderr = $msg->new_reply_to(
+		msg_type => 'stream',
+		content => { name => 'stderr', data => $stderr, }
+	);
+	$kernel->send_message( $kernel->iopub, $stream_stderr );
+
+	$self->display_data( $kernel, $msg );
+
 	if( defined $exception ) {
 		# send back exception
 		my $err = $msg->new_reply_to(
-			msg_type => 'pyerr', # this changes in v5.0 of protocol
+			msg_type => 'pyerr', # TODO this changes in v5.0 of protocol
 			content => {
 				ename => $exec_result->exception_name,
 				evalue => $exec_result->exception_value,
@@ -104,6 +115,39 @@ sub execute {
 	$exec_result;
 }
 
+sub display_data {
+	my ($self, $kernel, $msg) = @_;
+	for my $data ( @{ $self->repl->results }) {
+		my $data_formats = $self->_display_data_format( $data );
+		if( defined $data_formats ) {
+			my $display_data_msg = $msg->new_reply_to(
+				msg_type => 'display_data',
+				content => {
+					data => $data_formats,
+				},
+				metadata => {},
+			);
+			$kernel->send_message( $kernel->iopub, $display_data_msg );
+		}
+	}
+}
+
+sub _display_data_format {
+	my ($self, $data) = @_;
+	if( $data =~ /^\x{89}PNG/  ) {
+		return {
+			"image/png" => $data,
+			"text/plain" => '[PNG image]', # TODO get dimensions
+			"text/html" =>
+				q{<img
+					src="data:image/png;base64,@{[encode_base64($data)]}"
+				/>},
+
+		};
+	}
+	undef;
+}
+
 sub msg_execute_request {
 	my ($self, $kernel, $msg ) = @_;
 
@@ -114,13 +158,13 @@ sub msg_execute_request {
 	my $exec_result = $self->execute( $kernel, $msg );
 	my %extra_fields;
 	if( $exec_result->is_status_ok ) {
-		%extra_fields = ( 
+		%extra_fields = (
 			payload => [],
 			user_variables => {},
 			user_expressions => {},
 		);
 	} elsif( $exec_result->is_status_error ) {
-		%extra_fields = ( 
+		%extra_fields = (
 			ename => $exec_result->exception_name,
 			evalue => $exec_result->exception_value,
 			traceback => $exec_result->exception_traceback,

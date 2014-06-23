@@ -9,7 +9,7 @@ has last_output => ( is => 'rw' );
 
 has error => ( is => 'rw' );
 
-has results => ( is => 'rw' );
+has results => ( is => 'rw', default => sub { [] } );
 
 before run_once => sub {
 	my $self = shift;
