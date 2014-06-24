@@ -139,10 +139,9 @@ sub _display_data_format {
 			"image/png" => $data,
 			"text/plain" => '[PNG image]', # TODO get dimensions
 			"text/html" =>
-				q{<img
+				qq|<img
 					src="data:image/png;base64,@{[encode_base64($data)]}"
-				/>},
-
+				/>|,
 		};
 	}
 	undef;
