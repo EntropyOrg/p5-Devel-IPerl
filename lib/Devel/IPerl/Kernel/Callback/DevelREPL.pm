@@ -78,23 +78,27 @@ sub execute {
 	}
 
 	# send display_data / pyout
-	my $output = $msg->new_reply_to(
-		msg_type => 'pyout', # TODO this changes in v5.0 of protocol
-		content => {
-			execution_count => $self->execution_count,
-			data => {
-				'text/plain' => $stdout // '',
-			},
-			metadata => {},
-		}
-	);
-	$kernel->send_message( $kernel->iopub, $output );
+	if( defined $stdout && length $stdout ) {
+		my $output = $msg->new_reply_to(
+			msg_type => 'pyout', # TODO this changes in v5.0 of protocol
+			content => {
+				execution_count => $self->execution_count,
+				data => {
+					'text/plain' => $stdout,
+				},
+				metadata => {},
+			}
+		);
+		$kernel->send_message( $kernel->iopub, $output );
+	}
 
-	my $stream_stderr = $msg->new_reply_to(
-		msg_type => 'stream',
-		content => { name => 'stderr', data => $stderr, }
-	);
-	$kernel->send_message( $kernel->iopub, $stream_stderr );
+	if( defined $stderr and length $stderr ) {
+		my $stream_stderr = $msg->new_reply_to(
+			msg_type => 'stream',
+			content => { name => 'stderr', data => $stderr, }
+		);
+		$kernel->send_message( $kernel->iopub, $stream_stderr );
+	}
 
 	$self->display_data( $kernel, $msg );
 

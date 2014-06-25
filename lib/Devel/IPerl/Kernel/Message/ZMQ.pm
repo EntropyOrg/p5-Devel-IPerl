@@ -30,7 +30,7 @@ sub message_from_zmq_blobs {
 
 	#   b'blob',            # extra raw data buffer(s)
 	#   ...
-	my $blobs_rest = @$blobs[7..$number_of_blobs-1];
+	my @blobs_rest = ( @$blobs[7..$number_of_blobs-1] );
 	# ]
 	# TODO check the signature
 	$self->new(
@@ -39,7 +39,7 @@ sub message_from_zmq_blobs {
 		parent_header => decode_json($parent_header),
 		metadata => decode_json($metadata),
 		content => decode_json($content),
-		blobs => [ map { decode_json $_ } @$blobs_rest ],
+		blobs => [ map { decode_json($_) } @blobs_rest ],
 	);
 }
 
