@@ -8,7 +8,7 @@ use Devel::REPL;
 use Devel::IPerl::ReadLine::String;
 use Capture::Tiny ':all';
 use Try::Tiny;
-use MIME::Base64;
+use Devel::IPerl::Display;
 
 extends qw(Devel::IPerl::Kernel::Callback);
 
@@ -122,7 +122,7 @@ sub execute {
 sub display_data {
 	my ($self, $kernel, $msg) = @_;
 	for my $data ( @{ $self->repl->results }) {
-		my $data_formats = $self->_display_data_format( $data );
+		my $data_formats = Devel::IPerl::Display->display_data_format_handler( $data );
 		if( defined $data_formats ) {
 			my $display_data_msg = $msg->new_reply_to(
 				msg_type => 'display_data',
@@ -136,20 +136,6 @@ sub display_data {
 	}
 }
 
-sub _display_data_format {
-	my ($self, $data) = @_;
-	if( $data =~ /^\x{89}PNG/  ) {
-		return {
-			"image/png" => $data,
-			"text/plain" => '[PNG image]', # TODO get dimensions
-			"text/html" =>
-				qq|<img
-					src="data:image/png;base64,@{[encode_base64($data)]}"
-				/>|,
-		};
-	}
-	undef;
-}
 
 sub msg_execute_request {
 	my ($self, $kernel, $msg ) = @_;
