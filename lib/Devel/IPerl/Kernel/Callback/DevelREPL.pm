@@ -10,6 +10,8 @@ use Capture::Tiny ':all';
 use Try::Tiny;
 use Devel::IPerl::Display;
 
+use Log::Any qw($log);
+
 extends qw(Devel::IPerl::Kernel::Callback);
 
 with qw(Devel::IPerl::Kernel::Callback::Role::REPL);
@@ -17,6 +19,7 @@ with qw(Devel::IPerl::Kernel::Callback::Role::REPL);
 has repl => ( is => 'lazy' );
 sub _build_repl {
 	my ($self) = @_;
+	$log->trace('Creating REPL');
 	my $repl = Devel::REPL->new;
 
 	my $term = Devel::IPerl::ReadLine::String->new;
@@ -49,24 +52,26 @@ sub _build_repl {
 
 # return the STDOUT, STDERR, and Devel::REPL's Term::Readline output
 sub run_repl {
-  my ($self, $cmd) = @_;
-  my $repl = $self->repl;
-  $repl->term->cmd($cmd);
-  my ($stdout, $stderr) = capture {
-    $repl->run_once;
-  };
-  return ($stdout, $stderr, $repl->last_output);
+	my ($self, $cmd) = @_;
+	my $repl = $self->repl;
+	$log->tracef('Running command: %s', $cmd);
+	$repl->term->cmd($cmd);
+	my ($stdout, $stderr) = capture {
+		$repl->run_once;
+	};
+	return ($stdout, $stderr, $repl->last_output);
 }
 
 sub execute {
 	my ($self, $kernel, $msg) = @_;
-	my $exec_result = Devel::IPerl::ExecutionResult->new();
 
-	# TODO: set $exec_result->status
-	$exec_result->status_ok;
-
-	my $exception;
+	### Run code
 	my ($stdout, $stderr, $string) = $self->run_repl(  $msg->content->{code} );
+
+	### Store execution status
+	### e.g., any errors, exceptions
+	my $exec_result = Devel::IPerl::ExecutionResult->new();
+	my $exception;
 	if( defined $self->repl->error ) {
 		$exception = $self->repl->error;
 		$exec_result->status_error;
@@ -75,8 +80,12 @@ sub execute {
 
 		# TODO get an actual traceback
 		$exec_result->exception_traceback( [$exception->message] );
+	} else {
+		# no exception
+		$exec_result->status_ok;
 	}
 
+	### Send back stdout/stderr
 	# send display_data / pyout
 	if( defined $stdout && length $stdout ) {
 		my $output = $msg->new_reply_to(
@@ -92,7 +101,7 @@ sub execute {
 		$kernel->send_message( $kernel->iopub, $output );
 	}
 
-	if( defined $stderr and length $stderr ) {
+	if( defined $stderr && length $stderr ) {
 		my $stream_stderr = $msg->new_reply_to(
 			msg_type => 'stream',
 			content => { name => 'stderr', data => $stderr, }
@@ -100,8 +109,10 @@ sub execute {
 		$kernel->send_message( $kernel->iopub, $stream_stderr );
 	}
 
+	### Send back data representations
 	$self->display_data( $kernel, $msg );
 
+	### Send back errors
 	if( defined $exception ) {
 		# send back exception
 		my $err = $msg->new_reply_to(
@@ -114,7 +125,6 @@ sub execute {
 		);
 		$kernel->send_message( $kernel->iopub, $err );
 	}
-
 
 	$exec_result;
 }
@@ -140,11 +150,24 @@ sub display_data {
 sub msg_execute_request {
 	my ($self, $kernel, $msg ) = @_;
 
-	# send kernel status : busy
+	### send kernel status : busy
 	my $status_busy = Devel::IPerl::Kernel::Message::Helper->kernel_status( $msg, 'busy' );
+	$log->tracef('send kernel status: %s', 'busy');
 	$kernel->send_message( $kernel->iopub, $status_busy );
 
+	### Send back execution status
 	my $exec_result = $self->execute( $kernel, $msg );
+	$self->execute_reply( $kernel, $msg, $exec_result );
+
+	### send kernel status : idle
+	my $status_idle = Devel::IPerl::Kernel::Message::Helper->kernel_status( $msg, 'idle' );
+	$log->tracef('send kernel status: %s', 'idle');
+	$kernel->send_message( $kernel->iopub, $status_idle );
+}
+
+sub execute_reply {
+	my ($self, $kernel, $msg, $exec_result) = @_;
+	$log->tracef('send back execution result: %s', $exec_result);
 	my %extra_fields;
 	if( $exec_result->is_status_ok ) {
 		%extra_fields = (
@@ -168,10 +191,6 @@ sub msg_execute_request {
 		}
 	);
 	$kernel->send_message( $kernel->shell, $execute_reply );
-
-	# send kernel status : idle
-	my $status_idle = Devel::IPerl::Kernel::Message::Helper->kernel_status( $msg, 'idle' );
-	$kernel->send_message( $kernel->iopub, $status_idle );
 }
 
 
