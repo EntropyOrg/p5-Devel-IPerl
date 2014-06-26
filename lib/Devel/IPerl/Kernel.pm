@@ -18,7 +18,7 @@ use IO::Async::Loop;
 use IO::Async::Handle;
 use IO::Handle;
 use Devel::IPerl::Kernel::Callback::DevelREPL;
-use Devel::IPerl::Kernel::Message::ZMQ;
+use Devel::IPerl::Message::ZMQ;
 
 has callback => (
 		is => 'rw',
@@ -41,7 +41,7 @@ after clear_zmq => sub {
 
 has message_format => (
 	is => 'ro',
-	default => sub { 'Devel::IPerl::Kernel::Message::ZMQ'; },
+	default => sub { 'Devel::IPerl::Message::ZMQ'; },
 );
 
 # Loop {{{

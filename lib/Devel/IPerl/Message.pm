@@ -1,4 +1,4 @@
-package Devel::IPerl::Kernel::Message;
+package Devel::IPerl::Message;
 # ABSTRACT: implements the IPython message specification version 5.0
 
 use strict;
@@ -39,7 +39,7 @@ has content => ( is => 'rw', default => sub { {} }, );
 has blobs => ( is => 'rw', default => sub { [] } );
 #}}}
 
-# isa Devel::IPerl::Kernel::Message
+# isa Devel::IPerl::Message
 has reply_to => ( is => 'rw', trigger => 1 );
 sub _trigger_reply_to {
 	my ($self) = @_;

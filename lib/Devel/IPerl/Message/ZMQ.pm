@@ -1,11 +1,11 @@
-package Devel::IPerl::Kernel::Message::ZMQ;
+package Devel::IPerl::Message::ZMQ;
 
 use strict;
 use namespace::autoclean;
 use Moo;
 use JSON::MaybeXS;
 
-extends qw(Devel::IPerl::Kernel::Message);
+extends qw(Devel::IPerl::Message);
 
 use constant DELIMITER => '<IDS|MSG>';
 

@@ -3,7 +3,7 @@ package Devel::IPerl::Kernel::Callback::DevelREPL;
 use strict;
 use Moo;
 use Devel::IPerl::ExecutionResult;
-use Devel::IPerl::Kernel::Message::Helper;
+use Devel::IPerl::Message::Helper;
 use Devel::REPL;
 use Devel::IPerl::ReadLine::String;
 use Capture::Tiny ':all';
@@ -151,7 +151,7 @@ sub msg_execute_request {
 	my ($self, $kernel, $msg ) = @_;
 
 	### send kernel status : busy
-	my $status_busy = Devel::IPerl::Kernel::Message::Helper->kernel_status( $msg, 'busy' );
+	my $status_busy = Devel::IPerl::Message::Helper->kernel_status( $msg, 'busy' );
 	$log->tracef('send kernel status: %s', 'busy');
 	$kernel->send_message( $kernel->iopub, $status_busy );
 
@@ -160,7 +160,7 @@ sub msg_execute_request {
 	$self->execute_reply( $kernel, $msg, $exec_result );
 
 	### send kernel status : idle
-	my $status_idle = Devel::IPerl::Kernel::Message::Helper->kernel_status( $msg, 'idle' );
+	my $status_idle = Devel::IPerl::Message::Helper->kernel_status( $msg, 'idle' );
 	$log->tracef('send kernel status: %s', 'idle');
 	$kernel->send_message( $kernel->iopub, $status_idle );
 }

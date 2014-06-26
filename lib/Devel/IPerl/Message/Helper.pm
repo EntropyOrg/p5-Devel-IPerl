@@ -1,4 +1,4 @@
-package Devel::IPerl::Kernel::Message::Helper;
+package Devel::IPerl::Message::Helper;
 
 use strict;
 
