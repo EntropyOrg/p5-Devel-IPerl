@@ -10,6 +10,8 @@ use Capture::Tiny ':all';
 use Try::Tiny;
 use Devel::IPerl::Display;
 
+use constant REPL_OUTPUT_TOO_LONG => 1024;
+
 use Log::Any qw($log);
 
 extends qw(Devel::IPerl::Kernel::Callback);
@@ -66,7 +68,7 @@ sub execute {
 	my ($self, $kernel, $msg) = @_;
 
 	### Run code
-	my ($stdout, $stderr, $string) = $self->run_repl(  $msg->content->{code} );
+	my ($stdout, $stderr, $repl_output) = $self->run_repl(  $msg->content->{code} );
 
 	### Store execution status
 	### e.g., any errors, exceptions
@@ -107,6 +109,19 @@ sub execute {
 			content => { name => 'stderr', data => $stderr, }
 		);
 		$kernel->send_message( $kernel->iopub, $stream_stderr );
+	}
+
+	# REPL output
+	# NOTE using stderr
+	# TODO can IPython handle any other streams?
+	# maybe only show REPL output if now display data can be shown?
+	if( defined $repl_output && length $repl_output > 0 && length $repl_output < REPL_OUTPUT_TOO_LONG ) {
+		my $stream_repl_output = $msg->new_reply_to(
+			msg_type => 'stream',
+			content => { name => 'stderr', data => $repl_output, }
+		);
+		$kernel->send_message( $kernel->iopub, $stream_repl_output );
+
 	}
 
 	### Send back data representations
