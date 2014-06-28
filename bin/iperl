@@ -1,5 +1,14 @@
 #!/bin/sh
 # PODNAME: iperl
-# ABSTRACT: start ipython notebook with perl profile
+# ABSTRACT: start ipython notebook with a perl profile
 
-ipython notebook --profile perl
+CURDIR=`dirname "$0"`
+TOP="$CURDIR/.."
+
+if ! ipython locate profile perl 2>&1 > /dev/null; then
+	# create the perl profile
+	ipython profile create perl
+	cp -pvR $TOP/profile/* $(ipython locate profile perl)/
+fi
+export PERL5LIB="$TOP/lib:$PERL5LIB"
+ipython "$@" --profile perl
