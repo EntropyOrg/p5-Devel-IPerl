@@ -5,10 +5,16 @@
 CURDIR=`dirname "$0"`
 TOP="$CURDIR/.."
 
-if ! ipython locate profile perl 2>&1 > /dev/null; then
+PROFILE_DIR=`ipython locate profile perl`
+if ! grep "Devel::IPerl" "$PROFILE_DIR"/ipython_config.py 2>&1 > /dev/null; then
 	# create the perl profile
 	ipython profile create perl
-	cp -pvR $TOP/profile/* $(ipython locate profile perl)/
+	PROFILE_DIR=`ipython locate profile perl`
+	cp -pvR $TOP/profile/* "$PROFILE_DIR"/
 fi
 export PERL5LIB="$TOP/lib:$PERL5LIB"
-ipython "$@" --profile perl
+ARGS="$@"
+if [ -z "$ARGS" ]; then
+	ARGS="console"
+fi
+ipython "$ARGS" --profile perl
