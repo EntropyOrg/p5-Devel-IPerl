@@ -1,0 +1,47 @@
+#!/bin/sh
+# PODNAME: iperl
+# ABSTRACT: start ipython notebook with a perl profile
+
+CURDIR=`dirname "$0"`
+TOP="$CURDIR/.."
+
+PROFILE_DIR=`ipython locate profile perl`
+if ! grep "Devel::IPerl" "$PROFILE_DIR"/ipython_config.py 2>&1 > /dev/null; then
+	# create the perl profile
+	ipython profile create perl
+	PROFILE_DIR=`ipython locate profile perl`
+	cp -pvR $TOP/profile/* "$PROFILE_DIR"/
+fi
+export PERL5LIB="$TOP/lib:$PERL5LIB"
+ARGS=$@
+if [ -z "$ARGS" ]; then
+	ARGS="console"
+fi
+ipython $ARGS --profile perl
+
+__END__
+
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+iperl - start ipython notebook with a perl profile
+
+=head1 VERSION
+
+version 0.001
+
+=head1 AUTHOR
+
+Zakariyya Mughal <zmughal@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2014 by Zakariyya Mughal.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut

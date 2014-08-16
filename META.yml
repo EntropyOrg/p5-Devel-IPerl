@@ -1,0 +1,44 @@
+---
+abstract: 'Perl language kernel for IPython'
+author:
+  - 'Zakariyya Mughal <zmughal@cpan.org>'
+build_requires:
+  Test::More: 0
+  version: 0
+configure_requires:
+  ExtUtils::MakeMaker: 0
+dynamic_config: 0
+generated_by: 'Dist::Zilla version 5.020, CPAN::Meta::Converter version 2.133380'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Devel-IPerl
+requires:
+  Capture::Tiny: 0
+  Devel::REPL: 0
+  File::LibMagic: 0
+  IO::Async::Handle: 0
+  IO::Async::Loop: 0
+  IO::Handle: 0
+  JSON::MaybeXS: 0
+  Log::Any: 0
+  MIME::Base64: 0
+  Moo: 0
+  Moo::Role: 0
+  MooX::HandlesVia: 0
+  MooseX::HandlesConstructor: 0
+  Path::Class: 0
+  Try::Tiny: 0
+  UUID::Tiny: 0
+  ZMQ::Constants: 0
+  ZMQ::LibZMQ3: 0
+  constant: 0
+  namespace::autoclean: 0
+  perl: 5.010
+  strict: 0
+  warnings: 0
+resources:
+  homepage: https://github.com/zmughal/p5-Devel-IPerl
+  repository: https://github.com/zmughal/p5-Devel-IPerl.git
+version: 0.001
