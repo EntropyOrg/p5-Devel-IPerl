@@ -10,6 +10,16 @@ use MooX::HandlesVia;
 # can only be "ok", "error", or "abort"
 has status => ( is => 'rw' );
 
+has stdout => ( is => 'rw' );
+
+has stderr => ( is => 'rw' );
+
+has last_output => ( is => 'rw' );
+
+has error => ( is => 'rw' );
+
+has results => ( is => 'rw', default => sub { [] } );
+
 use constant {
 	STATUS_OK    => 'ok',
 	STATUS_ERROR => 'error',
