@@ -1,6 +1,8 @@
 package Devel::IPerl::Kernel::Callback::Role::REPL;
 
 use strict;
+use warnings;
+
 use Moo::Role;
 
 requires 'execute';

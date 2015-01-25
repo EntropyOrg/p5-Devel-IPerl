@@ -1,6 +1,8 @@
 package Devel::IPerl::ExecutionResult;
 
 use strict;
+use warnings;
+
 use Moo;
 use MooX::HandlesVia;
 

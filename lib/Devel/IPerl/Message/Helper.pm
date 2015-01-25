@@ -1,6 +1,7 @@
 package Devel::IPerl::Message::Helper;
 
 use strict;
+use warnings;
 
 sub kernel_status {
 	my ($self, $msg, $status) = @_;

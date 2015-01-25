@@ -1,9 +1,10 @@
 package Devel::IPerl::Message::ZMQ;
 
 use strict;
-use namespace::autoclean;
+use warnings;
 use Moo;
 use JSON::MaybeXS;
+use namespace::autoclean;
 
 extends qw(Devel::IPerl::Message);
 

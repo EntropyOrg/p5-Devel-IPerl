@@ -1,6 +1,8 @@
 package Devel::IPerl::Kernel::Callback::DevelREPL;
 
 use strict;
+use warnings;
+
 use Moo;
 use Devel::IPerl::ExecutionResult;
 use Devel::IPerl::Message::Helper;
@@ -9,6 +11,7 @@ use Devel::IPerl::ReadLine::String;
 use Capture::Tiny ':all';
 use Try::Tiny;
 use Devel::IPerl::Display;
+use namespace::autoclean;
 
 use constant REPL_OUTPUT_TOO_LONG => 1024;
 

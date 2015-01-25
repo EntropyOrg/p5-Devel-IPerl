@@ -2,6 +2,7 @@ package Devel::IPerl::Display;
 
 use strict;
 use warnings;
+
 use MIME::Base64;
 use File::LibMagic;
 

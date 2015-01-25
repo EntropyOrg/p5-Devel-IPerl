@@ -1,8 +1,10 @@
 package Devel::IPerl::Kernel::Callback;
 
 use strict;
-use namespace::autoclean;
+use warnings;
+
 use Moo;
+use namespace::autoclean;
 
 sub msg_kernel_info_request {
 	my ($self, $kernel, $msg ) = @_;

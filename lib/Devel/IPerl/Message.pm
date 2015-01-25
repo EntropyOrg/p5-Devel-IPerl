@@ -2,11 +2,13 @@ package Devel::IPerl::Message;
 # ABSTRACT: implements the IPython message specification version 5.0
 
 use strict;
-use namespace::autoclean;
+use warnings;
+
 use Moo;
 use MooX::HandlesVia;
 use UUID::Tiny ':std';
 use MooseX::HandlesConstructor;
+use namespace::autoclean;
 
 # header: HashRef {{{
 has header => (
