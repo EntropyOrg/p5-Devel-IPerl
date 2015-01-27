@@ -17,7 +17,7 @@ sub _build_repl {
 
 	my $repl = Reply->new(
 		# needs these at a minimum
-		plugins => [ qw[Packages IPerl] ]
+		plugins => [ qw[Packages IPerl LexicalPersistence] ]
 		
 	);
 
