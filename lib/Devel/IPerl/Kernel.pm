@@ -210,10 +210,12 @@ sub stop {
 
 sub route_message {
 	my ($self, $blobs) = @_;
-	my $msg = $self->message_format->message_from_zmq_blobs($blobs);
-	my $fn = "msg_" . $msg->msg_type;
-	if( $self->callback->can( $fn ) ) {
-		$self->callback->$fn( $self, $msg );
+	my @msgs = $self->message_format->messages_from_zmq_blobs($blobs);
+	for my $msg (@msgs) {
+		my $fn = "msg_" . $msg->msg_type;
+		if( $self->callback->can( $fn ) ) {
+			$self->callback->$fn( $self, $msg );
+		}
 	}
 }
 

@@ -44,6 +44,27 @@ sub message_from_zmq_blobs {
 	);
 }
 
+sub messages_from_zmq_blobs {
+	my ($self, $blobs) = @_;
+
+	# UUID is at the start of the blobs
+	my $uuid = $blobs->[0];
+
+	# each messages starts with the UUID
+	my @message_starts = grep { $blobs->[$_] eq $uuid } 0..@$blobs-1;
+	# each message ends right before the next one starts
+	my @message_ends = map { $message_starts[$_] - 1 } 1..@message_starts-1;
+	# last message goes to the very end
+	push @message_ends, @$blobs - 1;
+
+	my @messages;
+	for my $idx (0..@message_starts-1) {
+		my $message_blobs = [ @{$blobs}[  $message_starts[$idx]..$message_ends[$idx] ] ];
+		push @messages, $self->message_from_zmq_blobs( $message_blobs );
+	}
+	@messages;
+}
+
 sub zmq_blobs_from_message {
 	my ($self) = @_;
 
