@@ -12,7 +12,6 @@ my $temp = File::Temp->newdir();
 $ENV{IPYTHONDIR} = $temp;
 use IPC::Run3;
 
-
 my ($in, $out, $err);
 
 my $data = [
@@ -20,6 +19,7 @@ my $data = [
 	{ in => q|2 * $x;|, out => q|4| },
 ];
 $in = join "\n", map { $_->{in} } @$data;
+note "Running code\n", ($in =~ s/^/    /mgr ) , "";
 
 # TODO timeout
 run3 [$iperl_command, 'console'], \$in, \$out, \$err;
@@ -37,8 +37,6 @@ if( index($out[-1], "Do you really want to exit ([y]/n)?") != -1 ) {
 }
 use List::AllUtils qw(pairvalues);
 my @out_values = map { $_ =~ s/^\s+|\s+$//gr  } pairvalues @out;
-
-use DDP; p @out_values;
 
 plan tests => 1;
 
