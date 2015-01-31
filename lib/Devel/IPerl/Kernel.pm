@@ -227,6 +227,12 @@ sub send_message {
 	zmq_msg_send($blobs->[-1], $socket, 0); # done
 }
 
+sub kernel_exit {
+	my ($self) = @_;
+	zmq_close( $self->heartbeat );
+	zmq_term( $self->zmq );
+}
+
 sub _setup_heartbeat {
 	my ($self) = @_;
 	# heartbeat socket is just an echo server
@@ -236,10 +242,10 @@ sub _setup_heartbeat {
 			zmq_device( ZMQ_FORWARDER, $self->heartbeat, $self->heartbeat );
 		},
 		on_exit => sub {
-			zmq_close( $self->heartbeat );
-			zmq_term( $self->zmq );
+			$self->kernel_exit;
 		},
 	);
+	$SIG{INT} = sub { $self->kernel_exit };
 	$self->_heartbeat_child( $child );
 }
 
