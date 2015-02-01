@@ -4,7 +4,6 @@ use strict;
 use warnings;
 
 use Log::Any qw($log);
-use Reply;
 use Devel::IPerl::ExecutionResult;
 use Capture::Tiny ':all';
 use Moo;
@@ -13,6 +12,7 @@ has repl => ( is => 'lazy' );
 
 sub _build_repl {
 	my ($self) = @_;
+	require Reply;
 	$log->trace('Creating REPL: Reply');
 
 	my $repl = Reply->new(

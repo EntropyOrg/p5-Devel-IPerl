@@ -4,7 +4,6 @@ use strict;
 use warnings;
 
 use Log::Any qw($log);
-use Devel::REPL;
 use Devel::IPerl::ExecutionResult;
 use Devel::IPerl::ReadLine::String;
 use Capture::Tiny ':all';
@@ -14,6 +13,7 @@ has repl => ( is => 'lazy' );
 
 sub _build_repl {
 	my ($self) = @_;
+	require Devel::REPL;
 	$log->trace('Creating REPL: Devel::REPL');
 	my $repl = Devel::REPL->new;
 
