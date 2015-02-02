@@ -29,14 +29,21 @@ sub run_line {
 	my $repl = $self->repl;
 	$log->tracef('Running command: %s', $cmd);
 
-	my ($stdout, $stderr) = capture {
+	capture {
 		$repl->step( $cmd, 0 );
 	};
 
 	my $exec_result = Devel::IPerl::ExecutionResult->new();
+	$exec_result->stdout( $repl->_concatenate_plugin('stdout') );
+	$exec_result->stderr( $repl->_concatenate_plugin('stderr') );
+
+	my @last_output = $repl->_concatenate_plugin('last_output');
+	$exec_result->last_output( $last_output[0] );
+
+	$exec_result->results( $repl->_concatenate_plugin('results') );
+
+	# TODO capture exceptions
 	$exec_result->status_ok; # TODO
-	$exec_result->stdout( $stdout );
-	$exec_result->stderr( $stderr );
 
 	$exec_result;
 }
