@@ -21,6 +21,7 @@ sub run_code {
 	# TODO timeout
 	run3 [$iperl_command, 'console'], \$in, \$out, \$err;
 
+	#use DDP; p $out;
 	my $out_nocolor = Term::ANSIColor::colorstrip $out;
 	$out_nocolor =~ s/[\1\2]//sg;
 
@@ -44,6 +45,10 @@ my $tests = [
 		data => [ { in => q|$x = 2;|, out => q|2| },
 			  { in => q|2 * $x;|, out => q|4| }, ],
 	},
+	{
+		name => 'test0',
+		data => [ { in => q|print "hey"|, out => q|hey| }, ],
+	},
 ];
 
 
@@ -58,10 +63,6 @@ for my $test (@$tests) {
 }
 
 
-
-#use DDP; p $in;
-#use DDP; p $out;
-#use DDP; p $err;
 
 
 done_testing;
