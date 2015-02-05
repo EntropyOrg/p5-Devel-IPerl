@@ -13,8 +13,8 @@ matrix:
       env: COVERAGE=1 AUTHOR_TESTING=1
 before_install:
   - sudo apt-get update
-  - sudo apt-get install libzmq3-dev libmagic-dev # install deps using apt-get (need to check the Python 3 IPython as well as dev version of IPython
-  - pip install -r requirements.txt
+  - sudo apt-get install libzmq3-dev libmagic-dev python-pygments # install deps using apt-get (need to check the Python 3 IPython as well as dev version of IPython
+  - sudo pip install -r requirements.txt
   - eval $(curl https://travis-perl.github.io/init) --auto
 branches:
   except:
