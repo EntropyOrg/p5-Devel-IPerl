@@ -12,6 +12,7 @@ matrix:
     - perl: 5.20
       env: COVERAGE=1 AUTHOR_TESTING=1
 before_install:
+  - sudo apt-get update
   - sudo apt-get install ipython ipython-notebook libzmq3-dev libmagic-dev # install deps using apt-get (need to check the Python 3 IPython as well as dev version of IPython
   - eval $(curl https://travis-perl.github.io/init) --auto
 branches:
