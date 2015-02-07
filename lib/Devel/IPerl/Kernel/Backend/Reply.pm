@@ -29,6 +29,8 @@ sub run_line {
 	my $repl = $self->repl;
 	$log->tracef('Running command: %s', $cmd);
 
+	$repl->_concatenate_plugin('clear_data');
+
 	capture {
 		$repl->step( $cmd, 0 );
 	};

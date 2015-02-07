@@ -53,13 +53,19 @@ sub mangle_result {
 	return @result;
 }
 
+sub clear_data {
+	my ($self) = @_;
+	for my $field ( qw(results stdout stderr error last_output) ) {
+		$self->{$field} = undef;
+	}
+}
+
 sub results { my $self = shift; $self->{results}; }
 sub stdout { my $self = shift; $self->{stdout}; }
 sub stderr { my $self = shift; $self->{stderr}; }
 sub last_output {
 	my $self = shift;
 	my $out = $self->{last_output};
-	$self->{last_output} = undef;
 	$out;
 }
 
