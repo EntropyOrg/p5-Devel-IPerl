@@ -6,7 +6,6 @@ use warnings;
 use File::Temp;
 use Term::ANSIColor 2.01;
 use IPC::Run3;
-use List::AllUtils qw(pairvalues);
 
 my $iperl_command = './bin/iperl'; # TODO find using relative path FindBin
 
@@ -16,10 +15,15 @@ sub run_code {
 	local $ENV{IPYTHONDIR} = $temp;
 
 	my ($in, $out, $err);
-	my $start = { in => [ q|print STDERR "==== start ====\n"; undef| ] };
-	my $stop = { in => [ q|print STDERR "==== stop ====\n"; undef| ] };
+	my $start_string = "==== start ====";
+	my $stop_string = "==== stop ====" . "abcd" x 512;
+	my $start = { in => [ qq|print STDERR "$start_string\\n"; undef| ] };
+	my $stop = { in => [ qq|print STDERR "$stop_string\\n"; undef| ] };
+
+	my $code = join "\n", map { @{ $_->{in} } } ($data);
+
 	$in = join "\n", map { @{ $_->{in} } } ($start, $data, $stop);
-	note "Running code:\n", ($in =~ s/^/    /mgr ) , "";
+	note "Running code:\n", ($code =~ s/^/    /mgr ) , "";
 
 	# TODO timeout
 	run3 [$iperl_command, 'console'], \$in, \$out, \$err;
@@ -30,7 +34,7 @@ sub run_code {
 	$err_nocolor =~ s/[\1\2]//sg;
 
 	#use Data::Dumper; $Data::Dumper::Useqq = 1; print Dumper( $out_nocolor );
-	my @repl_out = grep { /==== start ====/../==== stop ====/ } split "\n", $err_nocolor;
+	my @repl_out = grep { /$start_string/../$stop_string/ } split "\n", $err_nocolor;
 	shift @repl_out; pop @repl_out;
 	my $repl_out = join "\n", @repl_out;
 
