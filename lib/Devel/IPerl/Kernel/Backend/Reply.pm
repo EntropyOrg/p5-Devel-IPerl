@@ -40,6 +40,8 @@ sub run_line {
 	$exec_result->stderr( $repl->_concatenate_plugin('stderr') );
 
 	my @last_output = $repl->_concatenate_plugin('last_output');
+	$last_output[0] = "" unless defined $last_output[0];
+	$last_output[0] =~ s/^\n+$//g; # not sure why, but the output can just be a newline?
 	$exec_result->last_output( $last_output[0] );
 
 	$exec_result->results( $repl->_concatenate_plugin('results') );
