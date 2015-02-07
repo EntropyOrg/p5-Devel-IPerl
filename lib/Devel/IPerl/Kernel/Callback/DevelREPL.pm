@@ -89,7 +89,7 @@ sub execute {
 
 sub display_data {
 	my ($self, $kernel, $msg, $exec_result) = @_;
-	for my $data ( @{ $exec_result->results }) {
+	for my $data ( @{ $exec_result->results || [] }) {
 		my $data_formats = Devel::IPerl::Display->display_data_format_handler( $data );
 		if( defined $data_formats ) {
 			my $display_data_msg = $msg->new_reply_to(
