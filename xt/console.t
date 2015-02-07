@@ -1,4 +1,4 @@
-use Test::Most;
+use Test::More;
 
 use strict;
 use warnings;
@@ -47,8 +47,9 @@ my $tests = [
 	},
 	{
 		name => 'test0',
-		data => { in => [ q|print STDERR "hey\n"| ],
-				out => qq|hey\n1| },,
+		data => { in => [ q|print STDERR "hey\n"|,
+				  q|2 ** 8;| ],
+				out => qq|hey\n1\n256| },,
 	},
 ];
 
