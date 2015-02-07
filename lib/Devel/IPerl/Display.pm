@@ -11,7 +11,7 @@ my $magic = File::LibMagic->new();
 sub display_data_format_handler {
 	my ($self, $data) = @_;
 	return unless length $data;
-	my $mimetype_charset = $magic->checktype_contents($data);
+	my $mimetype_charset = $magic->checktype_contents("$data");
 	my $mimetype = ($mimetype_charset =~ /^([^;]*)/)[0];
 	if( $mimetype eq 'image/png'  ) {
 		return {
