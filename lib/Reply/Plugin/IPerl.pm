@@ -12,7 +12,9 @@ sub compile {
     my $self = shift;
     my ($next, @args) = @_;
 
-    # TODO capture compile errors
+    # capture compile errors
+    local $SIG{__WARN__} = sub { $self->{error} = @_ };
+
     $next->(@args);
 }
 
@@ -53,6 +55,13 @@ sub mangle_result {
 	return @result;
 }
 
+sub mangle_error {
+    my $self = shift;
+    my $error = shift;
+
+    $self->{error} = $error;
+}
+
 sub clear_data {
 	my ($self) = @_;
 	for my $field ( qw(results stdout stderr error last_output) ) {
@@ -63,6 +72,7 @@ sub clear_data {
 sub results { my $self = shift; $self->{results}; }
 sub stdout { my $self = shift; $self->{stdout}; }
 sub stderr { my $self = shift; $self->{stderr}; }
+sub error { my $self = shift; $self->{error}; }
 sub last_output {
 	my $self = shift;
 	my $out = $self->{last_output};
