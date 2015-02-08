@@ -1,11 +1,11 @@
-package Devel::IPerl::Kernel::Callback::DevelREPL;
+package Devel::IPerl::Kernel::Callback::REPL;
 
 use strict;
 use warnings;
 
 use Moo;
 use Devel::IPerl::Message::Helper;
-use Devel::IPerl::Kernel::Backend::DevelREPL;
+#use Devel::IPerl::Kernel::Backend::DevelREPL;
 use Devel::IPerl::Kernel::Backend::Reply;
 use Try::Tiny;
 use Devel::IPerl::Display;

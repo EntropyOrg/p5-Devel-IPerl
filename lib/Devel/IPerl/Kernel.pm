@@ -17,13 +17,13 @@ use Path::Class;
 use IO::Async::Loop;
 use IO::Async::Handle;
 use IO::Handle;
-use Devel::IPerl::Kernel::Callback::DevelREPL;
+use Devel::IPerl::Kernel::Callback::REPL;
 use Devel::IPerl::Message::ZMQ;
 
 has callback => (
 		is => 'rw',
 		default => sub {
-			Devel::IPerl::Kernel::Callback::DevelREPL->new;
+			Devel::IPerl::Kernel::Callback::REPL->new;
 		},
 	);
 
