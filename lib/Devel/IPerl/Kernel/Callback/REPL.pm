@@ -85,7 +85,7 @@ sub execute {
 			msg_type => 'pyerr', # TODO this changes in v5.0 of protocol
 			content => {
 				ename => $exec_result->exception_name,
-				evalue => $exec_result->exception_value,
+				evalue => "@{[ $exec_result->exception_value ]}", # must be string
 				traceback => $exec_result->exception_traceback,
 			}
 		);
@@ -151,7 +151,7 @@ sub execute_reply {
 	} elsif( $exec_result->is_status_error ) {
 		%extra_fields = (
 			ename => $exec_result->exception_name,
-			evalue => $exec_result->exception_value,
+			evalue => "@{[ $exec_result->exception_value ]}", # must be string
 			traceback => $exec_result->exception_traceback,
 		);
 	}

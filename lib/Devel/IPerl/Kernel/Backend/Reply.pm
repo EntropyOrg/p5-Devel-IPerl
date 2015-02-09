@@ -47,11 +47,12 @@ sub run_line {
 	$exec_result->results( $repl->_concatenate_plugin('results') );
 
 	# capture exceptions
-	$exec_result->error( $repl->_concatenate_plugin('error') );
+	my @error = $repl->_concatenate_plugin('error');
+	$exec_result->error( $error[0] );
 	if( defined $exec_result->error ) {
 		my $exception = $exec_result->error;
 		$exec_result->status_error;
-		$exec_result->exception_name( ref $exception // 'Error' );
+		$exec_result->exception_name( ref($exception) || 'Error' );
 		$exec_result->exception_value( $exception );
 
 		# TODO get an actual traceback

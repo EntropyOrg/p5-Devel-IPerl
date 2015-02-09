@@ -13,7 +13,7 @@ sub compile {
     my ($next, @args) = @_;
 
     # capture compile errors
-    local $SIG{__WARN__} = sub { $self->{error} = @_ };
+    local $SIG{__WARN__} = sub { $self->{error} = \@_ };
 
     $next->(@args);
 }
