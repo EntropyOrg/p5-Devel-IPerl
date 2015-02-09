@@ -4,28 +4,30 @@ use strict;
 use warnings;
 
 use Devel::IPerl::Plugin::PDLGraphicsGnuplot;
+use PDL;
+use PDL::Constants qw(PI);
 use PDL::Graphics::Gnuplot;
 use IPerl;
 
-ok(1);
-done_testing;
-
-__END__
-
 IPerl->load_plugin($_) for qw(PDLGraphicsGnuplot CoreDisplay);
 
-my $w = gpwin();
-#use DDP; p $w->options();
+sub run_plot {
+	my $w = gpwin();
+	#use DDP; p $w->options();
 
-use PDL;
-use PDL::Constants qw(PI);
-my $theta = zeros(200)->xlinvals(0, 6*PI);
+	my $theta = zeros(200)->xlinvals(0, 6*PI);
 
-$w->plot( $theta, sin($theta) );
+	$w->plot( $theta, sin($theta) );
 
-my $data = $w->iperl_data_representations;
+	my $data = $w->iperl_data_representations;
+}
+
+lives_ok { run_plot() } 'plotting does not die';
+
 #use DDP; p $data->{'text/html'};
 #use Path::Class;
 #file('/tmp/b.png')->spew( iomode => '>:raw', $data->{'image/png'} );
 
 #use DDP; p $w->iperl_data_representations;
+
+done_testing;
