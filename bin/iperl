@@ -4,6 +4,7 @@
 
 CURDIR=`dirname "$0"`
 TOP="$CURDIR/.."
+TOP=`readlink -f "$TOP"`
 
 PROFILE_DIR=`ipython locate profile perl`
 if ! grep "Devel::IPerl" "$PROFILE_DIR"/ipython_config.py 2>&1 > /dev/null; then
