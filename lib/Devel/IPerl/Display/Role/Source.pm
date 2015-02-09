@@ -13,14 +13,14 @@ sub BUILDARGS {
 	# if first arg is data that needs to be determined
 	if( @args % 2 == 1 ) {
 		my $data = shift @args;
-		if( $data =~ /^http[s]:/ ) {
+		if( $data =~ /^http[s]?:/ ) {
 			unshift @args, uri => $data;
-		} elsif( -f $data ) {
+		} elsif( eval { -f $data } ) {
+			# to avoid warning about newline in filename
 			unshift @args, filename => $data;
 		} else {
 			unshift @args, bytestream => $data;
 		}
-
 	}
 
 	return { @args };

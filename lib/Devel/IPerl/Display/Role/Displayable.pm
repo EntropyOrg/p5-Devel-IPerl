@@ -13,8 +13,6 @@ Returns a hash with the MIME types (e.g., C<text/html>) as the keys and a
 string representation as the values.
 
 =cut
-sub iperl_data_representations {
-	...
-}
+requires 'iperl_data_representations';
 
 1;

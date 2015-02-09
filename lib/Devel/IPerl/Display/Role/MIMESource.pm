@@ -26,6 +26,7 @@ sub _build__data {
 	} elsif( $self->uri ) {
 		my $ua = LWP::UserAgent->new();
 		my $response = $ua->get( $self->uri );
+		die "Could not retrieve data" unless $response->is_success;
 		my $data = $response->decoded_content;
 		return $data;
 	}

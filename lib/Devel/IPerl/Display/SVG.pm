@@ -4,17 +4,11 @@ use strict;
 use warnings;
 
 use Moo;
-with qw(Devel::IPerl::Display::Role::Displayable Devel::IPerl::Display::Role::MIMESource);
+with qw(Devel::IPerl::Display::Role::Displayable Devel::IPerl::Display::Role::MIMESource Devel::IPerl::Display::Role::WebImage);
 
-sub _build_mimetype { 'image/svg+xml' }
-sub iperl_data_representations {
-	my ($self) = @_;
-	my $data = $self->_data;
-	return {
-		$self->mimetype => $data,
-		"text/plain" => '[SVG image]', # TODO get dimensions?
-		"text/html" => qq|<img src="@{[ $self->_html_uri ]}" />|,
-	};
+sub _as_text_plain {
+	'[SVG image]', # TODO get dimensions?
 }
+sub _build_mimetype { 'image/svg+xml' }
 
 1;
