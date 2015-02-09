@@ -22,10 +22,19 @@ extends qw(Devel::IPerl::Kernel::Callback);
 with qw(Devel::IPerl::Kernel::Callback::Role::REPL);
 
 #has backend => ( is => 'rw', default => sub { Devel::IPerl::Kernel::Backend::DevelREPL->new } );
-has backend => ( is => 'rw', default => sub { Devel::IPerl::Kernel::Backend::Reply->new } );
+has backend => ( is => 'rw', default => sub {
+		my $backend = Devel::IPerl::Kernel::Backend::Reply->new;
+		$backend->run_line( q|use IPerl; IPerl->load_plugin('Default')| );
+		$backend;
+	} );
 
 sub execute {
 	my ($self, $kernel, $msg) = @_;
+
+	# This is so that the current state is available for IPerl->display() [ see display_data() ].
+	local $IPerl::REPL = $self;
+	local $IPerl::current_msg = $msg;
+	local $IPerl::current_kernel = $kernel;
 
 	### Run code
 	### Store execution status
