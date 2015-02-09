@@ -8,8 +8,10 @@ use Devel::IPerl::Message::Helper;
 #use Devel::IPerl::Kernel::Backend::DevelREPL;
 use Devel::IPerl::Kernel::Backend::Reply;
 use Try::Tiny;
-use Devel::IPerl::Display;
+use Devel::IPerl::DisplayableHandler;
 use namespace::autoclean;
+use List::AllUtils;
+use Scalar::Util qw(blessed);
 
 use constant REPL_OUTPUT_TOO_LONG => 1024;
 
@@ -58,7 +60,13 @@ sub execute {
 	# NOTE using stderr
 	# TODO can IPython handle any other streams?
 	# maybe only show REPL output if now display data can be shown?
-	if( defined $exec_result->last_output && length $exec_result->last_output > 0 && length $exec_result->last_output < REPL_OUTPUT_TOO_LONG ) {
+	my $results_all_displayable = List::AllUtils::all
+		{ blessed($_) && $_->can('iperl_data_representations')  }
+		@{ $exec_result->results // [] };
+	if( defined $exec_result->last_output
+		&& !$results_all_displayable
+		&& length $exec_result->last_output > 0
+		&& length $exec_result->last_output < REPL_OUTPUT_TOO_LONG ) {
 		my $stream_repl_output = $msg->new_reply_to(
 			msg_type => 'stream',
 			content => { name => 'stderr', data => $exec_result->last_output, }
@@ -68,7 +76,7 @@ sub execute {
 	}
 
 	### Send back data representations
-	$self->display_data( $kernel, $msg, $exec_result );
+	$self->display_data_from_exec_result( $kernel, $msg, $exec_result );
 
 	### Send back errors
 	if( defined $exec_result->error ) {
@@ -88,9 +96,11 @@ sub execute {
 }
 
 sub display_data {
-	my ($self, $kernel, $msg, $exec_result) = @_;
-	for my $data ( @{ $exec_result->results || [] }) {
-		my $data_formats = Devel::IPerl::Display->display_data_format_handler( $data );
+	my ($self, @data) = @_;
+	my $msg = $IPerl::current_msg;
+	my $kernel = $IPerl::current_kernel;
+	for my $data (@data) {
+		my $data_formats = Devel::IPerl::DisplayableHandler->display_data_format_handler( $data );
 		if( defined $data_formats ) {
 			my $display_data_msg = $msg->new_reply_to(
 				msg_type => 'display_data',
@@ -102,6 +112,11 @@ sub display_data {
 			$kernel->send_message( $kernel->iopub, $display_data_msg );
 		}
 	}
+}
+
+sub display_data_from_exec_result {
+	my ($self, $kernel, $msg, $exec_result) = @_;
+	$self->display_data( @{ $exec_result->results || [] } );
 }
 
 
