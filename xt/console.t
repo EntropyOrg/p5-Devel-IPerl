@@ -17,12 +17,15 @@ sub run_code {
 	my ($in, $out, $err);
 	my $start_string = "==== start ====";
 	my $stop_string = "==== stop ====" . "abcd" x 512;
+	my $intermediate_string = join "\n", ("# ignore") x 20;
 	my $start = { in => [ qq|print STDERR "$start_string\\n"; undef| ] };
 	my $stop = { in => [ qq|print STDERR "$stop_string\\n"; undef| ] };
 
 	my $code = join "\n", map { @{ $_->{in} } } ($data);
 
-	$in = join "\n", map { @{ $_->{in} } } ($start, $data, $stop);
+	$in = join "\n",
+		map { $_ . "\n$intermediate_string" }
+		map { @{ $_->{in} } } ($start, $data, $stop);
 	note "Running code:\n", ($code =~ s/^/    /mgr ) , "";
 
 	# TODO timeout
