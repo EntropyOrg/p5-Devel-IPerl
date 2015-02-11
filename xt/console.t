@@ -61,6 +61,8 @@ my $tests = [
 ];
 
 
+plan skip_all => 'Testing under Travis is flaky.' if defined $ENV{TRAVIS};
+
 plan tests => ~~ @$tests;
 
 for my $test (@$tests) {
