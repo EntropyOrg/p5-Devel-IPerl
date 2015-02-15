@@ -1,3 +1,12 @@
+0.002 2015-02-15 14:56:18-0600
+  - support using Reply as the REPL backend
+  - add Displayable role
+  - add support for IPerl helpers
+  - add plugin for PDL::Graphics::Gnuplot
+  - add example of rich display system
+  - convert `iperl` script from shell script to Perl
+  - dev: Travis-CI builds
+
 0.001 2014-08-16 18:27:47-0500
   - initial release
   - still needs more documentation and testing

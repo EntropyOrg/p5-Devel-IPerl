@@ -16,13 +16,19 @@ $([IPython.events]).on('app_initialized.NotebookApp', function(){
 
 	IPython.CodeCell.options_default['cm_config']['mode'] = 'perl';
 
-	CodeMirror.requireMode('perl', function(){
-		cells = IPython.notebook.get_cells();
-		for(var i in cells){
-			c = cells[i];
-			if (c.cell_type === 'code'){
-				c.auto_highlight()
+	if( CodeMirror.requireMode ) {
+		/* for some reason, IPython doesn't load the
+		 * CodeMirror.requireMode function and this causes loading
+		 * notebooks to hang
+		 */
+		CodeMirror.requireMode('perl', function(){
+			cells = IPython.notebook.get_cells();
+			for(var i in cells){
+				c = cells[i];
+				if (c.cell_type === 'code'){
+					c.auto_highlight()
+				}
 			}
-		}
-	});
+		});
+	}
 });

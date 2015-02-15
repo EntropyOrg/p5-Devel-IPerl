@@ -1,0 +1,7 @@
+#!/bin/sh
+
+CURDIR=`dirname "$0"`
+TOP="$CURDIR/.."
+TARGET="$TOP/share/profile/static/components/codemirror/mode/perl/perl.js"
+wget -O "$TARGET" 'https://raw.githubusercontent.com/codemirror/CodeMirror/master/mode/perl/perl.js'
+

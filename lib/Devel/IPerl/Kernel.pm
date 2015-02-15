@@ -1,5 +1,5 @@
 package Devel::IPerl::Kernel;
-$Devel::IPerl::Kernel::VERSION = '0.001';
+$Devel::IPerl::Kernel::VERSION = '0.002';
 use strict;
 use warnings;
 use namespace::autoclean;
@@ -17,13 +17,13 @@ use Path::Class;
 use IO::Async::Loop;
 use IO::Async::Handle;
 use IO::Handle;
-use Devel::IPerl::Kernel::Callback::DevelREPL;
+use Devel::IPerl::Kernel::Callback::REPL;
 use Devel::IPerl::Message::ZMQ;
 
 has callback => (
 		is => 'rw',
 		default => sub {
-			Devel::IPerl::Kernel::Callback::DevelREPL->new;
+			Devel::IPerl::Kernel::Callback::REPL->new;
 		},
 	);
 
@@ -210,10 +210,12 @@ sub stop {
 
 sub route_message {
 	my ($self, $blobs) = @_;
-	my $msg = $self->message_format->message_from_zmq_blobs($blobs);
-	my $fn = "msg_" . $msg->msg_type;
-	if( $self->callback->can( $fn ) ) {
-		$self->callback->$fn( $self, $msg );
+	my @msgs = $self->message_format->messages_from_zmq_blobs($blobs);
+	for my $msg (@msgs) {
+		my $fn = "msg_" . $msg->msg_type;
+		if( $self->callback->can( $fn ) ) {
+			$self->callback->$fn( $self, $msg );
+		}
 	}
 }
 
@@ -225,6 +227,12 @@ sub send_message {
 	zmq_msg_send($blobs->[-1], $socket, 0); # done
 }
 
+sub kernel_exit {
+	my ($self) = @_;
+	zmq_close( $self->heartbeat );
+	zmq_term( $self->zmq );
+}
+
 sub _setup_heartbeat {
 	my ($self) = @_;
 	# heartbeat socket is just an echo server
@@ -234,10 +242,10 @@ sub _setup_heartbeat {
 			zmq_device( ZMQ_FORWARDER, $self->heartbeat, $self->heartbeat );
 		},
 		on_exit => sub {
-			zmq_close( $self->heartbeat );
-			zmq_term( $self->zmq );
+			$self->kernel_exit;
 		},
 	);
+	$SIG{INT} = sub { $self->kernel_exit };
 	$self->_heartbeat_child( $child );
 }
 
@@ -259,7 +267,7 @@ Devel::IPerl::Kernel
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 AUTHOR
 

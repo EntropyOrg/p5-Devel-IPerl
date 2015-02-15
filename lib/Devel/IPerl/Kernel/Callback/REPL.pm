@@ -1,14 +1,17 @@
-package Devel::IPerl::Kernel::Callback::DevelREPL;
-$Devel::IPerl::Kernel::Callback::DevelREPL::VERSION = '0.001';
+package Devel::IPerl::Kernel::Callback::REPL;
+$Devel::IPerl::Kernel::Callback::REPL::VERSION = '0.002';
 use strict;
+use warnings;
+
 use Moo;
-use Devel::IPerl::ExecutionResult;
 use Devel::IPerl::Message::Helper;
-use Devel::REPL;
-use Devel::IPerl::ReadLine::String;
-use Capture::Tiny ':all';
+#use Devel::IPerl::Kernel::Backend::DevelREPL;
+use Devel::IPerl::Kernel::Backend::Reply;
 use Try::Tiny;
-use Devel::IPerl::Display;
+use Devel::IPerl::DisplayableHandler;
+use namespace::autoclean;
+use List::AllUtils;
+use Scalar::Util qw(blessed);
 
 use constant REPL_OUTPUT_TOO_LONG => 1024;
 
@@ -18,84 +21,35 @@ extends qw(Devel::IPerl::Kernel::Callback);
 
 with qw(Devel::IPerl::Kernel::Callback::Role::REPL);
 
-has repl => ( is => 'lazy' );
-sub _build_repl {
-	my ($self) = @_;
-	$log->trace('Creating REPL');
-	my $repl = Devel::REPL->new;
-
-	my $term = Devel::IPerl::ReadLine::String->new;
-	$repl->term( $term );
-	Moo::Role->apply_roles_to_object($repl, 'Devel::IPerl::ReadLine::Role::DevelREPL');
-
-	# Devel::REPL::Plugin::LexEnv
-	$repl->load_plugin('LexEnv');
-	# Devel::REPL::Plugin::OutputCache
-	$repl->load_plugin('OutputCache');
-
-	# Devel::REPL::Plugin::Completion, etc.
-	$repl->load_plugin('Completion');
-	$repl->no_term_class_warning(1);
-		# Plugin::Completion
-		# do not warn that the ReadLine is not isa
-		# Term::ReadLine::Gnu or Term::ReadLine::Perl
-	$repl->load_plugin($_) for (
-		'CompletionDriver::Keywords', # substr, while, etc
-		'CompletionDriver::LexEnv',   # current environment
-		'CompletionDriver::Globals',  # global variables
-		'CompletionDriver::INC',      # loading new modules
-		'CompletionDriver::Methods',  # class method completion
-	);
-
-	$repl->eval("no strict;");
-
-	$repl;
-}
-
-# return the STDOUT, STDERR, and Devel::REPL's Term::Readline output
-sub run_repl {
-	my ($self, $cmd) = @_;
-	my $repl = $self->repl;
-	$log->tracef('Running command: %s', $cmd);
-	$repl->term->cmd($cmd);
-	my ($stdout, $stderr) = capture {
-		$repl->run_once;
-	};
-	return ($stdout, $stderr, $repl->last_output);
-}
+#has backend => ( is => 'rw', default => sub { Devel::IPerl::Kernel::Backend::DevelREPL->new } );
+has backend => ( is => 'rw', default => sub {
+		my $backend = Devel::IPerl::Kernel::Backend::Reply->new;
+		$backend->run_line( q|use IPerl; IPerl->load_plugin('Default')| );
+		$backend;
+	} );
 
 sub execute {
 	my ($self, $kernel, $msg) = @_;
 
-	### Run code
-	my ($stdout, $stderr, $repl_output) = $self->run_repl(  $msg->content->{code} );
+	# This is so that the current state is available for IPerl->display() [ see display_data() ].
+	local $IPerl::REPL = $self;
+	local $IPerl::current_msg = $msg;
+	local $IPerl::current_kernel = $kernel;
 
+	### Run code
 	### Store execution status
 	### e.g., any errors, exceptions
-	my $exec_result = Devel::IPerl::ExecutionResult->new();
-	my $exception;
-	if( defined $self->repl->error ) {
-		$exception = $self->repl->error;
-		$exec_result->status_error;
-		$exec_result->exception_name( $exception->type );
-		$exec_result->exception_value( $exception->message );
-
-		# TODO get an actual traceback
-		$exec_result->exception_traceback( [$exception->message] );
-	} else {
-		# no exception
-		$exec_result->status_ok;
-	}
+	my $exec_result = $self->backend->run_line( $msg->content->{code} );
 
 	### Send back stdout/stderr
 	# send display_data / pyout
-	if( defined $stdout && length $stdout ) {
+	if( defined $exec_result->stdout && length $exec_result->stdout ) {
 		my $output = $msg->new_reply_to(
 			msg_type => 'pyout', # TODO this changes in v5.0 of protocol
 			content => {
 				execution_count => $self->execution_count,
 				data => {
-					'text/plain' => $stdout,
+					'text/plain' => $exec_result->stdout,
 				},
 				metadata => {},
 			}
@@ -103,10 +57,10 @@ sub execute {
 		$kernel->send_message( $kernel->iopub, $output );
 	}
 
-	if( defined $stderr && length $stderr ) {
+	if( defined $exec_result->stderr && length $exec_result->stderr ) {
 		my $stream_stderr = $msg->new_reply_to(
 			msg_type => 'stream',
-			content => { name => 'stderr', data => $stderr, }
+			content => { name => 'stderr', data => $exec_result->stderr, }
 		);
 		$kernel->send_message( $kernel->iopub, $stream_stderr );
 	}
@@ -115,26 +69,32 @@ sub execute {
 	# NOTE using stderr
 	# TODO can IPython handle any other streams?
 	# maybe only show REPL output if now display data can be shown?
-	if( defined $repl_output && length $repl_output > 0 && length $repl_output < REPL_OUTPUT_TOO_LONG ) {
+	my $results_all_displayable = List::AllUtils::all
+		{ blessed($_) && $_->can('iperl_data_representations')  }
+		@{ $exec_result->results // [] };
+	if( defined $exec_result->last_output
+		&& !$results_all_displayable
+		&& length $exec_result->last_output > 0
+		&& length $exec_result->last_output < REPL_OUTPUT_TOO_LONG ) {
 		my $stream_repl_output = $msg->new_reply_to(
 			msg_type => 'stream',
-			content => { name => 'stderr', data => $repl_output, }
+			content => { name => 'stderr', data => $exec_result->last_output, }
 		);
 		$kernel->send_message( $kernel->iopub, $stream_repl_output );
 
 	}
 
 	### Send back data representations
-	$self->display_data( $kernel, $msg );
+	$self->display_data_from_exec_result( $kernel, $msg, $exec_result );
 
 	### Send back errors
-	if( defined $exception ) {
+	if( defined $exec_result->error ) {
 		# send back exception
 		my $err = $msg->new_reply_to(
 			msg_type => 'pyerr', # TODO this changes in v5.0 of protocol
 			content => {
 				ename => $exec_result->exception_name,
-				evalue => $exec_result->exception_value,
+				evalue => "@{[ $exec_result->exception_value ]}", # must be string
 				traceback => $exec_result->exception_traceback,
 			}
 		);
@@ -145,9 +105,11 @@ sub execute {
 }
 
 sub display_data {
-	my ($self, $kernel, $msg) = @_;
-	for my $data ( @{ $self->repl->results }) {
-		my $data_formats = Devel::IPerl::Display->display_data_format_handler( $data );
+	my ($self, @data) = @_;
+	my $msg = $IPerl::current_msg;
+	my $kernel = $IPerl::current_kernel;
+	for my $data (@data) {
+		my $data_formats = Devel::IPerl::DisplayableHandler->display_data_format_handler( $data );
 		if( defined $data_formats ) {
 			my $display_data_msg = $msg->new_reply_to(
 				msg_type => 'display_data',
@@ -159,6 +121,11 @@ sub display_data {
 			$kernel->send_message( $kernel->iopub, $display_data_msg );
 		}
 	}
+}
+
+sub display_data_from_exec_result {
+	my ($self, $kernel, $msg, $exec_result) = @_;
+	$self->display_data( @{ $exec_result->results || [] } );
 }
 
 
@@ -193,7 +160,7 @@ sub execute_reply {
 	} elsif( $exec_result->is_status_error ) {
 		%extra_fields = (
 			ename => $exec_result->exception_name,
-			evalue => $exec_result->exception_value,
+			evalue => "@{[ $exec_result->exception_value ]}", # must be string
 			traceback => $exec_result->exception_traceback,
 		);
 	}
@@ -219,11 +186,11 @@ __END__
 
 =head1 NAME
 
-Devel::IPerl::Kernel::Callback::DevelREPL
+Devel::IPerl::Kernel::Callback::REPL
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 AUTHOR
 

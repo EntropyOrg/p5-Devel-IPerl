@@ -1,12 +1,14 @@
 package Devel::IPerl::Message;
 # ABSTRACT: implements the IPython message specification version 5.0
-$Devel::IPerl::Message::VERSION = '0.001';
+$Devel::IPerl::Message::VERSION = '0.002';
 use strict;
-use namespace::autoclean;
+use warnings;
+
 use Moo;
 use MooX::HandlesVia;
 use UUID::Tiny ':std';
 use MooseX::HandlesConstructor;
+use namespace::autoclean;
 
 # header: HashRef {{{
 has header => (
@@ -70,7 +72,7 @@ Devel::IPerl::Message - implements the IPython message specification version 5.0
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 AUTHOR
 

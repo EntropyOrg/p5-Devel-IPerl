@@ -1,8 +1,10 @@
 package Devel::IPerl::Kernel::Callback;
-$Devel::IPerl::Kernel::Callback::VERSION = '0.001';
+$Devel::IPerl::Kernel::Callback::VERSION = '0.002';
 use strict;
-use namespace::autoclean;
+use warnings;
+
 use Moo;
+use namespace::autoclean;
 
 sub msg_kernel_info_request {
 	my ($self, $kernel, $msg ) = @_;
@@ -47,7 +49,7 @@ Devel::IPerl::Kernel::Callback
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 AUTHOR
 

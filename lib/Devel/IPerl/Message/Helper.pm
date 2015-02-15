@@ -1,6 +1,7 @@
 package Devel::IPerl::Message::Helper;
-$Devel::IPerl::Message::Helper::VERSION = '0.001';
+$Devel::IPerl::Message::Helper::VERSION = '0.002';
 use strict;
+use warnings;
 
 sub kernel_status {
 	my ($self, $msg, $status) = @_;
@@ -27,7 +28,7 @@ Devel::IPerl::Message::Helper
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 AUTHOR
 

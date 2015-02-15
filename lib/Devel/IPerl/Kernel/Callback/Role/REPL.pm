@@ -1,6 +1,8 @@
 package Devel::IPerl::Kernel::Callback::Role::REPL;
-$Devel::IPerl::Kernel::Callback::Role::REPL::VERSION = '0.001';
+$Devel::IPerl::Kernel::Callback::Role::REPL::VERSION = '0.002';
 use strict;
+use warnings;
+
 use Moo::Role;
 
 requires 'execute';
@@ -28,7 +30,7 @@ Devel::IPerl::Kernel::Callback::Role::REPL
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 AUTHOR
 
