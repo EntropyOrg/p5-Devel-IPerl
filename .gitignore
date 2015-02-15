@@ -1,3 +1,6 @@
 Devel-IPerl-*
 .build
 .ipynb_checkpoints
+.ackrc
+old/
+xt/inline-python.t
