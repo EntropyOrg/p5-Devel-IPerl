@@ -24,3 +24,5 @@ requires 'MooX::Singleton';
 requires 'MooX::Types::MooseLike::Base';
 requires 'Role::Tiny';
 requires 'Test::Most';
+requires 'File::Copy::Recursive';
+requires 'File::ShareDir::ProjectDistDir';
