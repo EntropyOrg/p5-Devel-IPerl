@@ -1,21 +1,79 @@
-#!/bin/sh
+#!/usr/bin/env perl
 # PODNAME: iperl
 # ABSTRACT: start ipython notebook with a perl profile
 
-CURDIR=`dirname "$0"`
-TOP="$CURDIR/.."
-TOP=`readlink -f "$TOP"`
+use strict;
+use warnings;
 
-PROFILE_DIR=`ipython locate profile perl`
-if ! grep "Devel::IPerl" "$PROFILE_DIR"/ipython_config.py 2>&1 > /dev/null; then
-	# create the perl profile
-	ipython profile create perl
-	PROFILE_DIR=`ipython locate profile perl`
-	cp -pvR $TOP/profile/* "$PROFILE_DIR"/
-fi
-export PERL5LIB="$TOP/lib:$PERL5LIB"
-ARGS=$@
-if [ -z "$ARGS" ]; then
-	ARGS="console"
-fi
-ipython $ARGS --profile perl
+use FindBin;
+use File::Spec;
+use Path::Class;
+use Config;
+use File::Copy::Recursive qw(dircopy);
+use File::ShareDir::ProjectDistDir;
+
+main();
+
+########################################
+
+sub main {
+	set_lib_path();
+	create_perl_profile(); # create the Perl profile if it does not exist
+
+	# To use the --profile option, we need to have an interface name. I'm not sure
+	# why, since running IPython starts a console if you don't give it any
+	# arguments. Therefore, 'console' is a good default here.
+	push @ARGV, "console" unless ~~@ARGV;
+
+	# start IPython and specify that we want the perl profile
+	# TODO support more profiles in the future?
+	system("ipython", @ARGV, qw(--profile perl) );
+}
+
+sub get_profile_template_dir {
+	return dir(dist_dir('Devel-IPerl'))->subdir('profile');
+}
+
+sub get_profile_target_dir {
+	my $profile_dir = `ipython locate profile perl`;
+	return if $!; # does not exist
+	chomp $profile_dir;
+	return unless length $profile_dir;
+	$profile_dir;
+}
+
+sub create_perl_profile {
+	my $profile_dir = get_profile_target_dir();
+	my $create_directory = 0;
+	if( not defined $profile_dir ) {
+		$create_directory = 1;
+		warn "Directory for Perl profile does not exist...\n";
+	} else {
+		my $config_file = dir($profile_dir)->file('ipython_config.py');
+		my $config_contents = $config_file->slurp();
+		if( $config_contents !~ /Devel::IPerl/s ) {
+			die "Directory for Perl profile does not mention Devel::IPerl. Please rename $profile_dir. IPerl does not currently support using custom profiles.\n";
+		}
+	}
+	if( $create_directory ) {
+		system(qw( ipython profile create perl ));
+		my $src = get_profile_template_dir();
+		my $target = get_profile_target_dir();
+		print STDERR "Copying profile directory from $src to $target\n";
+		dircopy($src, $target);
+	}
+}
+
+
+
+# sets PERL5LIB so that Devel::IPerl is available
+sub set_lib_path {
+	my $path_to_lib = dir($FindBin::Bin, qw(.. lib) );
+	my $sep = $Config{path_sep};
+
+	$ENV{PERL5LIB} =
+		"$path_to_lib"
+		. ( defined $ENV{PERL5LIB} && length $ENV{PERL5LIB}
+			? "$sep$ENV{PERL5LIB}"
+			: "" );
+}
