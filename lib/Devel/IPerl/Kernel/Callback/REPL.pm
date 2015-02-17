@@ -87,6 +87,20 @@ sub execute {
 	### Send back data representations
 	$self->display_data_from_exec_result( $kernel, $msg, $exec_result );
 
+	### Send back warnings
+	if( defined $exec_result->warning ) {
+		# send back exception
+		my $err = $msg->new_reply_to(
+			msg_type => 'pyerr', # TODO this changes in v5.0 of protocol
+			content => {
+				ename => $exec_result->warning_name,
+				evalue => "@{[ $exec_result->warning_value ]}", # must be string
+				traceback => $exec_result->warning_traceback,
+			}
+		);
+		$kernel->send_message( $kernel->iopub, $err );
+	}
+
 	### Send back errors
 	if( defined $exec_result->error ) {
 		# send back exception
@@ -158,10 +172,23 @@ sub execute_reply {
 			user_expressions => {},
 		);
 	} elsif( $exec_result->is_status_error ) {
+		my @ename;
+		my @evalue;
+		my @traceback;
+		if( $exec_result->warning_name ) {
+			push @ename, $exec_result->warning_name;
+			push @evalue, $exec_result->warning_value;
+			push @traceback, @{ $exec_result->warning_traceback };
+		}
+		if( $exec_result->error ) {
+			push @ename, $exec_result->exception_name;
+			push @evalue, $exec_result->exception_value;
+			push @traceback, @{ $exec_result->exception_traceback };
+		}
 		%extra_fields = (
-			ename => $exec_result->exception_name,
-			evalue => "@{[ $exec_result->exception_value ]}", # must be string
-			traceback => $exec_result->exception_traceback,
+			ename => (join " ", @ename),
+			evalue => (join "\n", @evalue), # must be string
+			traceback => \@traceback,
 		);
 	}
 	my $execute_reply = $msg->new_reply_to(
