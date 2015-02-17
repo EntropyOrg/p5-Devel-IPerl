@@ -73,10 +73,6 @@ sub results { my $self = shift; $self->{results}; }
 sub stdout { my $self = shift; $self->{stdout}; }
 sub stderr { my $self = shift; $self->{stderr}; }
 sub error { my $self = shift; $self->{error}; }
-sub last_output {
-	my $self = shift;
-	my $out = $self->{last_output};
-	$out;
-}
+sub last_output { my $self = shift; $self->{last_output}; }
 
 1;
