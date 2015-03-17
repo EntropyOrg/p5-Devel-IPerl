@@ -172,6 +172,10 @@ sub run {#{{{
 	my ($self) = @_;
 	STDOUT->autoflush(1);
 
+	local $ENV{PERL_IPERL_RUNNING} = 1;
+
+	local $ENV{PERL_IPERL_IPYTHON} = 1; # in IPython environment
+
 	$self->_setup_heartbeat;
 
 	my @socket_funcs = ( \&shell, \&control, \&stdin, \&iopub );
