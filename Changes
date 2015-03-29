@@ -1,3 +1,8 @@
+0.003 2015-03-29 13:04:14-0500
+  - send warnings to frontend
+  - add an environment variable $ENV{PERL_IPERL_IPYTHON} that indicates if
+    IPerl is running under IPython.
+
 0.002 2015-02-15 14:56:18-0600
   - support using Reply as the REPL backend
   - add Displayable role
