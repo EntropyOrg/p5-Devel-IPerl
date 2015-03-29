@@ -1,5 +1,5 @@
 package Reply::Plugin::IPerl;
-$Reply::Plugin::IPerl::VERSION = '0.002';
+$Reply::Plugin::IPerl::VERSION = '0.003';
 use strict;
 use warnings;
 
@@ -13,7 +13,7 @@ sub compile {
     my ($next, @args) = @_;
 
     # capture compile errors
-    local $SIG{__WARN__} = sub { $self->{error} = \@_ };
+    local $SIG{__WARN__} = sub { push @{$self->{warning}}, @_ };
 
     $next->(@args);
 }
@@ -23,6 +23,7 @@ sub execute {
     my ($next, @args) = @_;
 
     my @results;
+    local $SIG{__WARN__} = sub { push @{$self->{warning}}, @_ };
     my ($stdout, $stderr) = capture {
 	    @results = $next->(@args);
     };
@@ -64,7 +65,7 @@ sub mangle_error {
 
 sub clear_data {
 	my ($self) = @_;
-	for my $field ( qw(results stdout stderr error last_output) ) {
+	for my $field ( qw(results stdout stderr error warning last_output) ) {
 		$self->{$field} = undef;
 	}
 }
@@ -73,11 +74,8 @@ sub results { my $self = shift; $self->{results}; }
 sub stdout { my $self = shift; $self->{stdout}; }
 sub stderr { my $self = shift; $self->{stderr}; }
 sub error { my $self = shift; $self->{error}; }
-sub last_output {
-	my $self = shift;
-	my $out = $self->{last_output};
-	$out;
-}
+sub warning { my $self = shift; $self->{warning}; }
+sub last_output { my $self = shift; $self->{last_output}; }
 
 1;
 
@@ -93,7 +91,7 @@ Reply::Plugin::IPerl
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 AUTHOR
 

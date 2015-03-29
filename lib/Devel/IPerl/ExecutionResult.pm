@@ -1,5 +1,5 @@
 package Devel::IPerl::ExecutionResult;
-$Devel::IPerl::ExecutionResult::VERSION = '0.002';
+$Devel::IPerl::ExecutionResult::VERSION = '0.003';
 use strict;
 use warnings;
 
@@ -18,6 +18,8 @@ has last_output => ( is => 'rw' );
 
 has error => ( is => 'rw' );
 
+has warning => ( is => 'rw' );
+
 has results => ( is => 'rw', default => sub { [] } );
 
 use constant {
@@ -34,9 +36,8 @@ sub is_status_ok    { $_[0]->status eq STATUS_OK    }
 sub is_status_error { $_[0]->status eq STATUS_ERROR }
 sub is_status_abort { $_[0]->status eq STATUS_ABORT }
 
-has exception_name => ( is => 'rw' );
-has exception_value => ( is => 'rw' );
-has exception_traceback => ( is => 'rw' );
+has [qw(exception_name exception_value exception_traceback)] => ( is => 'rw' );
+has [qw(warning_name warning_value warning_traceback)] => ( is => 'rw' );
 
 1;
 
@@ -52,7 +53,7 @@ Devel::IPerl::ExecutionResult
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 AUTHOR
 

@@ -1,5 +1,5 @@
 package Devel::IPerl::Kernel;
-$Devel::IPerl::Kernel::VERSION = '0.002';
+$Devel::IPerl::Kernel::VERSION = '0.003';
 use strict;
 use warnings;
 use namespace::autoclean;
@@ -172,6 +172,10 @@ sub run {#{{{
 	my ($self) = @_;
 	STDOUT->autoflush(1);
 
+	local $ENV{PERL_IPERL_RUNNING} = 1;
+
+	local $ENV{PERL_IPERL_IPYTHON} = 1; # in IPython environment
+
 	$self->_setup_heartbeat;
 
 	my @socket_funcs = ( \&shell, \&control, \&stdin, \&iopub );
@@ -267,7 +271,7 @@ Devel::IPerl::Kernel
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 AUTHOR
 

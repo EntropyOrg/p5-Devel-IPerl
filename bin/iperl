@@ -11,6 +11,7 @@ use Path::Class;
 use Config;
 use File::Copy::Recursive qw(dircopy);
 use File::ShareDir::ProjectDistDir;
+use Env qw(@PERL5LIB);
 
 main();
 
@@ -69,13 +70,7 @@ sub create_perl_profile {
 # sets PERL5LIB so that Devel::IPerl is available
 sub set_lib_path {
 	my $path_to_lib = dir($FindBin::Bin, qw(.. lib) );
-	my $sep = $Config{path_sep};
-
-	$ENV{PERL5LIB} =
-		"$path_to_lib"
-		. ( defined $ENV{PERL5LIB} && length $ENV{PERL5LIB}
-			? "$sep$ENV{PERL5LIB}"
-			: "" );
+	unshift @PERL5LIB, "$path_to_lib";
 }
 
 __END__
@@ -90,7 +85,7 @@ iperl - start ipython notebook with a perl profile
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 AUTHOR
 

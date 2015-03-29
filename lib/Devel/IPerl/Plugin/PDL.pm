@@ -1,5 +1,5 @@
 package Devel::IPerl::Plugin::PDL;
-$Devel::IPerl::Plugin::PDL::VERSION = '0.002';
+$Devel::IPerl::Plugin::PDL::VERSION = '0.003';
 # TODO
 
 1;
@@ -16,7 +16,7 @@ Devel::IPerl::Plugin::PDL
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 AUTHOR
 

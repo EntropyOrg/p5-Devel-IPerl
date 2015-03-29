@@ -30,6 +30,7 @@ my %WriteMakefileArgs = (
   "PREREQ_PM" => {
     "Capture::Tiny" => 0,
     "Devel::REPL" => 0,
+    "Env" => 0,
     "File::Copy::Recursive" => 0,
     "File::ShareDir::ProjectDistDir" => 0,
     "File::Spec" => 0,
@@ -70,7 +71,7 @@ my %WriteMakefileArgs = (
     "Test::Most" => 0,
     "version" => 0
   },
-  "VERSION" => "0.002",
+  "VERSION" => "0.003",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -80,6 +81,7 @@ my %WriteMakefileArgs = (
 my %FallbackPrereqs = (
   "Capture::Tiny" => 0,
   "Devel::REPL" => 0,
+  "Env" => 0,
   "ExtUtils::MakeMaker" => 0,
   "File::Copy::Recursive" => 0,
   "File::ShareDir::Install" => "0.06",

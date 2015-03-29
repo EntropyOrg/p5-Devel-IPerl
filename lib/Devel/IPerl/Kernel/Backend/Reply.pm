@@ -1,5 +1,5 @@
 package Devel::IPerl::Kernel::Backend::Reply;
-$Devel::IPerl::Kernel::Backend::Reply::VERSION = '0.002';
+$Devel::IPerl::Kernel::Backend::Reply::VERSION = '0.003';
 use strict;
 use warnings;
 
@@ -17,7 +17,7 @@ sub _build_repl {
 
 	my $repl = Reply->new(
 		# needs these at a minimum
-		plugins => [ qw[Packages IPerl LexicalPersistence Hints] ]
+		plugins => [ qw[IPerl Packages LexicalPersistence Hints] ]
 		
 	);
 
@@ -46,10 +46,26 @@ sub run_line {
 
 	$exec_result->results( $repl->_concatenate_plugin('results') );
 
+	my $status_ok = 1;
+
+	my $warn = [ $repl->_concatenate_plugin('warning') ];
+	$exec_result->warning( @$warn ) if defined $warn->[0];
+	if( defined $exec_result->warning ) {
+		$status_ok = 0;
+		my $warning_string = join "\n", @{$exec_result->warning};
+		$exec_result->status_error; # TODO not really an error?
+		$exec_result->warning_name( 'Warning' );
+		$exec_result->warning_value( $warning_string );
+
+		# TODO get an actual traceback
+		$exec_result->warning_traceback( [$warning_string] );
+	}
+
 	# capture exceptions
 	my @error = $repl->_concatenate_plugin('error');
 	$exec_result->error( $error[0] );
 	if( defined $exec_result->error ) {
+		$status_ok = 0;
 		my $exception = $exec_result->error;
 		$exec_result->status_error;
 		$exec_result->exception_name( ref($exception) || 'Error' );
@@ -57,7 +73,9 @@ sub run_line {
 
 		# TODO get an actual traceback
 		$exec_result->exception_traceback( [$exception] );
-	} else {
+	}
+
+	if( $status_ok ) {
 		$exec_result->status_ok; # TODO
 	}
 
@@ -79,7 +97,7 @@ Devel::IPerl::Kernel::Backend::Reply
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 AUTHOR
 
