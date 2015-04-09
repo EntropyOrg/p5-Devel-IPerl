@@ -26,6 +26,20 @@ sub main {
 	# arguments. Therefore, 'console' is a good default here.
 	push @ARGV, "console" unless ~~@ARGV;
 
+	if($ARGV[0] eq '--version') {
+		chomp( my $ipython_version = `ipython --version` );
+		my $devel_iperl_version;
+		{
+			unshift @INC, @PERL5LIB;
+			require Devel::IPerl;
+			$devel_iperl_version = $Devel::IPerl::VERSION;
+			$devel_iperl_version //= '[git]';
+		}
+		print STDERR "Devel::IPerl ($devel_iperl_version); IPython ($ipython_version)\n";
+		print STDERR "Devel/IPerl.pm: $INC{'Devel/IPerl.pm'}\n";
+		return 0;
+	}
+
 	# start IPython and specify that we want the perl profile
 	# TODO support more profiles in the future?
 	system("ipython", @ARGV, qw(--profile perl) );
