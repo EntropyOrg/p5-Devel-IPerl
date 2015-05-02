@@ -15,13 +15,26 @@ sub _build_repl {
 	require Reply;
 	$log->trace('Creating REPL: Reply');
 
+	my @autocomplete_plugins = qw( Autocomplete::Functions Autocomplete::Globals
+		Autocomplete::Keywords Autocomplete::Lexicals Autocomplete::Methods
+		Autocomplete::Packages);
 	my $repl = Reply->new(
 		# needs these at a minimum
-		plugins => [ qw[IPerl Packages LexicalPersistence Hints] ]
-		
+		plugins => [ qw[IPerl Packages LexicalPersistence Hints],
+			@autocomplete_plugins ]
+
+
 	);
 
 	$repl;
+}
+
+sub completion {
+	my ($self, $line, $cursor_location) = @_;
+
+	my $repl = $self->repl;
+	my $line_up_to_cursor = substr $line, 0, $cursor_location;
+	my @matches = $repl->_concatenate_plugin('tab_handler', $line_up_to_cursor);
 }
 
 sub run_line {
