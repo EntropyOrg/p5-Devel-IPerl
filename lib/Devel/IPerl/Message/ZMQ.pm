@@ -5,6 +5,7 @@ use warnings;
 use Moo;
 use JSON::MaybeXS;
 use namespace::autoclean;
+use Digest::SHA qw(hmac_sha256_hex);
 
 extends qw(Devel::IPerl::Message);
 
@@ -68,17 +69,26 @@ sub messages_from_zmq_blobs {
 sub zmq_blobs_from_message {
 	my ($self) = @_;
 
-	# TODO implement HMAC signature
-	my $hmac_signature = ( $self->has_shared_key ? 'TODO' : '' ); # if auth is disabled, signature is empty string
+	my $serialized;
+	my @blob_order = qw( header parent_header metadata content );
+	$serialized->{$_} = encode_json( $self->$_ ) for @blob_order;
+
+	# implement HMAC signature
+	my $hmac_signature;
+	if( $self->has_shared_key ) {
+		my $data = "";
+		$data .= $serialized->{$_} for @blob_order;
+		$hmac_signature = hmac_sha256_hex( $data, $self->shared_key );
+	} else {
+		# if auth is disabled, signature is empty string
+		$hmac_signature = '';
+	}
 
 	[
 		@{$self->zmq_uuids},
 		DELIMITER,
 		$hmac_signature,
-		encode_json($self->header),
-		encode_json($self->parent_header),
-		encode_json($self->metadata),
-		encode_json($self->content),
+		@$serialized{@blob_order},
 		( map { encode_json($_) } @{ $self->blobs } ),
 	];
 }
