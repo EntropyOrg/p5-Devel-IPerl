@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 # PODNAME: iperl
-# ABSTRACT: start ipython notebook with a perl profile
+# ABSTRACT: start ipython notebook with an IPerl kernel
 
 use strict;
 use warnings;
@@ -19,7 +19,6 @@ main();
 
 sub main {
 	set_lib_path();
-	create_perl_profile(); # create the Perl profile if it does not exist
 	create_kernel_spec();
 
 	# To use the --kernel option, we need to have an interface name. I'm not sure
@@ -59,10 +58,6 @@ sub get_ipython_version {
 	$ipython_version;
 }
 
-sub get_profile_template_dir {
-	return dir(dist_dir('Devel-IPerl'))->subdir('profile');
-}
-
 sub get_kernels_template_dir {
 	return dir(dist_dir('Devel-IPerl'))->subdir(qw[ kernels iperl ]);
 }
@@ -81,37 +76,6 @@ sub get_kernels_target_dir {
 	dir($ipython_dir)->subdir(qw[ kernels iperl ]);
 }
 
-sub get_profile_target_dir {
-	my $profile_dir = `ipython locate profile perl`;
-	return if $!; # does not exist
-	chomp $profile_dir;
-	return unless length $profile_dir;
-	$profile_dir;
-}
-
-sub create_perl_profile {
-	my $profile_dir = get_profile_target_dir();
-	my $create_directory = 0;
-	if( not defined $profile_dir ) {
-		$create_directory = 1;
-		warn "Directory for Perl profile does not exist...\n";
-	} else {
-		my $config_file = dir($profile_dir)->file('ipython_config.py');
-		my $config_contents = $config_file->slurp();
-		if( $config_contents !~ /Devel::IPerl/s ) {
-			die "Directory for Perl profile does not mention Devel::IPerl. Please rename $profile_dir. IPerl does not currently support using custom profiles.\n";
-		}
-	}
-	if( $create_directory ) {
-		system(qw( ipython profile create perl ));
-		my $src = get_profile_template_dir();
-		my $target = get_profile_target_dir();
-		print STDERR "Copying profile directory from $src to $target\n";
-		dircopy($src, $target);
-		sub_VERSION_in_file( dir($target)->file('ipython_config.py') );
-	}
-}
-
 sub create_kernel_spec {
 	my $kernels_dir = get_kernels_target_dir();
 	my $create_directory = 0;
@@ -128,7 +92,7 @@ sub create_kernel_spec {
 	if( $create_directory ) {
 		my $src = get_kernels_template_dir();
 		my $target = get_kernels_target_dir();
-		print STDERR "Copying profile directory from $src to $target\n";
+		print STDERR "Copying kernel spec directory from $src to $target\n";
 		dircopy($src, $target);
 		sub_VERSION_in_file( dir($target)->file('kernel.json') );
 	}
@@ -142,8 +106,6 @@ sub sub_VERSION_in_file {
 	$content =~ s/VERSION/$version/gm;
 	$file->spew( $content );
 }
-
-
 
 # sets PERL5LIB so that Devel::IPerl is available
 sub set_lib_path {
