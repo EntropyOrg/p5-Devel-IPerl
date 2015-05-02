@@ -1,0 +1,11 @@
+{
+  "display_name": "IPerl VERSION",
+  "argv": [
+    "perl",
+    "-MDevel::IPerl",
+    "-e1",
+    "kernel",
+    "{connection_file}"
+  ],
+  "language": "perl"
+}

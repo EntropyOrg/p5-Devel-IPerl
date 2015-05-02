@@ -20,6 +20,7 @@ main();
 sub main {
 	set_lib_path();
 	create_perl_profile(); # create the Perl profile if it does not exist
+	create_kernel_spec();
 
 	# To use the --profile option, we need to have an interface name. I'm not sure
 	# why, since running IPython starts a console if you don't give it any
@@ -27,14 +28,8 @@ sub main {
 	push @ARGV, "console" unless ~~@ARGV;
 
 	if($ARGV[0] eq '--version') {
-		chomp( my $ipython_version = `ipython --version` );
-		my $devel_iperl_version;
-		{
-			unshift @INC, @PERL5LIB;
-			require Devel::IPerl;
-			$devel_iperl_version = $Devel::IPerl::VERSION;
-			$devel_iperl_version //= '[git]';
-		}
+		my $ipython_version = get_ipython_version();
+		my $devel_iperl_version = get_devel_iperl_version();
 		print STDERR "Devel::IPerl ($devel_iperl_version); IPython ($ipython_version)\n";
 		print STDERR "Devel/IPerl.pm: $INC{'Devel/IPerl.pm'}\n";
 		return 0;
@@ -45,8 +40,42 @@ sub main {
 	system("ipython", @ARGV, qw(--profile perl) );
 }
 
+sub get_devel_iperl_version {
+	my $devel_iperl_version;
+	{
+		unshift @INC, @PERL5LIB;
+		require Devel::IPerl;
+		$devel_iperl_version = $Devel::IPerl::VERSION;
+		$devel_iperl_version //= '[git]';
+	}
+	$devel_iperl_version;
+}
+
+sub get_ipython_version {
+	chomp( my $ipython_version = `ipython --version` );
+	$ipython_version;
+}
+
 sub get_profile_template_dir {
 	return dir(dist_dir('Devel-IPerl'))->subdir('profile');
+}
+
+sub get_kernels_template_dir {
+	return dir(dist_dir('Devel-IPerl'))->subdir(qw[ kernels iperl ]);
+}
+
+sub get_ipython_target_dir {
+	my $ipython_dir = `ipython locate`;
+	return if $!; # does not exist
+	chomp $ipython_dir;
+	return unless length $ipython_dir;
+	$ipython_dir;
+}
+
+sub get_kernels_target_dir {
+	my $ipython_dir = get_ipython_target_dir();
+	return unless length $ipython_dir;
+	dir($ipython_dir)->subdir(qw[ kernels iperl ]);
 }
 
 sub get_profile_target_dir {
@@ -76,7 +105,39 @@ sub create_perl_profile {
 		my $target = get_profile_target_dir();
 		print STDERR "Copying profile directory from $src to $target\n";
 		dircopy($src, $target);
+		sub_VERSION_in_file( dir($target)->file('ipython_config.py') );
 	}
+}
+
+sub create_kernel_spec {
+	my $kernels_dir = get_kernels_target_dir();
+	my $create_directory = 0;
+	if( not defined $kernels_dir or not -d $kernels_dir ) {
+		$create_directory = 1;
+		warn "Directory for Perl kernel spec does not exist...\n";
+	} else {
+		my $config_file = dir($kernels_dir)->file('kernel.json');
+		my $config_contents = $config_file->slurp();
+		if( $config_contents !~ /IPerl/s ) {
+			die "IPerl kernel spec does not appear to be set up for Devel::IPerl. Please rename $kernels_dir.\n";
+		}
+	}
+	if( $create_directory ) {
+		my $src = get_kernels_template_dir();
+		my $target = get_kernels_target_dir();
+		print STDERR "Copying profile directory from $src to $target\n";
+		dircopy($src, $target);
+		sub_VERSION_in_file( dir($target)->file('kernel.json') );
+	}
+}
+
+sub sub_VERSION_in_file {
+	my( $path ) = @_;
+	my $file = file($path);
+	my $content = $file->slurp;
+	my $version = get_devel_iperl_version();
+	$content =~ s/VERSION/$version/gm;
+	$file->spew( $content );
 }
 
 

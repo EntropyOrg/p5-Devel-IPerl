@@ -15,6 +15,7 @@ has header => (
 	is => 'rw',
 	default => sub { {
 		msg_id => create_uuid_as_string(),
+		version => '5.0',
 	} },
 	handles_via => 'Hash',
 	# Header fields {{{

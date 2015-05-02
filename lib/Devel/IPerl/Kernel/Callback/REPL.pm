@@ -42,10 +42,10 @@ sub execute {
 	my $exec_result = $self->backend->run_line( $msg->content->{code} );
 
 	### Send back stdout/stderr
-	# send display_data / pyout
+	# send display_data / execute_result
 	if( defined $exec_result->stdout && length $exec_result->stdout ) {
 		my $output = $msg->new_reply_to(
-			msg_type => 'pyout', # TODO this changes in v5.0 of protocol
+			msg_type => 'execute_result',
 			content => {
 				execution_count => $self->execution_count,
 				data => {
@@ -60,7 +60,7 @@ sub execute {
 	if( defined $exec_result->stderr && length $exec_result->stderr ) {
 		my $stream_stderr = $msg->new_reply_to(
 			msg_type => 'stream',
-			content => { name => 'stderr', data => $exec_result->stderr, }
+			content => { name => 'stderr', text => $exec_result->stderr, }
 		);
 		$kernel->send_message( $kernel->iopub, $stream_stderr );
 	}
@@ -78,7 +78,7 @@ sub execute {
 		&& length $exec_result->last_output < REPL_OUTPUT_TOO_LONG ) {
 		my $stream_repl_output = $msg->new_reply_to(
 			msg_type => 'stream',
-			content => { name => 'stderr', data => $exec_result->last_output, }
+			content => { name => 'stderr', text => $exec_result->last_output, }
 		);
 		$kernel->send_message( $kernel->iopub, $stream_repl_output );
 
@@ -91,7 +91,7 @@ sub execute {
 	if( defined $exec_result->warning ) {
 		# send back exception
 		my $err = $msg->new_reply_to(
-			msg_type => 'pyerr', # TODO this changes in v5.0 of protocol
+			msg_type => 'error',
 			content => {
 				ename => $exec_result->warning_name,
 				evalue => "@{[ $exec_result->warning_value ]}", # must be string
@@ -105,7 +105,7 @@ sub execute {
 	if( defined $exec_result->error ) {
 		# send back exception
 		my $err = $msg->new_reply_to(
-			msg_type => 'pyerr', # TODO this changes in v5.0 of protocol
+			msg_type => 'error',
 			content => {
 				ename => $exec_result->exception_name,
 				evalue => "@{[ $exec_result->exception_value ]}", # must be string
@@ -200,6 +200,63 @@ sub execute_reply {
 		}
 	);
 	$kernel->send_message( $kernel->shell, $execute_reply );
+}
+
+sub msg_complete_request {
+	my ($self, $kernel, $msg, $socket ) = @_;
+
+	my $code = $msg->content->{code};
+	my $cursor_pos = $msg->content->{cursor_pos};
+
+	my @matches = ();
+	my $metadata = {};
+	my ($status, $cursor_start, $cursor_end);
+	my $matched_text = "";
+	if( $self->backend->can('completion') ) {
+		try {
+			@matches = $self->backend->completion( $code, $cursor_pos );
+			$cursor_start = $cursor_pos;
+			my $len = 0;
+			if( @matches ) {
+				my $line_end = substr $msg->content->{code}, 0, $cursor_pos;
+				my $first_match = $matches[0];
+				my $first_match_len = length $first_match;
+				for my $z ( reverse 0..$first_match_len ) {
+					my $suffix = substr $line_end, -$z;
+					my $prefix = substr $first_match, 0, $z;
+					if( $suffix eq $prefix ) {
+						$cursor_start = $cursor_pos - $z;
+						$len = $z;
+						last;
+					}
+				}
+				$matched_text = substr($msg->content->{code}, $cursor_start, $len)
+			}
+			$cursor_end = $cursor_pos;
+			$status = 'ok';
+		} catch {
+			$status = $_;
+		};
+	} else {
+		$cursor_start = $cursor_pos;
+		$cursor_end = $cursor_pos;
+		$matched_text = "";
+		$status = 'ok';
+	}
+	my $content = {
+		status => $status,
+		cursor_start => $cursor_start,
+		cursor_end => $cursor_end,
+		metadata => $metadata,
+		#matched_text => $matched_text,
+		matches => \@matches,
+	};
+	my $complete_reply = $msg->new_reply_to(
+		msg_type => 'complete_reply',
+		content => $content,
+	);
+	#use DDP; p $complete_reply;
+	$kernel->send_message( $kernel->shell, $complete_reply );
 }
 
 

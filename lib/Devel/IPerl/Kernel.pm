@@ -39,6 +39,8 @@ after clear_zmq => sub {
 	}
 };
 
+has shared_key => ( is => 'rw', predicate => 1 ); # has_shared_key
+
 has message_format => (
 	is => 'ro',
 	default => sub { 'Devel::IPerl::Message::ZMQ'; },
@@ -71,7 +73,7 @@ sub _connection_data_config {
 	my ($self, $data) = @_;
 	my $conf_dispatch = {
 		ip => \&ip,
-		signature_scheme => \&signature_scheme,
+		signature_scheme => \&signature_scheme, # TODO check the signature_scheme eq "hmac-sha256"
 		transport => \&transport,
 		key => \&key,
 	};
@@ -86,7 +88,7 @@ sub _connection_data_config {
 has ip => ( is => 'rw' );
 has transport => ( is => 'rw' );
 has signature_scheme => ( is => 'rw' );
-has key => ( is => 'rw' );
+has key => ( is => 'rw', predicate => 1 );
 #}}}
 # Ports {{{
 # Heartbeat {{{
@@ -214,7 +216,10 @@ sub stop {
 
 sub route_message {
 	my ($self, $blobs, $socket) = @_;
-	my @msgs = $self->message_format->messages_from_zmq_blobs($blobs);
+	my @msgs = $self->message_format->messages_from_zmq_blobs(
+		$blobs,
+		(shared_key => $self->key) x !!( $self->has_key ),
+	);
 	for my $msg (@msgs) {
 		my $fn = "msg_" . $msg->msg_type;
 		if( $self->callback->can( $fn ) ) {
