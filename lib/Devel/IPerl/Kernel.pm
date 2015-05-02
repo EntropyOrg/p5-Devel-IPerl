@@ -193,7 +193,7 @@ sub run {#{{{
 					#print "|$msg|", "\n"; #DEBUG
 				}
 				if( @blobs ) {
-					$self->route_message(\@blobs);
+					$self->route_message(\@blobs, $socket);
 				}
 			},
 			on_write_ready => sub { },
@@ -213,12 +213,12 @@ sub stop {
 }
 
 sub route_message {
-	my ($self, $blobs) = @_;
+	my ($self, $blobs, $socket) = @_;
 	my @msgs = $self->message_format->messages_from_zmq_blobs($blobs);
 	for my $msg (@msgs) {
 		my $fn = "msg_" . $msg->msg_type;
 		if( $self->callback->can( $fn ) ) {
-			$self->callback->$fn( $self, $msg );
+			$self->callback->$fn( $self, $msg, $socket );
 		}
 	}
 }
