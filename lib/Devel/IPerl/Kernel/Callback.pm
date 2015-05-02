@@ -19,7 +19,7 @@ sub msg_kernel_info_request {
 				name => 'perl',
 				version => substr($^V, 1), # 1 character past the 'v' prefix
 				mimetype => 'text/x-perl',
-				file_extension => 'pl',
+				file_extension => '.pl',
 			},
 			banner => 'IPerl!',
 			help_links => [
