@@ -15,9 +15,18 @@ sub msg_kernel_info_request {
 			protocol_version => '5.0',
 			implementation => 'iperl',
 			implementation_version => $Devel::IPerl::VERSION // '0.0.0',
-			language => 'perl',
-			language_version => substr($^V, 1), # 1 character past the 'v' prefix
-			banner => 'IPerl!'
+			language_info => {
+				name => 'perl',
+				version => substr($^V, 1), # 1 character past the 'v' prefix
+				mimetype => 'text/x-perl',
+				file_extension => 'pl',
+			},
+			banner => 'IPerl!',
+			help_links => [
+				{ text => 'MetaCPAN', url => 'https://metacpan.org/' },
+				{ text => 'Perldoc', url => 'http://perldoc.perl.org/' },
+				{ text => 'PDL', url => 'http://pdl.perl.org/?docs=Index&title=PDL::Index' },
+			],
 		}
 	);
 	$kernel->send_message( $kernel->shell, $reply );

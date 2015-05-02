@@ -42,10 +42,10 @@ sub execute {
 	my $exec_result = $self->backend->run_line( $msg->content->{code} );
 
 	### Send back stdout/stderr
-	# send display_data / pyout
+	# send display_data / execute_result
 	if( defined $exec_result->stdout && length $exec_result->stdout ) {
 		my $output = $msg->new_reply_to(
-			msg_type => 'pyout', # TODO this changes in v5.0 of protocol
+			msg_type => 'execute_result',
 			content => {
 				execution_count => $self->execution_count,
 				data => {
@@ -60,7 +60,7 @@ sub execute {
 	if( defined $exec_result->stderr && length $exec_result->stderr ) {
 		my $stream_stderr = $msg->new_reply_to(
 			msg_type => 'stream',
-			content => { name => 'stderr', data => $exec_result->stderr, }
+			content => { name => 'stderr', text => $exec_result->stderr, }
 		);
 		$kernel->send_message( $kernel->iopub, $stream_stderr );
 	}
@@ -78,7 +78,7 @@ sub execute {
 		&& length $exec_result->last_output < REPL_OUTPUT_TOO_LONG ) {
 		my $stream_repl_output = $msg->new_reply_to(
 			msg_type => 'stream',
-			content => { name => 'stderr', data => $exec_result->last_output, }
+			content => { name => 'stderr', text => $exec_result->last_output, }
 		);
 		$kernel->send_message( $kernel->iopub, $stream_repl_output );
 
@@ -91,7 +91,7 @@ sub execute {
 	if( defined $exec_result->warning ) {
 		# send back exception
 		my $err = $msg->new_reply_to(
-			msg_type => 'pyerr', # TODO this changes in v5.0 of protocol
+			msg_type => 'error',
 			content => {
 				ename => $exec_result->warning_name,
 				evalue => "@{[ $exec_result->warning_value ]}", # must be string
@@ -105,7 +105,7 @@ sub execute {
 	if( defined $exec_result->error ) {
 		# send back exception
 		my $err = $msg->new_reply_to(
-			msg_type => 'pyerr', # TODO this changes in v5.0 of protocol
+			msg_type => 'error',
 			content => {
 				ename => $exec_result->exception_name,
 				evalue => "@{[ $exec_result->exception_value ]}", # must be string
