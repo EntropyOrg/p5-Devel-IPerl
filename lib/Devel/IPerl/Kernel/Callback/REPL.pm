@@ -202,5 +202,62 @@ sub execute_reply {
 	$kernel->send_message( $kernel->shell, $execute_reply );
 }
 
+sub msg_complete_request {
+	my ($self, $kernel, $msg, $socket ) = @_;
+
+	my $code = $msg->content->{code};
+	my $cursor_pos = $msg->content->{cursor_pos};
+
+	my @matches = ();
+	my $metadata = {};
+	my ($status, $cursor_start, $cursor_end);
+	my $matched_text = "";
+	if( $self->backend->can('completion') ) {
+		try {
+			@matches = $self->backend->completion( $code, $cursor_pos );
+			$cursor_start = $cursor_pos;
+			my $len = 0;
+			if( @matches ) {
+				my $line_end = substr $msg->content->{code}, 0, $cursor_pos;
+				my $first_match = $matches[0];
+				my $first_match_len = length $first_match;
+				for my $z ( reverse 0..$first_match_len ) {
+					my $suffix = substr $line_end, -$z;
+					my $prefix = substr $first_match, 0, $z;
+					if( $suffix eq $prefix ) {
+						$cursor_start = $cursor_pos - $z;
+						$len = $z;
+						last;
+					}
+				}
+				$matched_text = substr($msg->content->{code}, $cursor_start, $len)
+			}
+			$cursor_end = $cursor_pos;
+			$status = 'ok';
+		} catch {
+			$status = $_;
+		};
+	} else {
+		$cursor_start = $cursor_pos;
+		$cursor_end = $cursor_pos;
+		$matched_text = "";
+		$status = 'ok';
+	}
+	my $content = {
+		status => $status,
+		cursor_start => $cursor_start,
+		cursor_end => $cursor_end,
+		metadata => $metadata,
+		#matched_text => $matched_text,
+		matches => \@matches,
+	};
+	my $complete_reply = $msg->new_reply_to(
+		msg_type => 'complete_reply',
+		content => $content,
+	);
+	#use DDP; p $complete_reply;
+	$kernel->send_message( $socket, $complete_reply );
+}
+
 
 1;
