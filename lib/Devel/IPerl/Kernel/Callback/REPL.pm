@@ -256,7 +256,7 @@ sub msg_complete_request {
 		content => $content,
 	);
 	#use DDP; p $complete_reply;
-	$kernel->send_message( $socket, $complete_reply );
+	$kernel->send_message( $kernel->shell, $complete_reply );
 }
 
 
