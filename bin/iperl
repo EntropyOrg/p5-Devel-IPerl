@@ -22,10 +22,14 @@ sub main {
 	create_perl_profile(); # create the Perl profile if it does not exist
 	create_kernel_spec();
 
-	# To use the --profile option, we need to have an interface name. I'm not sure
+	# To use the --kernel option, we need to have an interface name. I'm not sure
 	# why, since running IPython starts a console if you don't give it any
 	# arguments. Therefore, 'console' is a good default here.
 	push @ARGV, "console" unless ~~@ARGV;
+	my @kernel_args = qw(--kernel iperl);
+
+	# notebook does not take --kernel argument
+	@kernel_args = () if( grep { $_ eq 'notebook' } @ARGV );
 
 	if($ARGV[0] eq '--version') {
 		my $ipython_version = get_ipython_version();
@@ -35,9 +39,8 @@ sub main {
 		return 0;
 	}
 
-	# start IPython and specify that we want the perl profile
-	# TODO support more profiles in the future?
-	system("ipython", @ARGV, qw(--profile perl) );
+	# start IPython and specify which kernel we want
+	system("ipython", @ARGV, @kernel_args );
 }
 
 sub get_devel_iperl_version {
