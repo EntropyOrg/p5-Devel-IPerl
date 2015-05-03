@@ -27,6 +27,6 @@ requires 'Test::Most';
 requires 'File::Copy::Recursive';
 requires 'File::ShareDir::ProjectDistDir';
 requires 'Digest::SHA';
-on test => sub {
+#on test => sub {
 	requires 'IPC::Run3';
-};
+#};

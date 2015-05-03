@@ -14,10 +14,6 @@ before_install:
   - #sudo apt-get install gnuplot-x11 # so that PDL::Graphics::Gnuplot plugin can be tested (but turns out gnuplot version on Travis-CI is too old)
   - #cpanm --quiet --notests PDL::Graphics::Gnuplot PDL # uncomment for later when gnuplot can be tested
   - sudo pip install -r requirements.txt
-  - |
-      cat > cpanfile <<EOF
-      requires 'IPC::Run3';
-      EOF
   - eval $(curl https://travis-perl.github.io/init) --auto
 branches:
   except:
