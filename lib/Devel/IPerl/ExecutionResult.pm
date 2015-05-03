@@ -1,5 +1,5 @@
 package Devel::IPerl::ExecutionResult;
-$Devel::IPerl::ExecutionResult::VERSION = '0.004';
+$Devel::IPerl::ExecutionResult::VERSION = '0.005';
 use strict;
 use warnings;
 
@@ -53,7 +53,7 @@ Devel::IPerl::ExecutionResult
 
 =head1 VERSION
 
-version 0.004
+version 0.005
 
 =head1 AUTHOR
 

@@ -1,3 +1,8 @@
+0.005 2015-05-02 20:08:27-0500
+  - fix to how the kernel spec is written out. Generate the JSON in the
+    bin/iperl script.
+  - remove profile template in share/
+
 0.004 2015-05-02 19:46:58-0500
   - update the IPython message spec to v5.0
   - support code completion for the Reply REPL backend

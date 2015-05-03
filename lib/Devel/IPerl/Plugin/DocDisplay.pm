@@ -1,5 +1,5 @@
 package Devel::IPerl::Plugin::DocDisplay;
-$Devel::IPerl::Plugin::DocDisplay::VERSION = '0.004';
+$Devel::IPerl::Plugin::DocDisplay::VERSION = '0.005';
 use strict;
 use warnings;
 
@@ -31,7 +31,7 @@ Devel::IPerl::Plugin::DocDisplay
 
 =head1 VERSION
 
-version 0.004
+version 0.005
 
 =head1 AUTHOR
 

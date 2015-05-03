@@ -1,5 +1,5 @@
 package Devel::IPerl::Display::JS;
-$Devel::IPerl::Display::JS::VERSION = '0.004';
+$Devel::IPerl::Display::JS::VERSION = '0.005';
 use strict;
 use warnings;
 
@@ -39,7 +39,7 @@ Devel::IPerl::Display::JS
 
 =head1 VERSION
 
-version 0.004
+version 0.005
 
 =head1 AUTHOR
 

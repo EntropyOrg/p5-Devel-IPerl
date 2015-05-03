@@ -1,5 +1,5 @@
 package Devel::IPerl::Kernel;
-$Devel::IPerl::Kernel::VERSION = '0.004';
+$Devel::IPerl::Kernel::VERSION = '0.005';
 use strict;
 use warnings;
 use namespace::autoclean;
@@ -276,7 +276,7 @@ Devel::IPerl::Kernel
 
 =head1 VERSION
 
-version 0.004
+version 0.005
 
 =head1 AUTHOR
 
