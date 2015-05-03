@@ -1,5 +1,5 @@
 package Devel::IPerl::Kernel;
-$Devel::IPerl::Kernel::VERSION = '0.003';
+$Devel::IPerl::Kernel::VERSION = '0.004';
 use strict;
 use warnings;
 use namespace::autoclean;
@@ -39,6 +39,8 @@ after clear_zmq => sub {
 	}
 };
 
+has shared_key => ( is => 'rw', predicate => 1 ); # has_shared_key
+
 has message_format => (
 	is => 'ro',
 	default => sub { 'Devel::IPerl::Message::ZMQ'; },
@@ -71,7 +73,7 @@ sub _connection_data_config {
 	my ($self, $data) = @_;
 	my $conf_dispatch = {
 		ip => \&ip,
-		signature_scheme => \&signature_scheme,
+		signature_scheme => \&signature_scheme, # TODO check the signature_scheme eq "hmac-sha256"
 		transport => \&transport,
 		key => \&key,
 	};
@@ -86,7 +88,7 @@ sub _connection_data_config {
 has ip => ( is => 'rw' );
 has transport => ( is => 'rw' );
 has signature_scheme => ( is => 'rw' );
-has key => ( is => 'rw' );
+has key => ( is => 'rw', predicate => 1 );
 #}}}
 # Ports {{{
 # Heartbeat {{{
@@ -193,7 +195,7 @@ sub run {#{{{
 					#print "|$msg|", "\n"; #DEBUG
 				}
 				if( @blobs ) {
-					$self->route_message(\@blobs);
+					$self->route_message(\@blobs, $socket);
 				}
 			},
 			on_write_ready => sub { },
@@ -213,12 +215,15 @@ sub stop {
 }
 
 sub route_message {
-	my ($self, $blobs) = @_;
-	my @msgs = $self->message_format->messages_from_zmq_blobs($blobs);
+	my ($self, $blobs, $socket) = @_;
+	my @msgs = $self->message_format->messages_from_zmq_blobs(
+		$blobs,
+		(shared_key => $self->key) x !!( $self->has_key ),
+	);
 	for my $msg (@msgs) {
 		my $fn = "msg_" . $msg->msg_type;
 		if( $self->callback->can( $fn ) ) {
-			$self->callback->$fn( $self, $msg );
+			$self->callback->$fn( $self, $msg, $socket );
 		}
 	}
 }
@@ -271,7 +276,7 @@ Devel::IPerl::Kernel
 
 =head1 VERSION
 
-version 0.003
+version 0.004
 
 =head1 AUTHOR
 

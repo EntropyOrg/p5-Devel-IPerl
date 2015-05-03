@@ -21,6 +21,7 @@ name: Devel-IPerl
 requires:
   Capture::Tiny: 0
   Devel::REPL: 0
+  Digest::SHA: 0
   Env: 0
   File::Copy::Recursive: 0
   File::ShareDir::ProjectDistDir: 0
@@ -60,4 +61,4 @@ requires:
 resources:
   homepage: https://github.com/zmughal/p5-Devel-IPerl
   repository: https://github.com/zmughal/p5-Devel-IPerl.git
-version: 0.003
+version: 0.004

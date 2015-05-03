@@ -1,5 +1,5 @@
 package Devel::IPerl::Kernel::Callback::Role::REPL;
-$Devel::IPerl::Kernel::Callback::Role::REPL::VERSION = '0.003';
+$Devel::IPerl::Kernel::Callback::Role::REPL::VERSION = '0.004';
 use strict;
 use warnings;
 
@@ -30,7 +30,7 @@ Devel::IPerl::Kernel::Callback::Role::REPL
 
 =head1 VERSION
 
-version 0.003
+version 0.004
 
 =head1 AUTHOR
 

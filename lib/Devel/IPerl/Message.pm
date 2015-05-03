@@ -1,6 +1,6 @@
 package Devel::IPerl::Message;
 # ABSTRACT: implements the IPython message specification version 5.0
-$Devel::IPerl::Message::VERSION = '0.003';
+$Devel::IPerl::Message::VERSION = '0.004';
 use strict;
 use warnings;
 
@@ -15,6 +15,7 @@ has header => (
 	is => 'rw',
 	default => sub { {
 		msg_id => create_uuid_as_string(),
+		version => '5.0',
 	} },
 	handles_via => 'Hash',
 	# Header fields {{{
@@ -72,7 +73,7 @@ Devel::IPerl::Message - implements the IPython message specification version 5.0
 
 =head1 VERSION
 
-version 0.003
+version 0.004
 
 =head1 AUTHOR
 

@@ -1,5 +1,5 @@
 package Devel::IPerl::Kernel::Callback;
-$Devel::IPerl::Kernel::Callback::VERSION = '0.003';
+$Devel::IPerl::Kernel::Callback::VERSION = '0.004';
 use strict;
 use warnings;
 
@@ -15,9 +15,18 @@ sub msg_kernel_info_request {
 			protocol_version => '5.0',
 			implementation => 'iperl',
 			implementation_version => $Devel::IPerl::VERSION // '0.0.0',
-			language => 'perl',
-			language_version => substr($^V, 1), # 1 character past the 'v' prefix
-			banner => 'IPerl!'
+			language_info => {
+				name => 'perl',
+				version => substr($^V, 1), # 1 character past the 'v' prefix
+				mimetype => 'text/x-perl',
+				file_extension => '.pl',
+			},
+			banner => 'IPerl!',
+			help_links => [
+				{ text => 'MetaCPAN', url => 'https://metacpan.org/' },
+				{ text => 'Perldoc', url => 'http://perldoc.perl.org/' },
+				{ text => 'PDL', url => 'http://pdl.perl.org/?docs=Index&title=PDL::Index' },
+			],
 		}
 	);
 	$kernel->send_message( $kernel->shell, $reply );
@@ -49,7 +58,7 @@ Devel::IPerl::Kernel::Callback
 
 =head1 VERSION
 
-version 0.003
+version 0.004
 
 =head1 AUTHOR
 

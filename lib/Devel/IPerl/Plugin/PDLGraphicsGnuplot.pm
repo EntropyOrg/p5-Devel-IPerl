@@ -1,5 +1,5 @@
 package Devel::IPerl::Plugin::PDLGraphicsGnuplot;
-$Devel::IPerl::Plugin::PDLGraphicsGnuplot::VERSION = '0.003';
+$Devel::IPerl::Plugin::PDLGraphicsGnuplot::VERSION = '0.004';
 use strict;
 use warnings;
 
@@ -109,7 +109,7 @@ Devel::IPerl::Plugin::PDLGraphicsGnuplot
 
 =head1 VERSION
 
-version 0.003
+version 0.004
 
 =head1 AUTHOR
 

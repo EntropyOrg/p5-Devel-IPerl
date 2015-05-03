@@ -53,6 +53,9 @@ lib/Devel/IPerl/ReadLine/String.pm
 lib/IPerl.pm
 lib/Reply/Plugin/IPerl.pm
 requirements.txt
+share/kernels/iperl/kernel.json
+share/kernels/iperl/logo-32x32.png
+share/kernels/iperl/logo-64x64.png
 share/profile/ipython_config.py
 share/profile/static/custom/custom.js
 t/data/ccwn3p08.png

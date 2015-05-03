@@ -26,3 +26,7 @@ requires 'Role::Tiny';
 requires 'Test::Most';
 requires 'File::Copy::Recursive';
 requires 'File::ShareDir::ProjectDistDir';
+requires 'Digest::SHA';
+on develop => sub {
+	requires 'IPC::Run3';
+};
