@@ -1,3 +1,11 @@
+0.004 2015-05-02 19:46:58-0500
+  - update the IPython message spec to v5.0
+  - support code completion for the Reply REPL backend
+  - Add a kernel spec so that kernel switching can work in the IPython
+    Notebook. This means that an IPython profile directory
+    (~/.ipython/profile_perl/) is not needed to start a frontend.
+  - add HMAC SHA256 signature to message spec
+
 0.003 2015-03-29 13:04:14-0500
   - send warnings to frontend
   - add an environment variable $ENV{PERL_IPERL_IPYTHON} that indicates if
