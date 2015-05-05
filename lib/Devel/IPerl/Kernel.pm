@@ -39,8 +39,6 @@ after clear_zmq => sub {
 	}
 };
 
-has shared_key => ( is => 'rw', predicate => 1 ); # has_shared_key
-
 has message_format => (
 	is => 'ro',
 	default => sub { 'Devel::IPerl::Message::ZMQ'; },
@@ -88,7 +86,7 @@ sub _connection_data_config {
 has ip => ( is => 'rw' );
 has transport => ( is => 'rw' );
 has signature_scheme => ( is => 'rw' );
-has key => ( is => 'rw', predicate => 1 );
+has key => ( is => 'rw', predicate => 1 ); # has_key
 #}}}
 # Ports {{{
 # Heartbeat {{{
