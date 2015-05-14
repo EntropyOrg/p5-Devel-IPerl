@@ -15,8 +15,8 @@ sub BUILDARGS {
 		my $data = shift @args;
 		if( $data =~ /^http[s]?:/ ) {
 			unshift @args, uri => $data;
-		} elsif( eval { -f $data } ) {
-			# to avoid warning about newline in filename
+		} elsif( eval { no warnings qw(newline); -f $data } ) {
+			# using no warnings/eval to avoid warning about newline in filename
 			unshift @args, filename => $data;
 		} else {
 			unshift @args, bytestream => $data;
