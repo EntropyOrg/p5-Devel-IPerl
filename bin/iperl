@@ -21,6 +21,13 @@ main();
 sub main {
 	set_lib_path();
 	create_kernel_spec();
+	if( @ARGV >= 1 ) {
+		if( $ARGV[0] eq 'kernel' || $ARGV[0] eq 'nbconvert.iperl' ) {
+			unshift @INC, @PERL5LIB;
+			require Devel::IPerl;
+			return &Devel::IPerl::main();
+		}
+	}
 
 	# To use the --kernel option, we need to have an interface name. I'm not sure
 	# why, since running IPython starts a console if you don't give it any
