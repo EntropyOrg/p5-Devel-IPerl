@@ -31,7 +31,7 @@ has _heartbeat_child => ( is => 'rw' );
 
 # the ZeroMQ context (not fork/thread-safe)
 has zmq => ( is => 'lazy', clearer => 1 );
-sub _build_zmq { zmq_init(); }
+sub _build_zmq { zmq_ctx_new(); }
 after clear_zmq => sub {
 	my ($self) = @_;
 	for my $clear_fn ( \&clear_heartbeat, \&clear_shell, \&clear_control, \&clear_stdin, \&clear_iopub ) {
@@ -237,7 +237,7 @@ sub send_message {
 sub kernel_exit {
 	my ($self) = @_;
 	zmq_close( $self->heartbeat );
-	zmq_term( $self->zmq );
+	zmq_ctx_term( $self->zmq );
 }
 
 sub _setup_heartbeat {
