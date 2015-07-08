@@ -175,6 +175,6 @@ For example, you can load a plugin that adds a role to L<C<<< PDL::Graphics::Gnu
 
 Have fun and let me know what you make with your IPerl notebooks!
 
-Feel free to add your notebooks to the L<IPerl wiki|https://github.com/zmughal/p5-Devel-IPerl/wiki>!
+Feel free to add your notebooks to the L<IPerl wiki|https://github.com/EntropyOrg/p5-Devel-IPerl/wiki>!
 
 
