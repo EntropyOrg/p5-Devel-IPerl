@@ -1,5 +1,5 @@
 package Devel::IPerl::Plugin::DataMedia;
-$Devel::IPerl::Plugin::DataMedia::VERSION = '0.005';
+$Devel::IPerl::Plugin::DataMedia::VERSION = '0.006';
 use strict;
 use warnings;
 
@@ -42,7 +42,7 @@ Devel::IPerl::Plugin::DataMedia
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 AUTHOR
 

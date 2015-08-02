@@ -1,5 +1,5 @@
 package Devel::IPerl::Display::Role::WebImage;
-$Devel::IPerl::Display::Role::WebImage::VERSION = '0.005';
+$Devel::IPerl::Display::Role::WebImage::VERSION = '0.006';
 use strict;
 use warnings;
 
@@ -39,7 +39,7 @@ Devel::IPerl::Display::Role::WebImage
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 AUTHOR
 

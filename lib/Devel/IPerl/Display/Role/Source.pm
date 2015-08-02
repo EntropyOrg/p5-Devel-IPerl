@@ -1,5 +1,5 @@
 package Devel::IPerl::Display::Role::Source;
-$Devel::IPerl::Display::Role::Source::VERSION = '0.005';
+$Devel::IPerl::Display::Role::Source::VERSION = '0.006';
 use strict;
 use warnings;
 
@@ -15,8 +15,8 @@ sub BUILDARGS {
 		my $data = shift @args;
 		if( $data =~ /^http[s]?:/ ) {
 			unshift @args, uri => $data;
-		} elsif( eval { -f $data } ) {
-			# to avoid warning about newline in filename
+		} elsif( eval { no warnings qw(newline); -f $data } ) {
+			# using no warnings/eval to avoid warning about newline in filename
 			unshift @args, filename => $data;
 		} else {
 			unshift @args, bytestream => $data;
@@ -40,7 +40,7 @@ Devel::IPerl::Display::Role::Source
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 AUTHOR
 

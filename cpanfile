@@ -27,6 +27,8 @@ requires 'Test::Most';
 requires 'File::Copy::Recursive';
 requires 'File::ShareDir::ProjectDistDir';
 requires 'Digest::SHA';
+requires 'Markdown::Pod';
+requires 'HTML::FromANSI';
 on develop => sub {
 	requires 'IPC::Run3';
 };

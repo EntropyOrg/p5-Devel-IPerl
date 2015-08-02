@@ -1,5 +1,5 @@
 package IPerl;
-$IPerl::VERSION = '0.005';
+$IPerl::VERSION = '0.006';
 use strict;
 use warnings;
 use Moo;
@@ -49,7 +49,7 @@ IPerl
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 METHODS
 

@@ -1,5 +1,5 @@
 package Devel::IPerl::Display::Role::Displayable;
-$Devel::IPerl::Display::Role::Displayable::VERSION = '0.005';
+$Devel::IPerl::Display::Role::Displayable::VERSION = '0.006';
 use strict;
 use warnings;
 
@@ -21,7 +21,7 @@ Devel::IPerl::Display::Role::Displayable
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 METHODS
 

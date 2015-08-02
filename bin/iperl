@@ -21,6 +21,13 @@ main();
 sub main {
 	set_lib_path();
 	create_kernel_spec();
+	if( @ARGV >= 1 ) {
+		if( $ARGV[0] eq 'kernel' || $ARGV[0] eq 'nbconvert.iperl' ) {
+			unshift @INC, @PERL5LIB;
+			require Devel::IPerl;
+			return &Devel::IPerl::main();
+		}
+	}
 
 	# To use the --kernel option, we need to have an interface name. I'm not sure
 	# why, since running IPython starts a console if you don't give it any
@@ -80,6 +87,7 @@ sub get_kernels_target_dir {
 sub create_kernel_spec {
 	my $kernels_dir = get_kernels_target_dir();
 	my $create_directory = 0;
+	$create_directory = 1; # TODO do this properly later by checking the version
 	if( not defined $kernels_dir or not -d $kernels_dir ) {
 		$create_directory = 1;
 		warn "Directory for Perl kernel spec does not exist...\n";
@@ -93,13 +101,14 @@ sub create_kernel_spec {
 	if( $create_directory ) {
 		my $src = get_kernels_template_dir();
 		my $target = get_kernels_target_dir();
-		print STDERR "Copying kernel spec directory from $src to $target\n";
+		#print STDERR "Copying kernel spec directory from $src to $target\n"; # TODO uncomment later
 		dircopy($src, $target);
 		my $kernel_file = dir($target)->file('kernel.json');
 		my $kernel_spec = {
 			display_name => "IPerl @{[get_devel_iperl_version()]}",
-			argv => [ "perl", "-MDevel::IPerl", "-e1", "kernel", "{connection_file}" ],
+			argv => [ "perl", "-MDevel::IPerl", "-e Devel::IPerl::main", "kernel", "{connection_file}" ],
 			language => "perl",
+			iperl_version => get_devel_iperl_version(),
 		};
 		$kernel_file->spew( encode_json($kernel_spec) );
 	}
@@ -123,7 +132,7 @@ iperl - start ipython notebook with an IPerl kernel
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 AUTHOR
 

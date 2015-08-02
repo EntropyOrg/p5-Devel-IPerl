@@ -1,5 +1,5 @@
 package Devel::IPerl::Display::IFrame;
-$Devel::IPerl::Display::IFrame::VERSION = '0.005';
+$Devel::IPerl::Display::IFrame::VERSION = '0.006';
 use strict;
 use warnings;
 
@@ -39,7 +39,7 @@ Devel::IPerl::Display::IFrame
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 AUTHOR
 

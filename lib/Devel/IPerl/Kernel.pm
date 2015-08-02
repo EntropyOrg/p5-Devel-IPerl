@@ -1,5 +1,5 @@
 package Devel::IPerl::Kernel;
-$Devel::IPerl::Kernel::VERSION = '0.005';
+$Devel::IPerl::Kernel::VERSION = '0.006';
 use strict;
 use warnings;
 use namespace::autoclean;
@@ -38,8 +38,6 @@ after clear_zmq => sub {
 		$self->$clear_fn();
 	}
 };
-
-has shared_key => ( is => 'rw', predicate => 1 ); # has_shared_key
 
 has message_format => (
 	is => 'ro',
@@ -88,7 +86,7 @@ sub _connection_data_config {
 has ip => ( is => 'rw' );
 has transport => ( is => 'rw' );
 has signature_scheme => ( is => 'rw' );
-has key => ( is => 'rw', predicate => 1 );
+has key => ( is => 'rw', predicate => 1 ); # has_key
 #}}}
 # Ports {{{
 # Heartbeat {{{
@@ -276,7 +274,7 @@ Devel::IPerl::Kernel
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 AUTHOR
 
