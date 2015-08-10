@@ -1,3 +1,4 @@
+# ABSTRACT: A role for image objects that is used to generate HTML with parameters such as geometry.
 package Devel::IPerl::Display::Role::WebImage;
 
 use strict;
@@ -26,3 +27,17 @@ sub iperl_data_representations {
 }
 
 1;
+
+=head1 SYNOPSIS
+
+    my $web_image = Displayable::With::WebImage->new(
+        data => "...",
+        width => '100px',
+        height => '200px' );
+
+=head1 DESCRIPTION
+
+This role returns an HTML representation that takes into account the height and
+width.
+
+=cut

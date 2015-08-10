@@ -11,4 +11,10 @@ sub _as_text_plain {
 }
 sub _build_mimetype { 'image/png' }
 
+=head1 DESCRIPTION
+
+A L<Displayable|Devel::IPerl::Display::Role::Displayable> for images of MIME type C<image/png>.
+
+=cut
+
 1;
