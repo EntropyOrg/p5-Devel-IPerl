@@ -95,5 +95,33 @@ sub run_line {
 	$exec_result;
 }
 
+# taken/modified from Devel::REPL::Plugin::MultiLine::PPI
+sub is_complete {
+    my ($self, $code) = @_;
+
+    require PPI::Document;
+
+    # add this so we can test whether the document ends in PPI::Statement::Null
+    $code .= "\n;;";
+
+    my $document = PPI::Document->new(\$code);
+    return 1 if !defined($document);
+
+    # adding ";" to a complete document adds a PPI::Statement::Null. we added a ;;
+    # so if it doesn't end in null then there's probably something that's
+    # incomplete
+    return 1 if $document->child(-1)->isa('PPI::Statement::Null');
+
+    # this could use more logic, such as returning 1 on s/foo/ba<Enter>
+    my $unfinished_structure = sub {
+        my ($document, $element) = @_;
+        return 0 unless $element->isa('PPI::Structure');
+        return 1 unless $element->finish;
+        return 0;
+    };
+
+    return !($document->find_any($unfinished_structure));
+}
+
 
 1;
