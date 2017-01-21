@@ -14,11 +14,11 @@ use ZMQ::Constants
 	    ZMQ_FORWARDER );
 use JSON::MaybeXS;
 use Path::Class;
-use IO::Async::Loop;
-use IO::Async::Handle;
-use IO::Handle;
 use Devel::IPerl::Kernel::Callback::REPL;
 use Devel::IPerl::Message::ZMQ;
+
+use Mojo::Reactor::Poll::LibZMQ3;
+use Mojo::IOLoop;
 
 has callback => (
 		is => 'rw',
@@ -46,7 +46,7 @@ has message_format => (
 
 # Loop {{{
 has _loop => ( is => 'lazy' );
-sub _build__loop { IO::Async::Loop->new; }
+sub _build__loop { Mojo::IOLoop->singleton; }
 #}}}
 
 # Connection configuration {{{
@@ -181,26 +181,23 @@ sub run {#{{{
 	my @socket_funcs = ( \&shell, \&control, \&stdin, \&iopub );
 	for my $socket_fn (@socket_funcs) {
 		my $socket = $self->$socket_fn();
-		my $socket_fd = zmq_getsockopt( $socket, ZMQ_FD );
-		my $io_handle = IO::Handle->new_from_fd( $socket_fd, 'r' );
-		my $handle =  IO::Async::Handle->new(
-			handle => $io_handle,
-			on_read_ready => sub {
-				my @blobs;
-				while ( my $recvmsg = zmq_recvmsg( $socket, ZMQ_RCVMORE ) ) {
-					my $msg = zmq_msg_data($recvmsg);
-					push @blobs, $msg;
-					#print "|$msg|", "\n"; #DEBUG
-				}
-				if( @blobs ) {
-					$self->route_message(\@blobs, $socket);
-				}
-			},
-			on_write_ready => sub { },
-		);
-		$self->_loop->add( $handle );
+        
+        my $cb = sub {
+            my @blobs;
+            while ( my $recvmsg = zmq_recvmsg( $socket, ZMQ_RCVMORE ) ) {
+                my $msg = zmq_msg_data($recvmsg);
+                push @blobs, $msg;
+                #print "|$msg|", "\n"; #DEBUG
+            }
+            if( @blobs ) {
+                $self->route_message(\@blobs, $socket);
+            }
+        };
+        
+        $self->_loop->reactor->io($socket, $cb);
+        $self->_loop->reactor->watch($socket, 1, 0);
 	}
-	$self->_loop->loop_forever;
+    $self->_loop->start;
 }
 
 sub stop {
@@ -209,7 +206,7 @@ sub stop {
 
 	# TODO find out why this gives the error
 	# "Bad file descriptor (epoll.cpp:67)"
-	$self->_loop->loop_stop;
+    $self->_loop->stop;
 }
 
 sub route_message {
@@ -236,6 +233,7 @@ sub send_message {
 
 sub kernel_exit {
 	my ($self) = @_;
+
 	zmq_close( $self->heartbeat );
 	zmq_term( $self->zmq );
 }
@@ -243,17 +241,16 @@ sub kernel_exit {
 sub _setup_heartbeat {
 	my ($self) = @_;
 	# heartbeat socket is just an echo server
-	my $child = $self->_loop->spawn_child(
-		code => sub {
-			$self->clear_zmq; # need to create new context for this process
-			zmq_device( ZMQ_FORWARDER, $self->heartbeat, $self->heartbeat );
-		},
-		on_exit => sub {
-			$self->kernel_exit;
-		},
-	);
-	$SIG{INT} = sub { $self->kernel_exit };
-	$self->_heartbeat_child( $child );
+
+	my $pid = fork;
+	if ($pid == 0) { # child
+		$self->clear_zmq; # need to create new context for this process
+		zmq_device( ZMQ_FORWARDER, $self->heartbeat, $self->heartbeat );
+	} 
+	else { # parent
+		$self->_heartbeat_child( $pid );
+		$SIG{INT} = sub { $self->kernel_exit };
+	}
 }
 
 
