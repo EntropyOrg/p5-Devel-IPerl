@@ -2,7 +2,6 @@ requires 'autodie';
 requires 'Capture::Tiny';
 requires 'Devel::REPL';
 requires 'Reply';
-requires 'File::LibMagic';
 requires 'IO::Async';
 requires 'IO::Handle';
 requires 'JSON::MaybeXS';
