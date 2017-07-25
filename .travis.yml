@@ -1,4 +1,18 @@
 language: perl
+sudo: false
+dist: trusty
+cache:
+  directories:
+    # local::lib caching
+    - $HOME/perl5
+addons:
+  apt:
+    packages:
+      - libzmq3-dev
+      - python3-pygments
+      - python3-setuptools
+      - aspell     # for dzil Test::PodSpelling
+      - aspell-en  # for dzil Test::PodSpelling
 perl:
   - "5.14"
   - "5.16"
@@ -9,11 +23,14 @@ matrix:
     - perl: "5.20"
       env: COVERAGE=1
 before_install:
-  - sudo apt-get update
-  - sudo apt-get install libzmq3-dev libmagic-dev python-pygments # install deps using apt-get (need to check the Python 3 IPython as well as dev version of IPython
-  - #sudo apt-get install gnuplot-x11 # so that PDL::Graphics::Gnuplot plugin can be tested (but turns out gnuplot version on Travis-CI is too old)
-  - #cpanm --quiet --notests PDL::Graphics::Gnuplot PDL # uncomment for later when gnuplot can be tested
-  - sudo pip install -r requirements.txt
+  # Update Python install
+  - >
+      export PATH=$(python3 -c "import site, os; print(os.path.join(site.USER_BASE, 'bin'))"):$PATH;
+      export PYTHONPATH=$(python3 -c "import site; print(site.USER_SITE)")${PYTHONPATH:+:}${PYTHONPATH};
+      easy_install3 --user pip;
+      pip3 install --user -U setuptools
+
+  - pip3 install --user -U -r requirements.txt
   - eval $(curl https://travis-perl.github.io/init) --auto
 branches:
   except:
