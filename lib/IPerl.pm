@@ -1,4 +1,5 @@
-package IPerl;
+package # hide from PAUSE
+	IPerl;
 
 use strict;
 use warnings;
