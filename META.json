@@ -13,6 +13,11 @@
       "version" : 2
    },
    "name" : "Devel-IPerl",
+   "no_index" : {
+      "package" : [
+         "IPerl"
+      ]
+   },
    "prereqs" : {
       "configure" : {
          "requires" : {
@@ -94,7 +99,7 @@
          "web" : "https://github.com/EntropyOrg/p5-Devel-IPerl"
       }
    },
-   "version" : "0.007",
+   "version" : "0.008",
    "x_serialization_backend" : "Cpanel::JSON::XS version 3.0238"
 }
 

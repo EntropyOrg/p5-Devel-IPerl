@@ -19,6 +19,9 @@ meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: '1.4'
 name: Devel-IPerl
+no_index:
+  package:
+    - IPerl
 requires:
   Capture::Tiny: '0'
   Devel::REPL: '0'
@@ -64,5 +67,5 @@ requires:
 resources:
   homepage: https://github.com/EntropyOrg/p5-Devel-IPerl
   repository: https://github.com/EntropyOrg/p5-Devel-IPerl.git
-version: '0.007'
+version: '0.008'
 x_serialization_backend: 'YAML::Tiny version 1.70'

@@ -1,6 +1,6 @@
 package Devel::IPerl;
 # ABSTRACT: Perl language kernel for IPython
-$Devel::IPerl::VERSION = '0.007';
+$Devel::IPerl::VERSION = '0.008';
 use strict;
 use warnings;
 
@@ -34,7 +34,7 @@ Devel::IPerl - Perl language kernel for IPython
 
 =head1 VERSION
 
-version 0.007
+version 0.008
 
 =head1 AUTHOR
 

@@ -1,5 +1,5 @@
 package Devel::IPerl::Kernel::Callback::REPL;
-$Devel::IPerl::Kernel::Callback::REPL::VERSION = '0.007';
+$Devel::IPerl::Kernel::Callback::REPL::VERSION = '0.008';
 use strict;
 use warnings;
 
@@ -295,7 +295,7 @@ Devel::IPerl::Kernel::Callback::REPL
 
 =head1 VERSION
 
-version 0.007
+version 0.008
 
 =head1 AUTHOR
 

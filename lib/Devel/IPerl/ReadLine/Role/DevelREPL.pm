@@ -1,5 +1,5 @@
 package Devel::IPerl::ReadLine::Role::DevelREPL;
-$Devel::IPerl::ReadLine::Role::DevelREPL::VERSION = '0.007';
+$Devel::IPerl::ReadLine::Role::DevelREPL::VERSION = '0.008';
 use strict;
 use warnings;
 
@@ -47,7 +47,7 @@ Devel::IPerl::ReadLine::Role::DevelREPL
 
 =head1 VERSION
 
-version 0.007
+version 0.008
 
 =head1 AUTHOR
 
