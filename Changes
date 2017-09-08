@@ -1,3 +1,25 @@
+0.007 2017-09-07 23:46:03-0400
+  Fixes
+    - Fix ZMQ protocol to process multiple ZMQ identities by Tom McLaughlin
+      (thomasjm++). See <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/59>.
+    - Use `jupyter` command to launch kernel rather than the deprecated
+      `ipython` by Stephan Loyd (stphnlyd++). See
+      <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/64>.
+    - Build fixes for dzil by Mohammad S Anwar (manwar++).
+      See <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/77>.
+
+  Enhancements
+    - Add support for `is_complete_request` message type by Stephan Loyd
+      (stphnlyd++). See <https://github.com/EntropyOrg/p5-Devel-IPerl/issues/62>,
+      <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/63>.
+
+  Refactoring
+    - Split out ChartClicker plugin to separate distribution.
+      See <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/76>.
+    - Split out PDLGraphicsGnuplot plugin to separate distribution.
+      See <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/75>.
+
+
 0.006 2015-08-02 16:27:06-0500
   - add a Chart::Clicker plugin. Much thanks to
     Zhenyi Zhou (zhouzhen1++) for implementing this.
