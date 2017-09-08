@@ -1,3 +1,8 @@
+0.008 2017-09-08 02:47:34-0400
+  Fixes
+    - Hide IPerl namespace from PAUSE because a module with the name iPerl
+      already exists on CPAN.
+
 0.007 2017-09-07 23:46:03-0400
   Fixes
     - Fix ZMQ protocol to process multiple ZMQ identities by Tom McLaughlin
