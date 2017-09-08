@@ -1,5 +1,5 @@
 package Devel::IPerl::Display::PNG;
-$Devel::IPerl::Display::PNG::VERSION = '0.006';
+$Devel::IPerl::Display::PNG::VERSION = '0.007';
 use strict;
 use warnings;
 
@@ -10,6 +10,7 @@ sub _as_text_plain {
 	'[PNG image]', # TODO get dimensions?
 }
 sub _build_mimetype { 'image/png' }
+
 
 1;
 
@@ -25,7 +26,11 @@ Devel::IPerl::Display::PNG
 
 =head1 VERSION
 
-version 0.006
+version 0.007
+
+=head1 DESCRIPTION
+
+A L<Displayable|Devel::IPerl::Display::Role::Displayable> for images of MIME type C<image/png>.
 
 =head1 AUTHOR
 

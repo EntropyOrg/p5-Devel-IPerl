@@ -1,5 +1,5 @@
 package Devel::IPerl::Display::AudioMPEG;
-$Devel::IPerl::Display::AudioMPEG::VERSION = '0.006';
+$Devel::IPerl::Display::AudioMPEG::VERSION = '0.007';
 use strict;
 use warnings;
 
@@ -33,7 +33,7 @@ Devel::IPerl::Display::AudioMPEG
 
 =head1 VERSION
 
-version 0.006
+version 0.007
 
 =head1 AUTHOR
 

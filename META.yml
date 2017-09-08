@@ -3,66 +3,66 @@ abstract: 'Perl language kernel for IPython'
 author:
   - 'Zakariyya Mughal <zmughal@cpan.org>'
 build_requires:
-  Test::More: 0
-  Test::Most: 0
-  perl: 5.013002
-  version: 0
+  File::Which: '0'
+  Test::More: '0'
+  Test::Most: '0'
+  perl: '5.013002'
+  version: '0'
 configure_requires:
-  ExtUtils::MakeMaker: 0
-  File::ShareDir::Install: 0.06
-  perl: 5.013002
+  ExtUtils::MakeMaker: '0'
+  File::ShareDir::Install: '0.06'
+  perl: '5.013002'
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 5.036, CPAN::Meta::Converter version 2.150001'
+generated_by: 'Dist::Zilla version 6.010, CPAN::Meta::Converter version 2.150010'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
-  version: 1.4
+  version: '1.4'
 name: Devel-IPerl
 requires:
-  Capture::Tiny: 0
-  Chart::Clicker: 0
-  Devel::REPL: 0
-  Digest::SHA: 0
-  Env: 0
-  File::Copy::Recursive: 0
-  File::ShareDir::ProjectDistDir: 0
-  File::Spec: 0
-  File::Temp: 0
-  FindBin: 0
-  Getopt::Long: 0
-  HTML::FromANSI: 0
-  IO::Async::Handle: 0
-  IO::Async::Loop: 0
-  IO::Handle: 0
-  JSON::MaybeXS: 0
-  LWP::UserAgent: 0
-  List::AllUtils: 0
-  Log::Any: 0
-  MIME::Base64: 0
-  Markdown::Pod: 0
-  Moo: 0
-  Moo::Role: 0
-  MooX::HandlesVia: 0
-  MooX::Singleton: 0
-  MooX::Types::MooseLike::Base: 0
-  MooseX::HandlesConstructor: 0
-  Path::Class: 0
-  Reply: 0
-  Reply::Plugin: 0
-  Role::Tiny: 0
-  Scalar::Util: 0
-  Try::Tiny: 0
-  UUID::Tiny: 0
-  ZMQ::Constants: 0
-  ZMQ::LibZMQ3: 0
-  autodie: 0
-  base: 0
-  constant: 0
-  namespace::autoclean: 0
-  perl: 5.013002
-  strict: 0
-  warnings: 0
+  Capture::Tiny: '0'
+  Devel::REPL: '0'
+  Digest::SHA: '0'
+  Env: '0'
+  File::Copy::Recursive: '0'
+  File::ShareDir::ProjectDistDir: '0'
+  File::Spec: '0'
+  FindBin: '0'
+  Getopt::Long: '0'
+  HTML::FromANSI: '0'
+  IO::Async::Handle: '0'
+  IO::Async::Loop: '0'
+  IO::Handle: '0'
+  JSON::MaybeXS: '0'
+  LWP::UserAgent: '0'
+  List::AllUtils: '0'
+  Log::Any: '0'
+  MIME::Base64: '0'
+  Markdown::Pod: '0'
+  Moo: '0'
+  Moo::Role: '0'
+  MooX::HandlesVia: '0'
+  MooX::Singleton: '0'
+  MooX::Types::MooseLike::Base: '0'
+  MooseX::HandlesConstructor: '0'
+  PPI::Document: '0'
+  Path::Class: '0'
+  Reply: '0'
+  Reply::Plugin: '0'
+  Scalar::Util: '0'
+  Try::Tiny: '0'
+  UUID::Tiny: '0'
+  ZMQ::Constants: '0'
+  ZMQ::LibZMQ3: '0'
+  autodie: '0'
+  base: '0'
+  constant: '0'
+  namespace::autoclean: '0'
+  perl: '5.013002'
+  strict: '0'
+  warnings: '0'
 resources:
   homepage: https://github.com/EntropyOrg/p5-Devel-IPerl
   repository: https://github.com/EntropyOrg/p5-Devel-IPerl.git
-version: 0.006
+version: '0.007'
+x_serialization_backend: 'YAML::Tiny version 1.70'

@@ -1,5 +1,6 @@
+# ABSTRACT: A role for image objects that is used to generate HTML with parameters such as geometry.
 package Devel::IPerl::Display::Role::WebImage;
-$Devel::IPerl::Display::Role::WebImage::VERSION = '0.006';
+$Devel::IPerl::Display::Role::WebImage::VERSION = '0.007';
 use strict;
 use warnings;
 
@@ -35,11 +36,23 @@ __END__
 
 =head1 NAME
 
-Devel::IPerl::Display::Role::WebImage
+Devel::IPerl::Display::Role::WebImage - A role for image objects that is used to generate HTML with parameters such as geometry.
 
 =head1 VERSION
 
-version 0.006
+version 0.007
+
+=head1 SYNOPSIS
+
+    my $web_image = Displayable::With::WebImage->new(
+        data => "...",
+        width => '100px',
+        height => '200px' );
+
+=head1 DESCRIPTION
+
+This role returns an HTML representation that takes into account the height and
+width.
 
 =head1 AUTHOR
 

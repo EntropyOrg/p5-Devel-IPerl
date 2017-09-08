@@ -1,5 +1,5 @@
 package Devel::IPerl::Message::ZMQ;
-$Devel::IPerl::Message::ZMQ::VERSION = '0.006';
+$Devel::IPerl::Message::ZMQ::VERSION = '0.007';
 use strict;
 use warnings;
 use Moo;
@@ -18,25 +18,32 @@ has shared_key => ( is => 'rw', predicate => 1 ); # has_shared_key
 # see spec: <http://ipython.org/ipython-doc/dev/development/messaging.html#the-wire-protocol>
 sub message_from_zmq_blobs {
 	my ($self, $blobs, %opt) = @_;
-	my $number_of_blobs = @$blobs;
 
-	# [
-	# TODO there may be multiple UUIDs, so we have to read until the delimiter
-	my $uuid           = $blobs->[0]; # b'u-u-i-d',         # zmq identity(ies)
-	my $delimiter      = $blobs->[1]; # b'<IDS|MSG>',       # delimiter
-	my $hmac_signature = $blobs->[2]; # b'baddad42',        # HMAC signature
-	my $header         = $blobs->[3]; # b'{header}',        # serialized header dict
-	my $parent_header  = $blobs->[4]; # b'{parent_header}', # serialized parent header dict
-	my $metadata       = $blobs->[5]; # b'{metadata}',      # serialized metadata dict
-	my $content        = $blobs->[6]; # b'{content},        # serialized content dict
+	# Read in all identifiers
+	my @uuids = ();
+	while (1) {
+		if ($blobs->[0] eq DELIMITER) {
+			shift @$blobs;
+			last;
+		} else {
+			push @uuids, $blobs->[0];
+			shift @$blobs;
+		}
+	}
+
+	my $hmac_signature = $blobs->[0]; # b'baddad42',        # HMAC signature
+	my $header         = $blobs->[1]; # b'{header}',        # serialized header dict
+	my $parent_header  = $blobs->[2]; # b'{parent_header}', # serialized parent header dict
+	my $metadata       = $blobs->[3]; # b'{metadata}',      # serialized metadata dict
+	my $content        = $blobs->[4]; # b'{content},        # serialized content dict
 
 	#   b'blob',            # extra raw data buffer(s)
-	#   ...
-	my @blobs_rest = ( @$blobs[7..$number_of_blobs-1] );
-	# ]
+	my $number_of_blobs = @$blobs;
+	my @blobs_rest = ( @$blobs[5..$number_of_blobs-1] );
+
 	# TODO check the signature
 	$self->new(
-		zmq_uuids => [ $uuid ],
+		zmq_uuids => \@uuids,
 		header => decode_json($header),
 		parent_header => decode_json($parent_header),
 		metadata => decode_json($metadata),
@@ -117,7 +124,7 @@ Devel::IPerl::Message::ZMQ
 
 =head1 VERSION
 
-version 0.006
+version 0.007
 
 =head1 AUTHOR
 

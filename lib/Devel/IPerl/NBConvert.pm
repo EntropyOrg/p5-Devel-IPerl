@@ -1,5 +1,5 @@
 package Devel::IPerl::NBConvert;
-$Devel::IPerl::NBConvert::VERSION = '0.006';
+$Devel::IPerl::NBConvert::VERSION = '0.007';
 use strict;
 use warnings;
 
@@ -93,7 +93,7 @@ Devel::IPerl::NBConvert
 
 =head1 VERSION
 
-version 0.006
+version 0.007
 
 =head1 AUTHOR
 

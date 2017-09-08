@@ -1,5 +1,5 @@
 package Devel::IPerl::Kernel::Callback::REPL;
-$Devel::IPerl::Kernel::Callback::REPL::VERSION = '0.006';
+$Devel::IPerl::Kernel::Callback::REPL::VERSION = '0.007';
 use strict;
 use warnings;
 
@@ -259,6 +259,27 @@ sub msg_complete_request {
 	$kernel->send_message( $kernel->shell, $complete_reply );
 }
 
+sub msg_is_complete_request {
+    my ($self, $kernel, $msg, $socket ) = @_;
+
+    my $content;
+    if ($self->backend->is_complete( $msg->{content}{code} )) {
+        $content = {
+            status => 'complete',
+        };
+    } else {
+        $content = {
+            status => 'incomplete',
+            indent => '',
+        };
+    }
+    my $is_complete_reply = $msg->new_reply_to(
+        msg_type => 'is_complete_reply',
+        content => $content,
+    );
+    $kernel->send_message( $kernel->shell, $is_complete_reply );
+}
+
 
 1;
 
@@ -274,7 +295,7 @@ Devel::IPerl::Kernel::Callback::REPL
 
 =head1 VERSION
 
-version 0.006
+version 0.007
 
 =head1 AUTHOR
 
