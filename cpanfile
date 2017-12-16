@@ -21,6 +21,8 @@ requires 'MooX::HandlesVia';
 requires 'MooX::Singleton';
 requires 'MooX::Types::MooseLike::Base';
 requires 'MooseX::HandlesConstructor';
+requires 'Net::Async::ZMQ';
+requires 'Net::Async::ZMQ::Socket';
 requires 'PPI::Document';
 requires 'Path::Class';
 requires 'Reply';

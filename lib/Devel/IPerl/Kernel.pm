@@ -18,7 +18,6 @@ BEGIN {
 use ZMQ::LibZMQ3;
 use ZMQ::Constants
 	qw( ZMQ_PUB ZMQ_REP ZMQ_ROUTER
-	    ZMQ_FD
 	    ZMQ_RCVMORE ZMQ_SNDMORE
 	    ZMQ_FORWARDER );
 use JSON::MaybeXS;
@@ -27,6 +26,8 @@ use IO::Async::Loop;
 use IO::Async::Handle;
 use IO::Handle;
 use IO::Async::Routine;
+use Net::Async::ZMQ;
+use Net::Async::ZMQ::Socket;
 use Devel::IPerl::Kernel::Callback::REPL;
 use Devel::IPerl::Message::ZMQ;
 
@@ -177,7 +178,6 @@ sub _assign_ports_from_data {
 #}}}
 #}}}
 
-my @io_handles;
 sub run {#{{{
 	my ($self) = @_;
 	STDOUT->autoflush(1);
@@ -188,13 +188,14 @@ sub run {#{{{
 
 	$self->_setup_heartbeat;
 
+	my $zmq = Net::Async::ZMQ->new;
+
 	my @socket_funcs = ( \&shell, \&control, \&stdin, \&iopub );
 	for my $socket_fn (@socket_funcs) {
 		my $socket = $self->$socket_fn();
-		my $socket_fd = zmq_getsockopt( $socket, ZMQ_FD );
-		my $io_handle = IO::Handle->new_from_fd( $socket_fd, 'r' );
-		my $handle =  IO::Async::Handle->new(
-			handle => $io_handle,
+
+		my $async_socket =  Net::Async::ZMQ::Socket->new(
+			socket => $socket,
 			on_read_ready => sub {
 				my @blobs;
 				while ( my $recvmsg = zmq_recvmsg( $socket, ZMQ_RCVMORE ) ) {
@@ -206,10 +207,13 @@ sub run {#{{{
 					$self->route_message(\@blobs, $socket);
 				}
 			},
-			on_write_ready => sub { },
 		);
-		$self->_loop->add( $handle );
+
+		$zmq->add_child( $async_socket );
 	}
+
+	$self->_loop->add( $zmq );
+
 	$self->_loop->loop_forever;
 }
 
