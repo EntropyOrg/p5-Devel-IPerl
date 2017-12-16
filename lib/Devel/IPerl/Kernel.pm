@@ -5,6 +5,15 @@ use warnings;
 use namespace::autoclean;
 
 use Moo;
+use Env qw(@PATH);
+use if $^O eq 'MSWin32', 'Alien::ZMQ::latest';
+
+BEGIN {
+	if ( $^O eq 'MSWin32' ) {
+		unshift @PATH, Alien::ZMQ::latest->bin_dir;
+	}
+}
+
 
 use ZMQ::LibZMQ3;
 use ZMQ::Constants

@@ -46,3 +46,7 @@ on develop => sub {
     requires 'Inline::Python';
     requires 'Term::ANSIColor', '2.01';
 };
+
+if( $^O eq 'MSWin32' ) {
+    requires 'Alien::ZMQ::latest';
+}
