@@ -8,6 +8,7 @@ requires 'Getopt::Long';
 requires 'HTML::FromANSI';
 requires 'IO::Async::Handle';
 requires 'IO::Async::Loop';
+requires 'IO::Async::Routine';
 requires 'JSON::MaybeXS';
 requires 'LWP::UserAgent';
 requires 'List::AllUtils';

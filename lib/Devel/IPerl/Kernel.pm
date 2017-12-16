@@ -17,6 +17,7 @@ use Path::Class;
 use IO::Async::Loop;
 use IO::Async::Handle;
 use IO::Handle;
+use IO::Async::Routine;
 use Devel::IPerl::Kernel::Callback::REPL;
 use Devel::IPerl::Message::ZMQ;
 
@@ -205,7 +206,7 @@ sub run {#{{{
 
 sub stop {
 	my ($self) = @_;
-	kill 1, $self->_heartbeat_child;
+	$self->_heartbeat_child->kill(1);
 
 	# TODO find out why this gives the error
 	# "Bad file descriptor (epoll.cpp:67)"
@@ -243,15 +244,16 @@ sub kernel_exit {
 sub _setup_heartbeat {
 	my ($self) = @_;
 	# heartbeat socket is just an echo server
-	my $child = $self->_loop->spawn_child(
+	my $child = IO::Async::Routine->new(
 		code => sub {
 			$self->clear_zmq; # need to create new context for this process
 			zmq_device( ZMQ_FORWARDER, $self->heartbeat, $self->heartbeat );
 		},
-		on_exit => sub {
+		on_return => sub {
 			$self->kernel_exit;
 		},
 	);
+	$self->_loop->add( $child );
 	$SIG{INT} = sub { $self->kernel_exit };
 	$self->_heartbeat_child( $child );
 }
