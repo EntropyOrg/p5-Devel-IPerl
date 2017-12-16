@@ -5,7 +5,7 @@ use File::Which;
 
 plan tests => 2;
 
-my ($ipython) = grep { -x which($_) } qw(ipython ipython3 ipython2);
+my ($ipython) = grep { -x which($_) } qw(jupyter ipython ipython3 ipython2);
 
 ok( defined $ipython, "Found ipython: $ipython");
 
