@@ -108,7 +108,7 @@ sub create_kernel_spec {
 		my $kernel_file = dir($target)->file('kernel.json');
 		my $kernel_spec = {
 			display_name => "IPerl @{[get_devel_iperl_version()]}",
-			argv => [ "perl", "-MDevel::IPerl", "-e Devel::IPerl::main", "kernel", "{connection_file}" ],
+			argv => [ "$^X", "-MDevel::IPerl", "-e Devel::IPerl::main", "kernel", "{connection_file}" ],
 			language => "perl",
 			iperl_version => get_devel_iperl_version(),
 		};
