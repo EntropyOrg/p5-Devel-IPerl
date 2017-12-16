@@ -1,0 +1,44 @@
+version: build-{build}
+
+clone_depth: 50
+
+cache:
+- '%LOCALAPPDATA%\pip\Cache'
+
+environment:
+  PERL_CPANM_OPT: "--notest --force --skip-satisfied"
+
+platform:
+  - x64
+
+install:
+  - set TMPDIR=%APPVEYOR_BUILD_FOLDER%\tmp
+  - mkdir %TMPDIR%
+
+  - set PYTHON_HOME=C:\Python36-x64
+  - path %PYTHON_HOME%;%PYTHON_HOME%\Scripts;%PATH%
+  - python --version
+  - pip install -U -r requirements.txt
+
+  - choco install --allowemptychecksum strawberryperl
+  - path C:\strawberry\perl\bin;C:\strawberry\perl\site\bin;C:\strawberry\c\bin;%PATH%
+  - "cpan App::cpanminus"
+  - "cpanm Dist::Zilla"
+  - "dzil authordeps | cpanm"
+
+  - set ALT_ALIEN_ZMQ_BRANCH=master
+  - cinst curl -y
+  - 'cd %APPVEYOR_BUILD_FOLDER% & curl -fsS -o install-zmq-libzmq.pl https://raw.githubusercontent.com/zmughal/p5-Alt-Alien-ZMQ-Alien-ZMQ-latest/%ALT_ALIEN_ZMQ_BRANCH%/maint/install-zmq-libzmq.pl & perl install-zmq-libzmq.pl --notest Alt::Alien::ZMQ::Alien::ZMQ::latest ZMQ::LibZMQ3 Net::Async::ZMQ'
+  - "dzil listdeps --author | cpanm"
+
+before_build:
+  - "dzil build --in build-dir"
+
+build_script:
+  - "dzil listdeps | cpanm"
+  - "cd build-dir"
+  - "cpanm --installdeps ."
+  - "cd .."
+
+test_script:
+  - "dzil test --release --keep-build-dir"

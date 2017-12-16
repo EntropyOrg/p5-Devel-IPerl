@@ -1,0 +1,15 @@
+---
+native:
+  debian:
+    packages:
+      - libzmq3-dev
+      - python3-pygments
+      - python3-setuptools
+  macos-homebrew:
+    packages:
+      - zmq
+      - python3
+  msys2-mingw64:
+    packages:
+      - mingw-w64-x86_64-zeromq
+      - mingw-w64-x86_64-python3
