@@ -19,6 +19,7 @@ install:
   - path %PYTHON_HOME%;%PYTHON_HOME%\Scripts;%PATH%
   - python --version
   - pip install -U -r requirements.txt
+  - jupyter --version
 
   - choco install --allowemptychecksum strawberryperl
   - path C:\strawberry\perl\bin;C:\strawberry\perl\site\bin;C:\strawberry\c\bin;%PATH%

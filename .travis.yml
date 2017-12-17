@@ -38,6 +38,7 @@ before_install:
 
   - export DEVOPS_BRANCH="master"
   - pip3 install --user -U -r requirements.txt
+  - jupyter --version
 
   - export ALT_ALIEN_ZMQ_BRANCH="master"
   - export RENARD_DEVOPS_HOOK_PRE_PERL="curl https://raw.githubusercontent.com/zmughal/p5-Alt-Alien-ZMQ-Alien-ZMQ-latest/$ALT_ALIEN_ZMQ_BRANCH/maint/install-zmq-libzmq.pl | perl - -- Alt::Alien::ZMQ::Alien::ZMQ::latest ZMQ::LibZMQ3 Net::Async::ZMQ"
