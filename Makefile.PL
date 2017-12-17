@@ -13,7 +13,7 @@ install_share dist => "share";
 
 
 my %WriteMakefileArgs = (
-  "ABSTRACT" => "Perl language kernel for IPython",
+  "ABSTRACT" => "Perl language kernel for Jupyter",
   "AUTHOR" => "Zakariyya Mughal <zmughal\@cpan.org>",
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => 0,
@@ -27,18 +27,20 @@ my %WriteMakefileArgs = (
   "MIN_PERL_VERSION" => "5.013002",
   "NAME" => "Devel::IPerl",
   "PREREQ_PM" => {
+    "B::Keywords" => 0,
     "Capture::Tiny" => 0,
     "Devel::REPL" => 0,
     "Digest::SHA" => 0,
     "Env" => 0,
     "File::Copy::Recursive" => 0,
-    "File::ShareDir::ProjectDistDir" => 0,
+    "File::ShareDir" => 0,
     "File::Spec" => 0,
     "FindBin" => 0,
     "Getopt::Long" => 0,
     "HTML::FromANSI" => 0,
     "IO::Async::Handle" => 0,
     "IO::Async::Loop" => 0,
+    "IO::Async::Routine" => 0,
     "IO::Handle" => 0,
     "JSON::MaybeXS" => 0,
     "LWP::UserAgent" => 0,
@@ -52,6 +54,8 @@ my %WriteMakefileArgs = (
     "MooX::Singleton" => 0,
     "MooX::Types::MooseLike::Base" => 0,
     "MooseX::HandlesConstructor" => 0,
+    "Net::Async::ZMQ" => 0,
+    "Net::Async::ZMQ::Socket" => 0,
     "PPI::Document" => 0,
     "Path::Class" => 0,
     "Reply" => 0,
@@ -64,6 +68,7 @@ my %WriteMakefileArgs = (
     "autodie" => 0,
     "base" => 0,
     "constant" => 0,
+    "if" => 0,
     "namespace::autoclean" => 0,
     "strict" => 0,
     "warnings" => 0
@@ -74,7 +79,7 @@ my %WriteMakefileArgs = (
     "Test::Most" => 0,
     "version" => 0
   },
-  "VERSION" => "0.008",
+  "VERSION" => "0.009",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -82,12 +87,13 @@ my %WriteMakefileArgs = (
 
 
 my %FallbackPrereqs = (
+  "B::Keywords" => 0,
   "Capture::Tiny" => 0,
   "Devel::REPL" => 0,
   "Digest::SHA" => 0,
   "Env" => 0,
   "File::Copy::Recursive" => 0,
-  "File::ShareDir::ProjectDistDir" => 0,
+  "File::ShareDir" => 0,
   "File::Spec" => 0,
   "File::Which" => 0,
   "FindBin" => 0,
@@ -95,6 +101,7 @@ my %FallbackPrereqs = (
   "HTML::FromANSI" => 0,
   "IO::Async::Handle" => 0,
   "IO::Async::Loop" => 0,
+  "IO::Async::Routine" => 0,
   "IO::Handle" => 0,
   "JSON::MaybeXS" => 0,
   "LWP::UserAgent" => 0,
@@ -108,6 +115,8 @@ my %FallbackPrereqs = (
   "MooX::Singleton" => 0,
   "MooX::Types::MooseLike::Base" => 0,
   "MooseX::HandlesConstructor" => 0,
+  "Net::Async::ZMQ" => 0,
+  "Net::Async::ZMQ::Socket" => 0,
   "PPI::Document" => 0,
   "Path::Class" => 0,
   "Reply" => 0,
@@ -122,6 +131,7 @@ my %FallbackPrereqs = (
   "autodie" => 0,
   "base" => 0,
   "constant" => 0,
+  "if" => 0,
   "namespace::autoclean" => 0,
   "strict" => 0,
   "version" => 0,
@@ -137,6 +147,10 @@ unless ( eval { ExtUtils::MakeMaker->VERSION(6.63_03) } ) {
 
 delete $WriteMakefileArgs{CONFIGURE_REQUIRES}
   unless eval { ExtUtils::MakeMaker->VERSION(6.52) };
+
+if ( $^O eq 'MSWin32' ) {
+	$WriteMakefileArgs{PREREQ_PM}{'Alien::ZMQ::latest'} = '0';
+}
 
 WriteMakefile(%WriteMakefileArgs);
 

@@ -1,5 +1,5 @@
 package Devel::IPerl::Display::Role::Source;
-$Devel::IPerl::Display::Role::Source::VERSION = '0.008';
+$Devel::IPerl::Display::Role::Source::VERSION = '0.009';
 use strict;
 use warnings;
 
@@ -40,7 +40,7 @@ Devel::IPerl::Display::Role::Source
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 AUTHOR
 

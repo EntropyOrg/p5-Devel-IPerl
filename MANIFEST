@@ -8,6 +8,7 @@ Makefile.PL
 NOTE.md
 README
 README.md
+appveyor.yml
 bin/iperl
 cpanfile
 dist.ini
@@ -52,6 +53,9 @@ lib/Devel/IPerl/ReadLine/Role/DevelREPL.pm
 lib/Devel/IPerl/ReadLine/String.pm
 lib/IPerl.pm
 lib/Reply/Plugin/IPerl.pm
+maint/cpanfile-git
+maint/devops.yml
+maint/generate-cpanfile
 requirements.txt
 share/kernels/iperl/logo-32x32.png
 share/kernels/iperl/logo-64x64.png

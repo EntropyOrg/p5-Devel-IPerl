@@ -1,16 +1,16 @@
 {
-   "abstract" : "Perl language kernel for IPython",
+   "abstract" : "Perl language kernel for Jupyter",
    "author" : [
       "Zakariyya Mughal <zmughal@cpan.org>"
    ],
-   "dynamic_config" : 0,
+   "dynamic_config" : 1,
    "generated_by" : "Dist::Zilla version 6.010, CPAN::Meta::Converter version 2.150010",
    "license" : [
       "perl_5"
    ],
    "meta-spec" : {
       "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
-      "version" : 2
+      "version" : "2"
    },
    "name" : "Devel-IPerl",
    "no_index" : {
@@ -37,18 +37,20 @@
       },
       "runtime" : {
          "requires" : {
+            "B::Keywords" : "0",
             "Capture::Tiny" : "0",
             "Devel::REPL" : "0",
             "Digest::SHA" : "0",
             "Env" : "0",
             "File::Copy::Recursive" : "0",
-            "File::ShareDir::ProjectDistDir" : "0",
+            "File::ShareDir" : "0",
             "File::Spec" : "0",
             "FindBin" : "0",
             "Getopt::Long" : "0",
             "HTML::FromANSI" : "0",
             "IO::Async::Handle" : "0",
             "IO::Async::Loop" : "0",
+            "IO::Async::Routine" : "0",
             "IO::Handle" : "0",
             "JSON::MaybeXS" : "0",
             "LWP::UserAgent" : "0",
@@ -62,6 +64,8 @@
             "MooX::Singleton" : "0",
             "MooX::Types::MooseLike::Base" : "0",
             "MooseX::HandlesConstructor" : "0",
+            "Net::Async::ZMQ" : "0",
+            "Net::Async::ZMQ::Socket" : "0",
             "PPI::Document" : "0",
             "Path::Class" : "0",
             "Reply" : "0",
@@ -74,6 +78,7 @@
             "autodie" : "0",
             "base" : "0",
             "constant" : "0",
+            "if" : "0",
             "namespace::autoclean" : "0",
             "perl" : "5.013002",
             "strict" : "0",
@@ -99,7 +104,7 @@
          "web" : "https://github.com/EntropyOrg/p5-Devel-IPerl"
       }
    },
-   "version" : "0.008",
-   "x_serialization_backend" : "Cpanel::JSON::XS version 3.0238"
+   "version" : "0.009",
+   "x_serialization_backend" : "JSON::XS version 3.04"
 }
 

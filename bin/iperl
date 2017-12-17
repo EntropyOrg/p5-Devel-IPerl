@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!perl
 # PODNAME: iperl
 # ABSTRACT: start jupyter notebook with an IPerl kernel
 
@@ -10,7 +10,7 @@ use File::Spec;
 use Path::Class;
 use Config;
 use File::Copy::Recursive qw(dircopy);
-use File::ShareDir::ProjectDistDir;
+use File::ShareDir qw(dist_dir);
 use JSON::MaybeXS qw(encode_json);
 use Env qw(@PERL5LIB);
 
@@ -108,7 +108,7 @@ sub create_kernel_spec {
 		my $kernel_file = dir($target)->file('kernel.json');
 		my $kernel_spec = {
 			display_name => "IPerl @{[get_devel_iperl_version()]}",
-			argv => [ "perl", "-MDevel::IPerl", "-e Devel::IPerl::main", "kernel", "{connection_file}" ],
+			argv => [ "$^X", "-MDevel::IPerl", "-e Devel::IPerl::main", "kernel", "{connection_file}" ],
 			language => "perl",
 			iperl_version => get_devel_iperl_version(),
 		};
@@ -134,7 +134,7 @@ iperl - start jupyter notebook with an IPerl kernel
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 AUTHOR
 

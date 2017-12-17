@@ -1,6 +1,6 @@
 package Devel::IPerl;
-# ABSTRACT: Perl language kernel for IPython
-$Devel::IPerl::VERSION = '0.008';
+# ABSTRACT: Perl language kernel for Jupyter
+$Devel::IPerl::VERSION = '0.009';
 use strict;
 use warnings;
 
@@ -30,11 +30,15 @@ __END__
 
 =head1 NAME
 
-Devel::IPerl - Perl language kernel for IPython
+Devel::IPerl - Perl language kernel for Jupyter
 
 =head1 VERSION
 
-version 0.008
+version 0.009
+
+=head1 DESCRIPTION
+
+See C<README.md> for installation instructions.
 
 =head1 AUTHOR
 
