@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!perl
 # PODNAME: iperl
 # ABSTRACT: start jupyter notebook with an IPerl kernel
 
@@ -10,7 +10,7 @@ use File::Spec;
 use Path::Class;
 use Config;
 use File::Copy::Recursive qw(dircopy);
-use File::ShareDir::ProjectDistDir;
+use File::ShareDir qw(dist_dir);
 use JSON::MaybeXS qw(encode_json);
 use Env qw(@PERL5LIB);
 

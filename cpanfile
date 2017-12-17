@@ -3,7 +3,7 @@ requires 'Capture::Tiny';
 requires 'Devel::REPL';
 requires 'Digest::SHA';
 requires 'File::Copy::Recursive';
-requires 'File::ShareDir::ProjectDistDir';
+requires 'File::ShareDir';
 requires 'Getopt::Long';
 requires 'HTML::FromANSI';
 requires 'IO::Async::Handle';
