@@ -22,7 +22,13 @@ matrix:
   include:
     - perl: "5.20"
       env: COVERAGE=1
+    - perl: "system"
+      os: osx
 before_install:
+  - >
+      if [ "$TRAVIS_OS_NAME" == "osx" ]; then
+        brew install cpanm zmq python3;
+      fi
   # Update Python install
   - >
       export PATH=$(python3 -c "import site, os; print(os.path.join(site.USER_BASE, 'bin'))"):$PATH;
@@ -32,9 +38,13 @@ before_install:
 
   - export DEVOPS_BRANCH="master"
   - pip3 install --user -U -r requirements.txt
+  - jupyter --version
+
+  - export ALT_ALIEN_ZMQ_BRANCH="master"
+  - export RENARD_DEVOPS_HOOK_PRE_PERL="curl https://raw.githubusercontent.com/zmughal/p5-Alt-Alien-ZMQ-Alien-ZMQ-latest/$ALT_ALIEN_ZMQ_BRANCH/maint/install-zmq-libzmq.pl | perl - -- Alt::Alien::ZMQ::Alien::ZMQ::latest ZMQ::LibZMQ3 Net::Async::ZMQ"
+
   - eval "$(curl https://raw.githubusercontent.com/project-renard/devops/$DEVOPS_BRANCH/script/helper.pl | perl -- | awk '/^#START/,/^#END/ { print > "/dev/stdout"; next } { print > "/dev/stderr"}' )"
 branches:
   except:
     - /^wip\//
     - /^blocked/
-sudo: true

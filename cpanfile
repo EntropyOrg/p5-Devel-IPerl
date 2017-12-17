@@ -3,11 +3,12 @@ requires 'Capture::Tiny';
 requires 'Devel::REPL';
 requires 'Digest::SHA';
 requires 'File::Copy::Recursive';
-requires 'File::ShareDir::ProjectDistDir';
+requires 'File::ShareDir';
 requires 'Getopt::Long';
 requires 'HTML::FromANSI';
 requires 'IO::Async::Handle';
 requires 'IO::Async::Loop';
+requires 'IO::Async::Routine';
 requires 'JSON::MaybeXS';
 requires 'LWP::UserAgent';
 requires 'List::AllUtils';
@@ -20,6 +21,8 @@ requires 'MooX::HandlesVia';
 requires 'MooX::Singleton';
 requires 'MooX::Types::MooseLike::Base';
 requires 'MooseX::HandlesConstructor';
+requires 'Net::Async::ZMQ';
+requires 'Net::Async::ZMQ::Socket';
 requires 'PPI::Document';
 requires 'Path::Class';
 requires 'Reply';
@@ -45,3 +48,7 @@ on develop => sub {
     requires 'Inline::Python';
     requires 'Term::ANSIColor', '2.01';
 };
+
+if( $^O eq 'MSWin32' ) {
+    requires 'Alien::ZMQ::latest';
+}

@@ -1,5 +1,5 @@
 package Devel::IPerl;
-# ABSTRACT: Perl language kernel for IPython
+# ABSTRACT: Perl language kernel for Jupyter
 
 use strict;
 use warnings;
