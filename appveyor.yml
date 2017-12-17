@@ -4,6 +4,7 @@ clone_depth: 50
 
 cache:
 - '%LOCALAPPDATA%\pip\Cache'
+- C:\strawberry\perl\site
 
 environment:
   PERL_CPANM_OPT: "--notest --force --skip-satisfied"
