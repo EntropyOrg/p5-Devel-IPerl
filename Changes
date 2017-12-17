@@ -1,3 +1,20 @@
+0.009 2017-12-17 01:37:41-0600
+
+  Feature
+    - Installation on macOS and Windows are now supported. This is documented
+      in `README.md`.
+      See <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/82>,
+      <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/83>.
+    - Align output style with IPython kernel (stphnlyd++).
+      See <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/66>.
+
+  Fixes
+    - Add explicit dependency on `B::Keywords` so that
+      `Reply::Plugin::Autocomplete::Keywords` plugin loads.
+      See <https://github.com/EntropyOrg/p5-Devel-IPerl/issues/53>.
+    - Make sure more of the code base uses `jupyter` rather than `ipython`.
+      See <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/82>.
+
 0.008 2017-09-08 02:47:34-0400
   Fixes
     - Hide IPerl namespace from PAUSE because a module with the name iPerl

@@ -21,3 +21,9 @@ sub main {
 }
 
 1;
+__END__
+=head1 DESCRIPTION
+
+See C<README.md> for installation instructions.
+
+=cut
