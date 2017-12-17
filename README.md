@@ -2,7 +2,7 @@
 
 | OS      |  Build status |
 |:-------:|--------------:|
-| Linux   | [![Build Status](https://travis-ci.org/PDLPorters/pdl.png?branch=master)](https://travis-ci.org/PDLPorters/pdl) |
+| Linux   | [![Build Status](https://travis-ci.org/EntropyOrg/p5-Devel-IPerl.png?branch=master)](https://travis-ci.org/EntropyOrg/p5-Devel-IPerl) |
 | Windows | [![Build status](https://ci.appveyor.com/api/projects/status/cnlq1vael2mehipa/branch/master?svg=true)](https://ci.appveyor.com/project/zmughal/p5-devel-iperl/branch/master) |
 
 [![Coverage Status](https://coveralls.io/repos/EntropyOrg/p5-Devel-IPerl/badge.png?branch=master)](https://coveralls.io/r/EntropyOrg/p5-Devel-IPerl?branch=master)
