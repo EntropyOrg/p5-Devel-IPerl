@@ -44,17 +44,11 @@ sub execute {
 	### Send back stdout/stderr
 	# send display_data / execute_result
 	if( defined $exec_result->stdout && length $exec_result->stdout ) {
-		my $output = $msg->new_reply_to(
-			msg_type => 'execute_result',
-			content => {
-				execution_count => $self->execution_count,
-				data => {
-					'text/plain' => $exec_result->stdout,
-				},
-				metadata => {},
-			}
+		my $stream_stdout = $msg->new_reply_to(
+			msg_type => 'stream',
+			content => { name => 'stdout', text => $exec_result->stdout, }
 		);
-		$kernel->send_message( $kernel->iopub, $output );
+		$kernel->send_message( $kernel->iopub, $stream_stdout );
 	}
 
 	if( defined $exec_result->stderr && length $exec_result->stderr ) {
@@ -66,9 +60,7 @@ sub execute {
 	}
 
 	# REPL output
-	# NOTE using stderr
-	# TODO can IPython handle any other streams?
-	# maybe only show REPL output if now display data can be shown?
+	# NOTE using execute_result
 	my $results_all_displayable = List::AllUtils::all
 		{ blessed($_) && $_->can('iperl_data_representations')  }
 		@{ $exec_result->results // [] };
@@ -76,12 +68,20 @@ sub execute {
 		&& !$results_all_displayable
 		&& length $exec_result->last_output > 0
 		&& length $exec_result->last_output < REPL_OUTPUT_TOO_LONG ) {
-		my $stream_repl_output = $msg->new_reply_to(
-			msg_type => 'stream',
-			content => { name => 'stderr', text => $exec_result->last_output, }
-		);
-		$kernel->send_message( $kernel->iopub, $stream_repl_output );
 
+		my $output_str = $exec_result->last_output;
+		chomp($output_str);
+		my $repl_output = $msg->new_reply_to(
+			msg_type => 'execute_result',
+			content => {
+				execution_count => $self->execution_count,
+				data => {
+					'text/plain' => $output_str,
+				},
+				metadata => {},
+			}
+		);
+		$kernel->send_message( $kernel->iopub, $repl_output );
 	}
 
 	### Send back data representations
