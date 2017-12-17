@@ -4,7 +4,7 @@
 
 =head1 NAME
 
-Devel::IPerl - Perl language kernel for IPython
+Devel::IPerl - Perl language kernel for Jupyter
 
 =head1 VERSION
 
