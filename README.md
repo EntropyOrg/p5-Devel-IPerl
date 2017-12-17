@@ -81,6 +81,11 @@ Make sure Jupyter is in the path by running
 
     cpanm Devel::IPerl
 
+If you have a [problem with failing tests for Markdown::Pod](https://github.com/keedi/Markdown-Pod/issues/8),
+you can install an older version using
+
+    cpanm Markdent@0.26 Markdown::Pod@0.006
+
 ## Running
 
     iperl console  # start the console
