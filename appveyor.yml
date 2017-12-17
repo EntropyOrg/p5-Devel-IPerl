@@ -33,14 +33,8 @@ install:
   - 'cd %APPVEYOR_BUILD_FOLDER% & curl -fsS -o install-zmq-libzmq.pl https://raw.githubusercontent.com/zmughal/p5-Alt-Alien-ZMQ-Alien-ZMQ-latest/%ALT_ALIEN_ZMQ_BRANCH%/maint/install-zmq-libzmq.pl & perl install-zmq-libzmq.pl --notest Alt::Alien::ZMQ::Alien::ZMQ::latest ZMQ::LibZMQ3 Net::Async::ZMQ'
   - "dzil listdeps --author | cpanm"
 
-before_build:
-  - "dzil build --in build-dir"
-
 build_script:
   - "dzil listdeps | cpanm"
-  - "cd build-dir"
-  - "cpanm --installdeps ."
-  - "cd .."
 
 test_script:
   - "dzil test --release --keep-build-dir"
