@@ -43,7 +43,7 @@ Some systems may not have a package manager (e.g,. Windows) or you may want to
 avoid using the package manager.
 
 Make sure you have Perl, a C/C++ compiler, `curl` (or another HTTP downloading
-tool such as `wget` or `lwp-request`), and `cpanm` on your system.
+tool such as `wget` or `lwp-request` (use `cpanm LWP` to install this)), and `cpanm` on your system.
 
 Then run this following command (read the [source first](https://raw.githubusercontent.com/zmughal/p5-Alt-Alien-ZMQ-Alien-ZMQ-latest/master/maint/install-zmq-libzmq.pl)!):
 
