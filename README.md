@@ -43,13 +43,13 @@ Some systems may not have a package manager (e.g,. Windows) or you may want to
 avoid using the package manager.
 
 Make sure you have Perl, a C/C++ compiler, `lwp-request` (or another HTTP
-downloading tool that outputs the contents of a HTTP request to STDOUT such as
+downloading tool that outputs the contents of an HTTP request to STDOUT such as
 `wget -O -` or `curl`), and `cpanm` on your system.
 
 Then run this following command (read the [source first](https://raw.githubusercontent.com/zmughal/p5-Alt-Alien-ZMQ-Alien-ZMQ-latest/master/maint/install-zmq-libzmq.pl)!):
 
     # use `cpanm LWP` to install `lwp-request`
-    lwp-request https://raw.githubusercontent.com/zmughal/p5-Alt-Alien-ZMQ-Alien-ZMQ-latest/master/maint/install-zmq-libzmq.pl | perl - -- Alt::Alien::ZMQ::Alien::ZMQ::latest ZMQ::LibZMQ3 Net::Async::ZMQ
+    lwp-request https://raw.githubusercontent.com/zmughal/p5-Alt-Alien-ZMQ-Alien-ZMQ-latest/master/maint/install-zmq-libzmq.pl | perl - --notest Alt::Alien::ZMQ::Alien::ZMQ::latest ZMQ::LibZMQ3 Net::Async::ZMQ
 
 What this does is install CPAN modules for
 
