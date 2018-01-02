@@ -43,6 +43,7 @@ before_install:
   - export ALT_ALIEN_ZMQ_BRANCH="master"
   - export RENARD_DEVOPS_HOOK_PRE_PERL="curl https://raw.githubusercontent.com/zmughal/p5-Alt-Alien-ZMQ-Alien-ZMQ-latest/$ALT_ALIEN_ZMQ_BRANCH/maint/install-zmq-libzmq.pl | perl - -- Alt::Alien::ZMQ::Alien::ZMQ::latest ZMQ::LibZMQ3 Net::Async::ZMQ"
 
+  - export RENARD_DEVOPS_HOOK_PRE_PERL="$RENARD_DEVOPS_HOOK_PRE_PERL; cpanm -n Expect"
   - eval "$(curl https://raw.githubusercontent.com/project-renard/devops/$DEVOPS_BRANCH/script/helper.pl | perl -- | awk '/^#START/,/^#END/ { print > "/dev/stdout"; next } { print > "/dev/stderr"}' )"
 branches:
   except:

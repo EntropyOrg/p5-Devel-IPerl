@@ -44,9 +44,9 @@ on test => sub {
 
 on develop => sub {
     requires 'File::Temp';
-    requires 'IPC::Run3';
     requires 'Inline::Python';
     requires 'Term::ANSIColor', '2.01';
+    requires 'Test::Requires';
 };
 
 if( $^O eq 'MSWin32' ) {
