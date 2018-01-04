@@ -30,7 +30,7 @@ install:
 
   - set ALT_ALIEN_ZMQ_BRANCH=master
   - cinst curl -y
-  - 'cd %APPVEYOR_BUILD_FOLDER% & curl -fsS -o install-zmq-libzmq.pl https://raw.githubusercontent.com/zmughal/p5-Alt-Alien-ZMQ-Alien-ZMQ-latest/%ALT_ALIEN_ZMQ_BRANCH%/maint/install-zmq-libzmq.pl & perl install-zmq-libzmq.pl --notest Alt::Alien::ZMQ::Alien::ZMQ::latest ZMQ::LibZMQ3 Net::Async::ZMQ'
+  - 'cd %APPVEYOR_BUILD_FOLDER% & curl -fsS -o install-zmq-libzmq.pl https://raw.githubusercontent.com/zmughal-p5CPAN/p5-Alt-Alien-ZMQ-Alien-ZMQ-latest/%ALT_ALIEN_ZMQ_BRANCH%/maint/install-zmq-libzmq.pl & perl install-zmq-libzmq.pl --notest Alt::Alien::ZMQ::Alien::ZMQ::latest ZMQ::LibZMQ3 Net::Async::ZMQ'
   - "dzil listdeps --author | cpanm"
 
 build_script:
