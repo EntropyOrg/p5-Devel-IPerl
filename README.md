@@ -59,7 +59,11 @@ What this does is install CPAN modules for
 
 Installing these modules can be tricky, so this script handles it for you.
 
-It has been tested on GNU/Linux, macOS, and Windows (Strawberry Perl).
+It has been tested on GNU/Linux, macOS, and Windows (Strawberry Perl 5.26.1.1).
+
+Note: There are currently issues with installing on Windows using ActivePerl
+and older versions of Strawberry Perl. These are mostly due to having an older
+toolchain which causes builds of the native libraries to fail.
 
 #### Jupyter
 
