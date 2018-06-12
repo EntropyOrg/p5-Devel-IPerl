@@ -205,6 +205,10 @@ sub execute_reply {
 sub msg_complete_request {
 	my ($self, $kernel, $msg, $socket ) = @_;
 
+	### send kernel status : busy
+	my $status_busy = Devel::IPerl::Message::Helper->kernel_status( $msg, 'busy' );
+	$kernel->send_message( $kernel->iopub, $status_busy );
+
 	my $code = $msg->content->{code};
 	my $cursor_pos = $msg->content->{cursor_pos};
 
@@ -257,10 +261,18 @@ sub msg_complete_request {
 	);
 	#use DDP; p $complete_reply;
 	$kernel->send_message( $kernel->shell, $complete_reply );
+
+	### send kernel status : idle
+	my $status_idle = Devel::IPerl::Message::Helper->kernel_status( $msg, 'idle' );
+	$kernel->send_message( $kernel->iopub, $status_idle );
 }
 
 sub msg_is_complete_request {
     my ($self, $kernel, $msg, $socket ) = @_;
+
+    ### send kernel status : busy
+    my $status_busy = Devel::IPerl::Message::Helper->kernel_status( $msg, 'busy' );
+    $kernel->send_message( $kernel->iopub, $status_busy );
 
     my $content;
     if ($self->backend->is_complete( $msg->{content}{code} )) {
@@ -278,6 +290,10 @@ sub msg_is_complete_request {
         content => $content,
     );
     $kernel->send_message( $kernel->shell, $is_complete_reply );
+
+    ### send kernel status : idle
+    my $status_idle = Devel::IPerl::Message::Helper->kernel_status( $msg, 'idle' );
+    $kernel->send_message( $kernel->iopub, $status_idle );
 }
 
 

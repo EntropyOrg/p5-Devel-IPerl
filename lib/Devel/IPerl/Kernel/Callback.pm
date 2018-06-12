@@ -43,6 +43,11 @@ sub msg_kernel_info_request {
 
 sub msg_shutdown_request {
 	my ($self, $kernel, $msg) = @_;
+
+	### send kernel status : busy
+	my $status_busy = Devel::IPerl::Message::Helper->kernel_status( $msg, 'busy' );
+	$kernel->send_message( $kernel->iopub, $status_busy );
+
 	my $shutdown_reply = $msg->new_reply_to(
 		msg_type => 'shutdown_reply',
 		content => {
@@ -51,6 +56,10 @@ sub msg_shutdown_request {
 	);
 	$kernel->send_message( $kernel->shell, $shutdown_reply );
 	$kernel->stop;
+
+	### send kernel status : idle
+	my $status_idle = Devel::IPerl::Message::Helper->kernel_status( $msg, 'idle' );
+	$kernel->send_message( $kernel->iopub, $status_idle );
 }
 
 1;
