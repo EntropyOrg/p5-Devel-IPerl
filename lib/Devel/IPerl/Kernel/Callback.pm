@@ -4,10 +4,15 @@ use strict;
 use warnings;
 
 use Moo;
+use Devel::IPerl::Message::Helper;
 use namespace::autoclean;
 
 sub msg_kernel_info_request {
 	my ($self, $kernel, $msg ) = @_;
+
+	### send kernel status : busy
+	my $status_busy = Devel::IPerl::Message::Helper->kernel_status( $msg, 'busy' );
+	$kernel->send_message( $kernel->iopub, $status_busy );
 
 	my $reply = $msg->new_reply_to(
 		msg_type => 'kernel_info_reply',
@@ -30,6 +35,10 @@ sub msg_kernel_info_request {
 		}
 	);
 	$kernel->send_message( $kernel->shell, $reply );
+
+	### send kernel status : idle
+	my $status_idle = Devel::IPerl::Message::Helper->kernel_status( $msg, 'idle' );
+	$kernel->send_message( $kernel->iopub, $status_idle );
 }
 
 sub msg_shutdown_request {
