@@ -197,13 +197,15 @@ sub run {#{{{
 		my $async_socket =  Net::Async::ZMQ::Socket->new(
 			socket => $socket,
 			on_read_ready => sub {
-				my @blobs;
-				while ( my $recvmsg = zmq_recvmsg( $socket, ZMQ_RCVMORE ) ) {
-					my $msg = zmq_msg_data($recvmsg);
-					push @blobs, $msg;
-					#print "|$msg|", "\n"; #DEBUG
-				}
-				if( @blobs ) {
+				while (1) {
+					my @blobs;
+					while ( my $recvmsg = zmq_recvmsg( $socket, ZMQ_RCVMORE ) ) {
+						my $msg = zmq_msg_data($recvmsg);
+						push @blobs, $msg;
+						#print "|$msg|", "\n"; #DEBUG
+					}
+					last unless (@blobs);
+
 					$self->route_message(\@blobs, $socket);
 				}
 			},
