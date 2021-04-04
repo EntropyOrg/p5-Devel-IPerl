@@ -48,7 +48,7 @@ sub message_from_zmq_blobs {
 		parent_header => decode_json($parent_header),
 		metadata => decode_json($metadata),
 		content => decode_json($content),
-		blobs => [ map { decode_json($_) } @blobs_rest ],
+		blobs => [ @blobs_rest ],
 		%opt,
 	);
 }
