@@ -129,6 +129,7 @@ sub display_data {
 				msg_type => 'display_data',
 				content => {
 					data => $data_formats,
+					metadata => {},
 				},
 				metadata => {},
 			);
