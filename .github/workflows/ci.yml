@@ -49,7 +49,7 @@ jobs:
       - name: Install Perl deps (Windows)
         if: matrix.os == 'windows-latest'
         run: |
-          curl https://raw.githubusercontent.com/zmughal-CPAN/p5-Alt-Alien-ZMQ-Alien-ZMQ-latest/${{ env.ALT_ALIEN_ZMQ_BRANCH }}/maint/install-zmq-libzmq.pl | perl - -- Alt::Alien::ZMQ::Alien::ZMQ::latest ZMQ::LibZMQ3 Net::Async::ZMQ
+          curl https://raw.githubusercontent.com/zmughal-CPAN/p5-Alt-Alien-ZMQ-Alien-ZMQ-latest/${{ env.ALT_ALIEN_ZMQ_BRANCH }}/maint/install-zmq-libzmq.pl | perl - -- -n Alt::Alien::ZMQ::Alien::ZMQ::latest ZMQ::LibZMQ3 Net::Async::ZMQ
       - name: Install Perl deps
         run: |
           cpanm --verbose --notest --installdeps .
