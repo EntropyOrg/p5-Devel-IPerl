@@ -15,13 +15,13 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
-        perl:
-          - "5.14"
-          - "5.16"
-          - "5.20"
-          - "5.30"
-          - "5.32"
-        thread: [ 'true' ]
+        perl: ['5']
+        include:
+          - { os: 'ubuntu-latest', perl: "5.14" }
+          - { os: 'ubuntu-latest', perl: "5.16" }
+          - { os: 'ubuntu-latest', perl: "5.20" }
+          - { os: 'ubuntu-latest', perl: "5.30" }
+          - { os: 'ubuntu-latest', perl: "5.32" }
     name: Perl ${{ matrix.perl }} on ${{ matrix.os }}
 
     steps:
@@ -30,7 +30,6 @@ jobs:
         uses: shogo82148/actions-setup-perl@v1
         with:
           perl-version: ${{ matrix.perl }}
-          multi-thread: ${{ matrix.thread }}
       - run: perl -V
       - name: Install native deps
         if: matrix.os == 'ubuntu-latest'
