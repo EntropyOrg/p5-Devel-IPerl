@@ -182,6 +182,16 @@ my $tests = [
 				],
 			},
 	},
+	{
+		name => 'Test Unicode',
+		data => { in => [
+					q|print STDERR "\x{2019}\n"|
+				],
+				out => [
+					{ out => '1', stream => "\x{2019}\n" },
+				],
+			},
+	},
 ];
 
 
