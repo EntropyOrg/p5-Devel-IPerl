@@ -7,7 +7,7 @@ use File::Temp;
 use Term::ANSIColor 2.01;
 use FindBin;
 use File::Spec;
-use Test::Requires qw(Expect);
+use Test::Needs qw(Expect);
 
 # find using relative path FindBin
 my $iperl_command = File::Spec->catfile($FindBin::Bin, qw(.. bin iperl));
