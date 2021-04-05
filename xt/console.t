@@ -9,6 +9,8 @@ use FindBin;
 use File::Spec;
 use Test::Needs qw(Expect);
 
+Expect->import;
+
 # find using relative path FindBin
 my $iperl_command = File::Spec->catfile($FindBin::Bin, qw(.. bin iperl));
 
@@ -50,10 +52,10 @@ sub run_code {
 	my $prompt_reached;
 	#$exp->restart_timeout_upon_receive(1);
 	$exp->expect( 2,
-		[ "Directory for Perl kernel spec does not exist...\n", sub { exp_continue } ],
-		[ qr/Jupyter console .*\n/, sub {exp_continue } ],
-		[ qr/IPerl!.*/, sub { exp_continue } ],
-		[ timeout => sub { exp_continue; } ],
+		[ "Directory for Perl kernel spec does not exist...\n", sub { exp_continue() } ],
+		[ qr/Jupyter console .*\n/, sub {exp_continue() } ],
+		[ qr/IPerl!.*/, sub { exp_continue() } ],
+		[ timeout => sub { exp_continue(); } ],
 		[ qr/Do you really want to exit.*/ => sub { shift->send("y\r") } ],
 		[ qr/.*]: / => sub {
 				my $self = shift;
@@ -65,7 +67,7 @@ sub run_code {
 					$output->{stream} = $self->before() . $things_before_out;
 					push @out_data, $output;
 
-					return exp_continue;
+					return exp_continue();
 				}
 				if( $index < @{ $data->{in} } ) {
 					$self->send(  $data->{in}[$index] );
@@ -74,10 +76,10 @@ sub run_code {
 				} else {
 					$self->send( "\cD" );
 				}
-				return exp_continue;
+				return exp_continue();
 			}
 		],
-		[ qr/\Q\033[8D\033[8C\033[0m\033[?12l\033[?25h\E/ => sub { return exp_continue } ],
+		[ qr/\Q\033[8D\033[8C\033[0m\033[?12l\033[?25h\E/ => sub { return exp_continue() } ],
 	);
 
 	my $strip = sub {
