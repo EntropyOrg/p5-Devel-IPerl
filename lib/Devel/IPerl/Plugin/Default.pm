@@ -1,5 +1,5 @@
 package Devel::IPerl::Plugin::Default;
-$Devel::IPerl::Plugin::Default::VERSION = '0.009';
+$Devel::IPerl::Plugin::Default::VERSION = '0.010';
 use strict;
 use warnings;
 
@@ -22,7 +22,7 @@ Devel::IPerl::Plugin::Default
 
 =head1 VERSION
 
-version 0.009
+version 0.010
 
 =head1 AUTHOR
 

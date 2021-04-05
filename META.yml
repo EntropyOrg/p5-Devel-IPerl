@@ -13,7 +13,7 @@ configure_requires:
   File::ShareDir::Install: '0.06'
   perl: '5.013002'
 dynamic_config: 1
-generated_by: 'Dist::Zilla version 6.010, CPAN::Meta::Converter version 2.150010'
+generated_by: 'Dist::Zilla version 6.017, CPAN::Meta::Converter version 2.150010'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -25,7 +25,6 @@ no_index:
 requires:
   B::Keywords: '0'
   Capture::Tiny: '0'
-  Devel::REPL: '0'
   Digest::SHA: '0'
   Env: '0'
   File::Copy::Recursive: '0'
@@ -72,5 +71,7 @@ requires:
 resources:
   homepage: https://github.com/EntropyOrg/p5-Devel-IPerl
   repository: https://github.com/EntropyOrg/p5-Devel-IPerl.git
-version: '0.009'
-x_serialization_backend: 'YAML::Tiny version 1.70'
+version: '0.010'
+x_generated_by_perl: v5.26.1
+x_serialization_backend: 'YAML::Tiny version 1.73'
+x_spdx_expression: 'Artistic-1.0-Perl OR GPL-1.0-or-later'

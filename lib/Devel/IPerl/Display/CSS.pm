@@ -1,5 +1,5 @@
 package Devel::IPerl::Display::CSS;
-$Devel::IPerl::Display::CSS::VERSION = '0.009';
+$Devel::IPerl::Display::CSS::VERSION = '0.010';
 use strict;
 use warnings;
 
@@ -40,7 +40,7 @@ Devel::IPerl::Display::CSS
 
 =head1 VERSION
 
-version 0.009
+version 0.010
 
 =head1 AUTHOR
 

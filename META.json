@@ -4,13 +4,13 @@
       "Zakariyya Mughal <zmughal@cpan.org>"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "Dist::Zilla version 6.010, CPAN::Meta::Converter version 2.150010",
+   "generated_by" : "Dist::Zilla version 6.017, CPAN::Meta::Converter version 2.150010",
    "license" : [
       "perl_5"
    ],
    "meta-spec" : {
       "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
-      "version" : "2"
+      "version" : 2
    },
    "name" : "Devel-IPerl",
    "no_index" : {
@@ -28,18 +28,20 @@
       },
       "develop" : {
          "requires" : {
+            "Data::Dumper" : "0",
+            "Encode" : "0",
             "File::Temp" : "0",
-            "IPC::Run3" : "0",
             "Inline::Python" : "0",
             "Term::ANSIColor" : "2.01",
-            "Test::More" : "0"
+            "Test::More" : "0",
+            "Test::Needs" : "0",
+            "open" : "0"
          }
       },
       "runtime" : {
          "requires" : {
             "B::Keywords" : "0",
             "Capture::Tiny" : "0",
-            "Devel::REPL" : "0",
             "Digest::SHA" : "0",
             "Env" : "0",
             "File::Copy::Recursive" : "0",
@@ -83,6 +85,9 @@
             "perl" : "5.013002",
             "strict" : "0",
             "warnings" : "0"
+         },
+         "suggests" : {
+            "Devel::REPL" : "0"
          }
       },
       "test" : {
@@ -104,7 +109,9 @@
          "web" : "https://github.com/EntropyOrg/p5-Devel-IPerl"
       }
    },
-   "version" : "0.009",
-   "x_serialization_backend" : "JSON::XS version 3.04"
+   "version" : "0.010",
+   "x_generated_by_perl" : "v5.26.1",
+   "x_serialization_backend" : "Cpanel::JSON::XS version 4.25",
+   "x_spdx_expression" : "Artistic-1.0-Perl OR GPL-1.0-or-later"
 }
 

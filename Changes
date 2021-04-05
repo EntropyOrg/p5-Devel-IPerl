@@ -1,3 +1,67 @@
+0.010 2021-04-05 14:48:12-0500
+
+  Features
+
+   - Kernel now works with JupyterLab.
+
+     Thanks to sknigh, Tmarinus, and vyuh for the bug report and to dlukes for
+     the fixes.
+
+     See <https://github.com/EntropyOrg/p5-Devel-IPerl/issues/90>,
+     <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/98>,
+     <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/101>.
+
+  Refactoring
+
+   - Test console using Expect.pm.
+
+     See <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/87>.
+
+  Bug fixes
+
+   - Update parsing the IPython version number in test (Joe Landman, joelandman++).
+
+     See <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/97>.
+
+   - Update message protocol to use kernel-status messages
+     (David Lukes, dlukes++).
+
+     See <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/98>.
+
+   - Fix hanging when running notebook cells in rapid succession and when
+     using "Run all cells" Thanks to David Lukes (dlukes++) for the report and
+     t.fujiwara (tofjw++) for the fix.
+
+     See <https://github.com/EntropyOrg/p5-Devel-IPerl/issues/93>,
+     <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/106>.
+
+   - Unicode output streams on STDOUT/STDERR.
+
+     Thanks to CH Su for the bug report and David Lukes (dlukes++) for the
+     fix.
+
+     See <https://github.com/EntropyOrg/p5-Devel-IPerl/issues/35>,
+     <https://github.com/EntropyOrg/p5-Devel-IPerl/issues/92>,
+     <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/98>.
+
+   - Stop JSON decoding raw data blobs.
+
+     See <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/100>
+
+  Build changes
+
+   - Test on more recent versions of Perl (Gabor Szabo, szabgab++).
+
+     See <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/99>.
+
+   - Run tests on GitHub Actions CI.
+
+     See <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/103>.
+
+   - Make Devel::REPL a suggested dependency as Reply is the default backend.
+
+     See <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/104>.
+
 0.009 2017-12-17 01:37:41-0600
 
   Feature

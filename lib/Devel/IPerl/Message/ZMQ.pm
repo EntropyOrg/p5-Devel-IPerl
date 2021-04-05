@@ -1,5 +1,5 @@
 package Devel::IPerl::Message::ZMQ;
-$Devel::IPerl::Message::ZMQ::VERSION = '0.009';
+$Devel::IPerl::Message::ZMQ::VERSION = '0.010';
 use strict;
 use warnings;
 use Moo;
@@ -48,7 +48,7 @@ sub message_from_zmq_blobs {
 		parent_header => decode_json($parent_header),
 		metadata => decode_json($metadata),
 		content => decode_json($content),
-		blobs => [ map { decode_json($_) } @blobs_rest ],
+		blobs => [ @blobs_rest ],
 		%opt,
 	);
 }
@@ -124,7 +124,7 @@ Devel::IPerl::Message::ZMQ
 
 =head1 VERSION
 
-version 0.009
+version 0.010
 
 =head1 AUTHOR
 

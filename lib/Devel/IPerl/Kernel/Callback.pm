@@ -1,13 +1,18 @@
 package Devel::IPerl::Kernel::Callback;
-$Devel::IPerl::Kernel::Callback::VERSION = '0.009';
+$Devel::IPerl::Kernel::Callback::VERSION = '0.010';
 use strict;
 use warnings;
 
 use Moo;
+use Devel::IPerl::Message::Helper;
 use namespace::autoclean;
 
 sub msg_kernel_info_request {
 	my ($self, $kernel, $msg ) = @_;
+
+	### send kernel status : busy
+	my $status_busy = Devel::IPerl::Message::Helper->kernel_status( $msg, 'busy' );
+	$kernel->send_message( $kernel->iopub, $status_busy );
 
 	my $reply = $msg->new_reply_to(
 		msg_type => 'kernel_info_reply',
@@ -30,10 +35,19 @@ sub msg_kernel_info_request {
 		}
 	);
 	$kernel->send_message( $kernel->shell, $reply );
+
+	### send kernel status : idle
+	my $status_idle = Devel::IPerl::Message::Helper->kernel_status( $msg, 'idle' );
+	$kernel->send_message( $kernel->iopub, $status_idle );
 }
 
 sub msg_shutdown_request {
 	my ($self, $kernel, $msg) = @_;
+
+	### send kernel status : busy
+	my $status_busy = Devel::IPerl::Message::Helper->kernel_status( $msg, 'busy' );
+	$kernel->send_message( $kernel->iopub, $status_busy );
+
 	my $shutdown_reply = $msg->new_reply_to(
 		msg_type => 'shutdown_reply',
 		content => {
@@ -42,6 +56,10 @@ sub msg_shutdown_request {
 	);
 	$kernel->send_message( $kernel->shell, $shutdown_reply );
 	$kernel->stop;
+
+	### send kernel status : idle
+	my $status_idle = Devel::IPerl::Message::Helper->kernel_status( $msg, 'idle' );
+	$kernel->send_message( $kernel->iopub, $status_idle );
 }
 
 1;
@@ -58,7 +76,7 @@ Devel::IPerl::Kernel::Callback
 
 =head1 VERSION
 
-version 0.009
+version 0.010
 
 =head1 AUTHOR
 

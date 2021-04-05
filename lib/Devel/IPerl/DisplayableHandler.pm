@@ -1,5 +1,5 @@
 package Devel::IPerl::DisplayableHandler;
-$Devel::IPerl::DisplayableHandler::VERSION = '0.009';
+$Devel::IPerl::DisplayableHandler::VERSION = '0.010';
 use strict;
 use warnings;
 use Scalar::Util qw(blessed);
@@ -26,7 +26,7 @@ Devel::IPerl::DisplayableHandler
 
 =head1 VERSION
 
-version 0.009
+version 0.010
 
 =head1 AUTHOR
 

@@ -1,6 +1,6 @@
 # ABSTRACT: A role for image objects that is used to generate HTML with parameters such as geometry.
 package Devel::IPerl::Display::Role::WebImage;
-$Devel::IPerl::Display::Role::WebImage::VERSION = '0.009';
+$Devel::IPerl::Display::Role::WebImage::VERSION = '0.010';
 use strict;
 use warnings;
 
@@ -40,7 +40,7 @@ Devel::IPerl::Display::Role::WebImage - A role for image objects that is used to
 
 =head1 VERSION
 
-version 0.009
+version 0.010
 
 =head1 SYNOPSIS
 

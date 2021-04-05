@@ -1,10 +1,5 @@
 # Devel-IPerl
 
-| OS      |  Build status |
-|:-------:|--------------:|
-| Linux   | [![Build Status](https://travis-ci.org/PDLPorters/pdl.png?branch=master)](https://travis-ci.org/PDLPorters/pdl) |
-| Windows | [![Build status](https://ci.appveyor.com/api/projects/status/cnlq1vael2mehipa/branch/master?svg=true)](https://ci.appveyor.com/project/zmughal/p5-devel-iperl/branch/master) |
-
 [![Coverage Status](https://coveralls.io/repos/EntropyOrg/p5-Devel-IPerl/badge.png?branch=master)](https://coveralls.io/r/EntropyOrg/p5-Devel-IPerl?branch=master)
 [![CPAN version](https://badge.fury.io/pl/Devel-IPerl.svg)](https://metacpan.org/pod/Devel::IPerl)
 
@@ -42,12 +37,14 @@ Then you will need to install `ZMQ::LibZMQ3` by running:
 Some systems may not have a package manager (e.g,. Windows) or you may want to
 avoid using the package manager.
 
-Make sure you have Perl, a C/C++ compiler, `curl` (or another HTTP downloading
-tool such as `wget` or `lwp-request`), and `cpanm` on your system.
+Make sure you have Perl, a C/C++ compiler, `lwp-request` (or another HTTP
+downloading tool that outputs the contents of an HTTP request to STDOUT such as
+`wget -O -` or `curl`), and `cpanm` on your system.
 
-Then run this following command (read the [source first](https://raw.githubusercontent.com/zmughal/p5-Alt-Alien-ZMQ-Alien-ZMQ-latest/master/maint/install-zmq-libzmq.pl)!):
+Then run this following command (read the [source first](https://raw.githubusercontent.com/zmughal-CPAN/p5-Alt-Alien-ZMQ-Alien-ZMQ-latest/master/maint/install-zmq-libzmq.pl)!):
 
-    curl https://raw.githubusercontent.com/zmughal/p5-Alt-Alien-ZMQ-Alien-ZMQ-latest/master/maint/install-zmq-libzmq.pl | perl - -- Alt::Alien::ZMQ::Alien::ZMQ::latest ZMQ::LibZMQ3 Net::Async::ZMQ
+    # use `cpanm LWP` to install `lwp-request`
+    lwp-request https://raw.githubusercontent.com/zmughal-CPAN/p5-Alt-Alien-ZMQ-Alien-ZMQ-latest/master/maint/install-zmq-libzmq.pl | perl - --notest Alt::Alien::ZMQ::Alien::ZMQ::latest ZMQ::LibZMQ3 Net::Async::ZMQ
 
 What this does is install CPAN modules for
 
@@ -57,7 +54,11 @@ What this does is install CPAN modules for
 
 Installing these modules can be tricky, so this script handles it for you.
 
-It has been tested on GNU/Linux, macOS, and Windows (Strawberry Perl).
+It has been tested on GNU/Linux, macOS, and Windows (Strawberry Perl 5.26.1.1).
+
+Note: There are currently issues with installing on Windows using ActivePerl
+and older versions of Strawberry Perl. These are mostly due to having an older
+toolchain which causes builds of the native libraries to fail.
 
 #### Jupyter
 
@@ -80,6 +81,11 @@ Make sure Jupyter is in the path by running
 ### Install from CPAN
 
     cpanm Devel::IPerl
+
+If you have a [problem with failing tests for Markdown::Pod](https://github.com/keedi/Markdown-Pod/issues/8),
+you can install an older version using
+
+    cpanm Markdent@0.26 Markdown::Pod@0.006
 
 ## Running
 
