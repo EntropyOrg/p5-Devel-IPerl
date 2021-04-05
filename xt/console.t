@@ -3,11 +3,23 @@ use Test::More;
 use strict;
 use warnings;
 
+# clean up processes:
+#
+#     $ pgrep -lfa IPerl
+#     $ pkill -f -9 IPerl
+
+use Encode qw(decode_utf8);
+use open qw(:std :encoding(UTF-8));
+
 use File::Temp;
 use Term::ANSIColor 2.01;
 use FindBin;
 use File::Spec;
+use Data::Dumper;
 use Test::Needs qw(Expect);
+
+local $Data::Dumper::Useqq = 1;
+local $Data::Dumper::Terse = 1;
 
 Expect->import;
 
@@ -57,17 +69,26 @@ sub run_code {
 		[ qr/IPerl!.*/, sub { exp_continue() } ],
 		[ timeout => sub { exp_continue(); } ],
 		[ qr/Do you really want to exit.*/ => sub { shift->send("y\r") } ],
+		[ qr/Shutting down kernel/ => sub { exp_continue() } ],
 		[ qr/.*]: / => sub {
 				my $self = shift;
 				if( $self->match() =~ qr/Out/ ) {
 					my $output = {};
 
 					my ($things_before_out) = $self->match() =~ /(.*?) Out/x;
-					$output->{out} = $self->after();
-					$output->{stream} = $self->before() . $things_before_out;
+					$output->{stream} = decode_utf8( $self->before() . $things_before_out );
 					push @out_data, $output;
 
 					return exp_continue();
+				}
+
+				if( @out_data && $self->match =~ qr/In/ && $self->before ne '' ) {
+					my $escape_str = "\e[0m\e[0m";
+					my $next_out =
+						decode_utf8( $self->before() )
+						=~ s/( ^\Q$escape_str\E ) | ( \n\n$ )//xgr;
+
+					$out_data[-1]->{out} = $next_out;
 				}
 				if( $index < @{ $data->{in} } ) {
 					$self->send(  $data->{in}[$index] );
@@ -108,6 +129,7 @@ sub run_code {
 	}
 
 	#use Data::Dumper; $Data::Dumper::Useqq = 1; print Dumper( \@out_data );
+	kill 9, $exp->pid;
 
 	\@out_data;
 }
@@ -169,9 +191,22 @@ plan tests => ~~ @$tests;
 
 for my $test (@$tests) {
 	subtest "Test: $test->{name}", sub {
-		my $data = $test->{data};
-		my $out = run_code( $test->{data} );
-		is_deeply( $out, $data->{out} );
+		my $input = $test->{data};
+		my $output = run_code( $input );
+		my $lines = @{ $input->{in} };
+		for my $i (0..$lines-1) {
+			note "Input: $input->{in}[$i]";
+
+			my $got_out = $output->[$i]{out};
+			my $exp_out = $input->{out}[$i]{out};
+			is $got_out, $exp_out, "Got out output: @{[ Dumper( $exp_out ) ]}";
+
+			my $got_stream = $output->[$i]{stream};
+			my $exp_stream = $input->{out}[$i]{stream};
+
+			is $got_stream, $exp_stream, "Got stream output: @{[ Dumper( $exp_stream ) ]}";
+		}
+		is_deeply( $output, $input->{out} );
 	}
 }
 
