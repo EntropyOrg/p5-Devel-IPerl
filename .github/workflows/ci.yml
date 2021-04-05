@@ -15,7 +15,12 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
-        perl: [ '5' ]
+        perl:
+          - "5.14"
+          - "5.16"
+          - "5.20"
+          - "5.30"
+          - "5.32"
         thread: [ 'true' ]
     name: Perl ${{ matrix.perl }} on ${{ matrix.os }}
 
