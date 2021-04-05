@@ -1,0 +1,53 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+
+jobs:
+  build_test:
+    runs-on: ${{ matrix.os }}
+    env:
+      AUTHOR_TESTING: 1
+      ALT_ALIEN_ZMQ_BRANCH: "master"
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        perl: [ '5' ]
+        thread: [ 'true' ]
+    name: Perl ${{ matrix.perl }} on ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: ${{ matrix.perl }}
+          multi-thread: ${{ matrix.thread }}
+      - run: perl -V
+      - name: Install native deps
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get install \
+                libzmq3-dev \
+                python3-pygments \
+                python3-setuptools
+      - name: Install native deps
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install zmq python3
+      - name: Install Python deps
+        run: |
+          pip3 install -r requirements.txt
+      - name: Install Perl deps (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          curl https://raw.githubusercontent.com/zmughal-CPAN/p5-Alt-Alien-ZMQ-Alien-ZMQ-latest/${{ env.ALT_ALIEN_ZMQ_BRANCH }}/maint/install-zmq-libzmq.pl | perl - -- Alt::Alien::ZMQ::Alien::ZMQ::latest ZMQ::LibZMQ3 Net::Async::ZMQ
+      - name: Install Perl deps
+        run: |
+          cpanm --verbose --notest --installdeps .
+      - name: Run tests
+        run: |
+          prove -lvr t/
