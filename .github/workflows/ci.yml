@@ -26,11 +26,20 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Set up perl
         uses: shogo82148/actions-setup-perl@v1
+        if: matrix.os != 'windows-latest'
         with:
           perl-version: ${{ matrix.perl }}
+      - name: Set up perl (Strawberry)
+        uses: shogo82148/actions-setup-perl@v1
+        if: matrix.os == 'windows-latest'
+        with:
+          distribution: 'strawberry'
+
       - run: perl -V
+
       - name: Install native deps
         if: matrix.os == 'ubuntu-latest'
         run: |
@@ -42,9 +51,11 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: |
           brew install zmq python3
+
       - name: Install Python deps
         run: |
           pip3 install -r requirements.txt
+
       - name: Install Perl deps (Windows)
         if: matrix.os == 'windows-latest'
         run: |
@@ -52,6 +63,7 @@ jobs:
       - name: Install Perl deps
         run: |
           cpanm --verbose --notest --installdeps .
+
       - name: Run tests
         run: |
           prove -lvr t/
