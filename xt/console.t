@@ -114,7 +114,7 @@ sub run_code {
 
 my $tests = [
 	{
-		name => 'test0',
+		name => 'arithmetic',
 		data => {
 				in => [
 					q|$x = 2;|,
@@ -127,7 +127,7 @@ my $tests = [
 			},
 	},
 	{
-		name => 'test0',
+		name => 'STDERR and arithmetic',
 		data => { in => [
 					q|print STDERR "hey"|,
 					q|2 ** 8;|,
@@ -139,7 +139,7 @@ my $tests = [
 			},
 	},
 	{
-		name => 'test0',
+		name => 'STDERR and newlines',
 		data => { in => [
 					q|print STDERR "hey\n"|,
 					q|print STDERR "hey\n\n"|,
@@ -151,7 +151,7 @@ my $tests = [
 			},
 	},
 	{
-		name => 'test0',
+		name => 'STDERR and more newlines',
 		data => { in => [
 					q|print STDERR "hey\n\n\n"|
 				],
