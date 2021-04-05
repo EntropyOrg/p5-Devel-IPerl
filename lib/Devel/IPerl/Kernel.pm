@@ -197,6 +197,12 @@ sub run {#{{{
 		my $async_socket =  Net::Async::ZMQ::Socket->new(
 			socket => $socket,
 			on_read_ready => sub {
+				# Keep reading for more messages because the
+				# socket filehandle is edge-triggered.
+				#
+				# See:
+				# - ZMQ_FD <http://api.zeromq.org/3-2:zmq-getsockopt#toc23>
+				# - <https://funcptr.net/2012/09/10/zeromq---edge-triggered-notification/>
 				while (1) {
 					my @blobs;
 					while ( my $recvmsg = zmq_recvmsg( $socket, ZMQ_RCVMORE ) ) {
