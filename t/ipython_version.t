@@ -14,7 +14,7 @@ my $version_text = qx/$ipython --version/;
 note "Got version output:\n$version_text";
 my $version;
 if ($ipython =~ /jupyter/) {
-	($version) = $version_text =~ /^ipython\s+:\s+(.*)$/m;
+	($version) = $version_text =~ /^ipython\s+:\s+(.*)$/mi;
 } else {
 	chomp( $version = $version_text );
 }
