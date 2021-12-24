@@ -29,26 +29,26 @@ jobs:
 
       - name: Set up perl
         uses: shogo82148/actions-setup-perl@v1
-        if: matrix.os != 'windows-latest'
+        if: runner.os != 'Windows'
         with:
           perl-version: ${{ matrix.perl }}
       - name: Set up perl (Strawberry)
         uses: shogo82148/actions-setup-perl@v1
-        if: matrix.os == 'windows-latest'
+        if: runner.os == 'Windows'
         with:
           distribution: 'strawberry'
 
       - run: perl -V
 
       - name: Install native deps
-        if: matrix.os == 'ubuntu-latest'
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get install \
                 libzmq3-dev \
                 python3-pygments \
                 python3-setuptools
       - name: Install native deps
-        if: matrix.os == 'macos-latest'
+        if: runner.os == 'macOS'
         run: |
           brew install zmq python3
 
@@ -57,7 +57,7 @@ jobs:
           pip3 install -r requirements.txt
 
       - name: Install Perl deps (Windows)
-        if: matrix.os == 'windows-latest'
+        if: runner.os == 'Windows'
         run: |
           curl https://raw.githubusercontent.com/zmughal-CPAN/p5-Alt-Alien-ZMQ-Alien-ZMQ-latest/${{ env.ALT_ALIEN_ZMQ_BRANCH }}/maint/install-zmq-libzmq.pl | perl - --notest -- Alt::Alien::ZMQ::Alien::ZMQ::latest ZMQ::LibZMQ3 Net::Async::ZMQ
       - name: Install Perl deps
