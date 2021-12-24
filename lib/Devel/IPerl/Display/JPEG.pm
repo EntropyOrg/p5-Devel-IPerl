@@ -1,5 +1,5 @@
 package Devel::IPerl::Display::JPEG;
-$Devel::IPerl::Display::JPEG::VERSION = '0.010';
+$Devel::IPerl::Display::JPEG::VERSION = '0.011';
 use strict;
 use warnings;
 
@@ -25,7 +25,7 @@ Devel::IPerl::Display::JPEG
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 AUTHOR
 

@@ -1,3 +1,18 @@
+0.011 2021-12-23 20:51:46-0500
+
+  Features
+
+   - Create a small Dockerfile for IPerl + PDL.
+
+     See <https://github.com/EntropyOrg/p5-Devel-IPerl/issues/57>,
+     <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/108>.
+
+  Bug fixes
+
+   - Fix IPython version parsing in test (startstarz++).
+
+     See <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/110>.
+
 0.010 2021-04-05 14:48:12-0500
 
   Features

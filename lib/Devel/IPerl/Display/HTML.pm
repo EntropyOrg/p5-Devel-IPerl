@@ -1,5 +1,5 @@
 package Devel::IPerl::Display::HTML;
-$Devel::IPerl::Display::HTML::VERSION = '0.010';
+$Devel::IPerl::Display::HTML::VERSION = '0.011';
 use strict;
 use warnings;
 
@@ -22,7 +22,7 @@ Devel::IPerl::Display::HTML
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 AUTHOR
 

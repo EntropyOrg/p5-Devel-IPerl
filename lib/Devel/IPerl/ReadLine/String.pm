@@ -1,5 +1,5 @@
 package Devel::IPerl::ReadLine::String;
-$Devel::IPerl::ReadLine::String::VERSION = '0.010';
+$Devel::IPerl::ReadLine::String::VERSION = '0.011';
 # This implements a mocked up version of the ReadLine interface.
 
 use strict;
@@ -50,7 +50,7 @@ Devel::IPerl::ReadLine::String
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 AUTHOR
 

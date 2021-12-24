@@ -1,5 +1,5 @@
 package Devel::IPerl::Display::Role::MIMESource;
-$Devel::IPerl::Display::Role::MIMESource::VERSION = '0.010';
+$Devel::IPerl::Display::Role::MIMESource::VERSION = '0.011';
 use strict;
 use warnings;
 
@@ -58,7 +58,7 @@ Devel::IPerl::Display::Role::MIMESource
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 AUTHOR
 

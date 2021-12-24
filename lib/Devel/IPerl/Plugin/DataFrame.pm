@@ -1,5 +1,5 @@
 package Devel::IPerl::Plugin::DataFrame;
-$Devel::IPerl::Plugin::DataFrame::VERSION = '0.010';
+$Devel::IPerl::Plugin::DataFrame::VERSION = '0.011';
 # TODO
 
 1;
@@ -16,7 +16,7 @@ Devel::IPerl::Plugin::DataFrame
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 AUTHOR
 

@@ -1,5 +1,5 @@
 package Reply::Plugin::IPerl;
-$Reply::Plugin::IPerl::VERSION = '0.010';
+$Reply::Plugin::IPerl::VERSION = '0.011';
 use strict;
 use warnings;
 
@@ -91,7 +91,7 @@ Reply::Plugin::IPerl
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 AUTHOR
 

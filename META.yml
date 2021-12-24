@@ -13,13 +13,20 @@ configure_requires:
   File::ShareDir::Install: '0.06'
   perl: '5.013002'
 dynamic_config: 1
-generated_by: 'Dist::Zilla version 6.017, CPAN::Meta::Converter version 2.150010'
+generated_by: 'Dist::Zilla version 6.024, CPAN::Meta::Converter version 2.150010'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: '1.4'
 name: Devel-IPerl
 no_index:
+  directory:
+    - eg
+    - examples
+    - inc
+    - share
+    - t
+    - xt
   package:
     - IPerl
 requires:
@@ -71,7 +78,7 @@ requires:
 resources:
   homepage: https://github.com/EntropyOrg/p5-Devel-IPerl
   repository: https://github.com/EntropyOrg/p5-Devel-IPerl.git
-version: '0.010'
+version: '0.011'
 x_generated_by_perl: v5.26.1
 x_serialization_backend: 'YAML::Tiny version 1.73'
 x_spdx_expression: 'Artistic-1.0-Perl OR GPL-1.0-or-later'
