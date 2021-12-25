@@ -10,7 +10,6 @@ jobs:
   build_test:
     runs-on: ${{ matrix.os }}
     env:
-      AUTHOR_TESTING: 1
       ALT_ALIEN_ZMQ_BRANCH: "master"
     strategy:
       matrix:
@@ -65,5 +64,7 @@ jobs:
           cpanm --verbose --notest --installdeps .
 
       - name: Run tests
+        env:
+          AUTHOR_TESTING: 1
         run: |
           prove -lvr t/
