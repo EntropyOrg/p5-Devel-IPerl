@@ -1,3 +1,4 @@
+   - Port from ZMQ::LibZMQ3 to ZMQ::FFI.
 0.011 2021-12-23 20:51:46-0500
 
   Features

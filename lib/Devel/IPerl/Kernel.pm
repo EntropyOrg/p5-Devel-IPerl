@@ -15,18 +15,14 @@ BEGIN {
 }
 
 
-use ZMQ::LibZMQ3;
-use ZMQ::Constants
-	qw( ZMQ_PUB ZMQ_REP ZMQ_ROUTER
-	    ZMQ_RCVMORE ZMQ_SNDMORE
-	    ZMQ_FORWARDER );
+use ZMQ::FFI 1.18 qw( ZMQ_PUB ZMQ_REP ZMQ_ROUTER );
 use JSON::MaybeXS;
 use Path::Class;
 use IO::Async::Loop;
 use IO::Async::Handle;
 use IO::Handle;
 use IO::Async::Routine;
-use Net::Async::ZMQ;
+use Net::Async::ZMQ 0.002;
 use Net::Async::ZMQ::Socket;
 use Devel::IPerl::Kernel::Callback::REPL;
 use Devel::IPerl::Message::ZMQ;
@@ -42,7 +38,7 @@ has _heartbeat_child => ( is => 'rw' );
 
 # the ZeroMQ context (not fork/thread-safe)
 has zmq => ( is => 'lazy', clearer => 1 );
-sub _build_zmq { zmq_init(); }
+sub _build_zmq { ZMQ::FFI->new }
 after clear_zmq => sub {
 	my ($self) = @_;
 	for my $clear_fn ( \&clear_heartbeat, \&clear_shell, \&clear_control, \&clear_stdin, \&clear_iopub ) {
@@ -152,11 +148,11 @@ sub _create_and_bind_socket {
 	die "type of socket not given" unless $type;
 	die "port not given" unless $port;
 
-	my $socket = zmq_socket( $self->zmq, $type );
+	my $socket = $self->zmq->socket( $type );
 	my $transport = $self->transport;
 	my $ip = $self->ip;
 	my $bind_address = "${transport}://${ip}:${port}";
-	zmq_bind( $socket, $bind_address );
+	$socket->bind( $bind_address );
 	$socket;
 }
 
@@ -205,10 +201,8 @@ sub run {#{{{
 				# - <https://funcptr.net/2012/09/10/zeromq---edge-triggered-notification/>
 				while (1) {
 					my @blobs;
-					while ( my $recvmsg = zmq_recvmsg( $socket, ZMQ_RCVMORE ) ) {
-						my $msg = zmq_msg_data($recvmsg);
-						push @blobs, $msg;
-						#print "|$msg|", "\n"; #DEBUG
+					while ( $socket->has_pollin ) {
+						push @blobs, $socket->recv_multipart;
 					}
 					last unless (@blobs);
 
@@ -227,10 +221,7 @@ sub run {#{{{
 
 sub stop {
 	my ($self) = @_;
-	$self->_heartbeat_child->kill(1);
-
-	# TODO find out why this gives the error
-	# "Bad file descriptor (epoll.cpp:67)"
+	$self->_heartbeat_child->kill('INT');
 	$self->_loop->loop_stop;
 }
 
@@ -252,14 +243,13 @@ sub send_message {
 	my ($self, $socket, $message) = @_;
 	my $blobs = $message->zmq_blobs_from_message;
 
-	zmq_msg_send($_, $socket, ZMQ_SNDMORE) for @$blobs[0..@$blobs-2];
-	zmq_msg_send($blobs->[-1], $socket, 0); # done
+	$socket->send_multipart( $blobs );
 }
 
 sub kernel_exit {
 	my ($self) = @_;
-	zmq_close( $self->heartbeat );
-	zmq_term( $self->zmq );
+	$self->_heartbeat_child->kill('INT');
+	$self->clear_zmq;
 }
 
 sub _setup_heartbeat {
@@ -268,7 +258,13 @@ sub _setup_heartbeat {
 	my $child = IO::Async::Routine->new(
 		code => sub {
 			$self->clear_zmq; # need to create new context for this process
-			zmq_device( ZMQ_FORWARDER, $self->heartbeat, $self->heartbeat );
+			my $hb = $self->heartbeat;
+			while(1) {
+				sleep 1;
+				until( $hb->has_pollin ) {
+					$hb->send($hb->recv);
+				}
+			}
 		},
 		on_return => sub {
 			$self->kernel_exit;
