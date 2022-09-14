@@ -1,4 +1,10 @@
+0.012 2022-09-14 00:33:57-0400
+
+  Refactoring
+
    - Port from ZMQ::LibZMQ3 to ZMQ::FFI.
+     See <https://github.com/EntropyOrg/p5-Devel-IPerl/pull/113>.
+
 0.011 2021-12-23 20:51:46-0500
 
   Features
