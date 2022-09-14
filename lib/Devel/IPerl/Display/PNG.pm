@@ -1,5 +1,5 @@
 package Devel::IPerl::Display::PNG;
-$Devel::IPerl::Display::PNG::VERSION = '0.011';
+$Devel::IPerl::Display::PNG::VERSION = '0.012';
 use strict;
 use warnings;
 
@@ -26,7 +26,7 @@ Devel::IPerl::Display::PNG
 
 =head1 VERSION
 
-version 0.011
+version 0.012
 
 =head1 DESCRIPTION
 

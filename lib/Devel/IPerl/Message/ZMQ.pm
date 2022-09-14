@@ -1,5 +1,5 @@
 package Devel::IPerl::Message::ZMQ;
-$Devel::IPerl::Message::ZMQ::VERSION = '0.011';
+$Devel::IPerl::Message::ZMQ::VERSION = '0.012';
 use strict;
 use warnings;
 use Moo;
@@ -124,7 +124,7 @@ Devel::IPerl::Message::ZMQ
 
 =head1 VERSION
 
-version 0.011
+version 0.012
 
 =head1 AUTHOR
 

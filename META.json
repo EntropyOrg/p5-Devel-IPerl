@@ -4,7 +4,7 @@
       "Zakariyya Mughal <zmughal@cpan.org>"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "Dist::Zilla version 6.024, CPAN::Meta::Converter version 2.150010",
+   "generated_by" : "Dist::Zilla version 6.025, CPAN::Meta::Converter version 2.150010",
    "license" : [
       "perl_5"
    ],
@@ -39,7 +39,6 @@
             "Data::Dumper" : "0",
             "Encode" : "0",
             "File::Temp" : "0",
-            "Inline::Python" : "0",
             "Term::ANSIColor" : "2.01",
             "Test::More" : "0",
             "Test::Needs" : "0",
@@ -74,7 +73,7 @@
             "MooX::Singleton" : "0",
             "MooX::Types::MooseLike::Base" : "0",
             "MooseX::HandlesConstructor" : "0",
-            "Net::Async::ZMQ" : "0",
+            "Net::Async::ZMQ" : "0.002",
             "Net::Async::ZMQ::Socket" : "0",
             "PPI::Document" : "0",
             "Path::Class" : "0",
@@ -83,8 +82,7 @@
             "Scalar::Util" : "0",
             "Try::Tiny" : "0",
             "UUID::Tiny" : "0",
-            "ZMQ::Constants" : "0",
-            "ZMQ::LibZMQ3" : "0",
+            "ZMQ::FFI" : "1.18",
             "autodie" : "0",
             "base" : "0",
             "constant" : "0",
@@ -117,9 +115,9 @@
          "web" : "https://github.com/EntropyOrg/p5-Devel-IPerl"
       }
    },
-   "version" : "0.011",
+   "version" : "0.012",
    "x_generated_by_perl" : "v5.26.1",
-   "x_serialization_backend" : "Cpanel::JSON::XS version 4.26",
+   "x_serialization_backend" : "Cpanel::JSON::XS version 4.28",
    "x_spdx_expression" : "Artistic-1.0-Perl OR GPL-1.0-or-later"
 }
 

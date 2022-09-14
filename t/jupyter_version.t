@@ -3,11 +3,16 @@ use Test::More;
 use version;
 use File::Which;
 
-plan tests => 2;
-
 my ($ipython) = grep { -x which($_) } qw(jupyter ipython ipython3 ipython2);
 
-ok( defined $ipython, "Found ipython: $ipython");
+if( $ipython ) {
+	plan tests => 2;
+} else {
+	plan skip_all => 'Missing Jupyter/IPython';
+}
+
+
+ok( defined $ipython, "Found Jupyter/IPython: $ipython");
 
 # run either the jupyter command which outputs more information, or the ipython commands which just outputs a version
 my $version_text = qx/$ipython --version/;
@@ -20,6 +25,6 @@ if ($ipython =~ /jupyter/) {
 }
 
 $version =~ s/-dev$//; # remove dev suffix
-ok( version->parse($version) >= version->parse(1.0), 'IPython frontend version must be >= 1.0' );
+ok( version->parse($version) >= version->parse(1.0), 'Jupyter/IPython frontend version must be >= 1.0' );
 
 done_testing;

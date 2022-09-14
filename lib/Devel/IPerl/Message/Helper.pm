@@ -1,5 +1,5 @@
 package Devel::IPerl::Message::Helper;
-$Devel::IPerl::Message::Helper::VERSION = '0.011';
+$Devel::IPerl::Message::Helper::VERSION = '0.012';
 use strict;
 use warnings;
 
@@ -28,7 +28,7 @@ Devel::IPerl::Message::Helper
 
 =head1 VERSION
 
-version 0.011
+version 0.012
 
 =head1 AUTHOR
 

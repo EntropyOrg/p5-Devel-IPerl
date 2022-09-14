@@ -1,5 +1,5 @@
 package Devel::IPerl::Display::Markdown;
-$Devel::IPerl::Display::Markdown::VERSION = '0.011';
+$Devel::IPerl::Display::Markdown::VERSION = '0.012';
 use strict;
 use warnings;
 
@@ -22,7 +22,7 @@ Devel::IPerl::Display::Markdown
 
 =head1 VERSION
 
-version 0.011
+version 0.012
 
 =head1 AUTHOR
 

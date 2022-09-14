@@ -1,4 +1,4 @@
 # This gets installed through CPAN, not git
 #requires 'Net::Async::ZMQ',
-#	git => 'https://github.com/zmughal/p5-Net-Async-ZMQ.git',
+#	git => 'https://github.com/zmughal-CPAN/p5-Net-Async-ZMQ.git',
 #	branch => 'master';

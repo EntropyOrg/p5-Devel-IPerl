@@ -1,6 +1,6 @@
 package Devel::IPerl;
 # ABSTRACT: Perl language kernel for Jupyter
-$Devel::IPerl::VERSION = '0.011';
+$Devel::IPerl::VERSION = '0.012';
 use strict;
 use warnings;
 
@@ -34,7 +34,7 @@ Devel::IPerl - Perl language kernel for Jupyter
 
 =head1 VERSION
 
-version 0.011
+version 0.012
 
 =head1 DESCRIPTION
 

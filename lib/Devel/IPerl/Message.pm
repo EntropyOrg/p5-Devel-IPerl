@@ -1,6 +1,6 @@
 package Devel::IPerl::Message;
 # ABSTRACT: implements the IPython message specification version 5.0
-$Devel::IPerl::Message::VERSION = '0.011';
+$Devel::IPerl::Message::VERSION = '0.012';
 use strict;
 use warnings;
 
@@ -73,7 +73,7 @@ Devel::IPerl::Message - implements the IPython message specification version 5.0
 
 =head1 VERSION
 
-version 0.011
+version 0.012
 
 =head1 AUTHOR
 

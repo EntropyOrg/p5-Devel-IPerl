@@ -1,5 +1,5 @@
 package Devel::IPerl::Kernel::Backend::Reply;
-$Devel::IPerl::Kernel::Backend::Reply::VERSION = '0.011';
+$Devel::IPerl::Kernel::Backend::Reply::VERSION = '0.012';
 use strict;
 use warnings;
 
@@ -138,7 +138,7 @@ Devel::IPerl::Kernel::Backend::Reply
 
 =head1 VERSION
 
-version 0.011
+version 0.012
 
 =head1 AUTHOR
 
