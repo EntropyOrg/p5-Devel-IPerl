@@ -64,7 +64,6 @@ on 'develop' => sub {
   requires "Data::Dumper" => "0";
   requires "Encode" => "0";
   requires "File::Temp" => "0";
-  requires "Inline::Python" => "0";
   requires "Term::ANSIColor" => "2.01";
   requires "Test::More" => "0";
   requires "Test::Needs" => "0";
