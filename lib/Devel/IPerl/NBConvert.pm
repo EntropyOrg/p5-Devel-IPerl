@@ -43,6 +43,26 @@ sub to_pod {
 
 	$pod_string .= "=encoding UTF-8\n";
 
+	my %stream_names_config = (
+		stdout => {
+			title => 'STDOUT',
+		},
+		stderr => {
+			title => 'STDERR',
+		},
+	);
+	my %output_type_config = (
+		"execute_result" => {
+			title => 'RESULT',
+		},
+		"display_data" => {
+			title => 'DISPLAY',
+		},
+		"stream" => {
+			title => 'STREAM',
+		},
+	);
+
 	for my $cell ( @{ $nb->{cells} } ) {
 		if( $cell->{cell_type} eq 'markdown' ) {
 			my $md = join '', @{ $cell->{source} };
@@ -68,11 +88,29 @@ sub to_pod {
 					my $html = join '', @{ $data->{"text/html"} };
 					$html =~ s/\n//g;
 					$html = "<p>$html</p>";
+					$pod_string .= "\nB<@{[ $output_type_config{$output->{output_type}}{title} ]}>:\n\n";
 					$pod_string .= $self->_pod_html( $html );
 				} elsif( exists $data->{"text/plain"} ) {
 					my $ansi_input = join '', @{ $data->{"text/plain"} };
 					my $html = $self->_ansi_html( $ansi_input );
+					$pod_string .= "\nB<@{[ $output_type_config{$output->{output_type}}{title} ]}>:\n\n";
 					$pod_string .= $self->_pod_html( $html );
+				} elsif( exists $output->{output_type} && $output->{output_type} eq 'stream' ) {
+					if( exists $stream_names_config{ $output->{name} } ) {
+						my $stream_name = $output->{name};
+						my $ansi_input = join '', @{ $output->{"text"} };
+						my $html = $self->_ansi_html( $ansi_input );
+						$pod_string .= "\nB<@{[
+							join('',
+								$output_type_config{$output->{output_type}}{title},
+								' ',
+								'(',
+								$stream_names_config{$stream_name}{title},
+								')',
+							)
+						]}>:\n\n";
+						$pod_string .= $self->_pod_html( $html );
+					}
 				}
 			}
 		}
