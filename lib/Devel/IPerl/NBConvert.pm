@@ -38,7 +38,6 @@ sub run {
 sub to_pod {
 	my ($self, $nb) = @_;
 	my $md2pod = Markdown::Pod->new;
-	my $ansi_css = $self->ansi_css;
 
 	my $pod_string;
 
@@ -65,12 +64,8 @@ sub to_pod {
 					$html = "<p>$html</p>";
 					$pod_string .= $self->_pod_html( $html );
 				} elsif( exists $data->{"text/plain"} ) {
-					local $HTML::FromANSI::Options{fill_cols} = 1; # fill all 80 cols
-					local $HTML::FromANSI::Options{font_face} = '';
-					local $HTML::FromANSI::Options{style} = '';
-					my $html = ansi2html( (join '', @{ $data->{"text/plain"} }) );
-					$html =~ s|^<tt>|<tt><span style='$ansi_css'>|;
-					$html =~ s|</tt>$|</span></tt>|;
+					my $ansi_input = join '', @{ $data->{"text/plain"} };
+					my $html = $self->_ansi_html( $ansi_input );
 					$pod_string .= $self->_pod_html( $html );
 				}
 			}
@@ -91,6 +86,21 @@ sub _pod_html {
 	$pod_string .= "\n\n=end html\n\n";
 
 	return $pod_string;
+}
+
+sub _ansi_html {
+	my ($self, $ansi_input) = @_;
+
+	my $ansi_css = $self->ansi_css;
+
+	local $HTML::FromANSI::Options{fill_cols} = 1; # fill all 80 cols
+	local $HTML::FromANSI::Options{font_face} = '';
+	local $HTML::FromANSI::Options{style} = '';
+	my $html = ansi2html($ansi_input);
+	$html =~ s|^<tt>|<tt><span style='$ansi_css'>|;
+	$html =~ s|</tt>$|</span></tt>|;
+
+	return $html;
 }
 
 1;
