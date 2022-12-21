@@ -5,6 +5,7 @@ use warnings;
 
 use Getopt::Long;
 use Path::Class;
+use Path::Tiny;
 use JSON::MaybeXS;
 use Markdown::Pod;
 use HTML::FromANSI;
@@ -22,7 +23,7 @@ has output_to_stdout => ( is => 'rw' );
 sub run {
 	my ($self) = @_;
 	my $file = shift @ARGV;
-	$self->notebook_file( file($file) );
+	$self->notebook_file( path($file) );
 
 	my $data = decode_json( $self->notebook_file->slurp );
 
