@@ -166,8 +166,6 @@ sub _ansi_html_original {
 sub _ansi_html_tiny {
 	my ($self, $ansi_input) = @_;
 
-	(my $ansi_input_nbsp = $ansi_input) =~ s/ /\N{NBSP}/g;
-
 	my $h = HTML::FromANSI::Tiny->new(
 		auto_reverse => 1,
 		background => 'white',
@@ -175,9 +173,8 @@ sub _ansi_html_tiny {
 		inline_style => 1,
 	);
 
-	my $html = $h->html( $ansi_input_nbsp );
-	$html =~ s/$/<br>/mg;
-	$html = qq|<code style="display: block">$html</code>|;
+	my $html = $h->html( $ansi_input );
+	$html = qq|<pre style="display: block"><code>$html</code></pre>|;
 
 	return $html;
 }
