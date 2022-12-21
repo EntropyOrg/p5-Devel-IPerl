@@ -46,7 +46,13 @@ sub to_pod {
 	for my $cell ( @{ $nb->{cells} } ) {
 		if( $cell->{cell_type} eq 'markdown' ) {
 			my $md = join '', @{ $cell->{source} };
-			$pod_string .= $md2pod->markdown_to_pod( markdown => $md );
+			my $md2pod_encoding = 'utf-8-strict';
+			my $pod_converted = $md2pod->markdown_to_pod(
+				markdown => $md,
+				encoding => $md2pod_encoding,
+			);
+			$pod_converted =~ s/\A\Q=encoding $md2pod_encoding\E\n\n//ms;
+			$pod_string .= $pod_converted;
 		} elsif( $cell->{cell_type} eq 'code' ) {
 			my $code = join '', @{ $cell->{source} };
 
