@@ -177,7 +177,7 @@ sub _ansi_html_tiny {
 
 	my $html = $h->html( $ansi_input_nbsp );
 	$html =~ s/$/<br>/mg;
-	$html = "<tt>$html</tt>";
+	$html = qq|<code style="display: block">$html</code>|;
 
 	return $html;
 }
