@@ -5,6 +5,7 @@ use warnings;
 
 use Getopt::Long;
 use Path::Class;
+use Path::Tiny;
 use JSON::MaybeXS;
 use Markdown::Pod;
 use HTML::FromANSI;
@@ -22,13 +23,16 @@ has output_to_stdout => ( is => 'rw' );
 sub run {
 	my ($self) = @_;
 	my $file = shift @ARGV;
-	$self->notebook_file( file($file) );
+	$self->notebook_file( path($file) );
 
-	my $data = decode_json( $self->notebook_file->slurp );
+	my $json = JSON::MaybeXS->new;
+	my $data = $json->decode( $self->notebook_file->slurp_utf8 );
 
 	my $output = $self->to_pod( $data );
 
-	print $output;
+	open(my $STDNEW, '>&', STDOUT);
+	binmode($STDNEW, ':encoding(UTF-8)');
+	print $STDNEW $output;
 }
 
 sub to_pod {
@@ -37,6 +41,8 @@ sub to_pod {
 	my $ansi_css = $self->ansi_css;
 
 	my $pod_string;
+
+	$pod_string .= "=encoding UTF-8\n";
 
 	for my $cell ( @{ $nb->{cells} } ) {
 		if( $cell->{cell_type} eq 'markdown' ) {

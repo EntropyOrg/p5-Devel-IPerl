@@ -30,6 +30,7 @@ requires "Net::Async::ZMQ" => "0.002";
 requires "Net::Async::ZMQ::Socket" => "0";
 requires "PPI::Document" => "0";
 requires "Path::Class" => "0";
+requires "Path::Tiny" => "0";
 requires "Reply" => "0";
 requires "Reply::Plugin" => "0";
 requires "Scalar::Util" => "0";
