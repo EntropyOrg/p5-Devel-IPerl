@@ -90,12 +90,12 @@ sub to_pod {
 					$html =~ s/\n//g;
 					$html = "<p>$html</p>";
 					$pod_string .= "\nB<@{[ $output_type_config{$output->{output_type}}{title} ]}>:\n\n";
-					$pod_string .= $self->_pod_html( $html );
+					$pod_string .= $self->_pod_html( $self->_html_span_indent($html) );
 				} elsif( exists $data->{"text/plain"} ) {
 					my $ansi_input = join '', @{ $data->{"text/plain"} };
 					my $html = $self->_ansi_html( $ansi_input );
 					$pod_string .= "\nB<@{[ $output_type_config{$output->{output_type}}{title} ]}>:\n\n";
-					$pod_string .= $self->_pod_html( $html );
+					$pod_string .= $self->_pod_html( $self->_html_span_indent($html) );
 				} elsif( exists $output->{output_type} && $output->{output_type} eq 'stream' ) {
 					if( exists $stream_names_config{ $output->{name} } ) {
 						my $stream_name = $output->{name};
@@ -110,7 +110,7 @@ sub to_pod {
 								')',
 							)
 						]}>:\n\n";
-						$pod_string .= $self->_pod_html( $html );
+						$pod_string .= $self->_pod_html( $self->_html_span_indent($html) );
 					}
 				}
 			}
@@ -120,6 +120,15 @@ sub to_pod {
 	}
 
 	return $pod_string;
+}
+
+sub _html_span_indent {
+	my ($self, $html_inner, $left) = @_;
+	$left ||= '1em';
+
+	my $css = "display:inline-block;margin-left:$left;";
+	my $html = qq|<span style="$css">| . $html_inner . '</span>';
+	return $html;
 }
 
 sub _pod_html {
