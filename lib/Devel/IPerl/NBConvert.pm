@@ -60,27 +60,35 @@ sub to_pod {
 				my $data = $output->{data};
 				if( exists $data->{"text/html"} ) {
 					# HTML preferred
-					$pod_string .= "=begin html\n\n";
 					my $html = join '', @{ $data->{"text/html"} };
 					$html =~ s/\n//g;
-					$pod_string .= "<p>$html</p>";
-					$pod_string .= "\n\n=end html\n\n";
+					$html = "<p>$html</p>";
+					$pod_string .= $self->_pod_html( $html );
 				} elsif( exists $data->{"text/plain"} ) {
-					$pod_string .= "=begin html\n\n";
 					local $HTML::FromANSI::Options{fill_cols} = 1; # fill all 80 cols
 					local $HTML::FromANSI::Options{font_face} = '';
 					local $HTML::FromANSI::Options{style} = '';
 					my $html = ansi2html( (join '', @{ $data->{"text/plain"} }) );
 					$html =~ s|^<tt>|<tt><span style='$ansi_css'>|;
 					$html =~ s|</tt>$|</span></tt>|;
-					$pod_string .= $html;
-					$pod_string .= "\n\n=end html\n\n";
+					$pod_string .= $self->_pod_html( $html );
 				}
 			}
 		}
 
 		$pod_string .= "\n\n";
 	}
+
+	return $pod_string;
+}
+
+sub _pod_html {
+	my ($self, $html) = @_;
+	my $pod_string;
+
+	$pod_string .= "=begin html\n\n";
+	$pod_string .= "$html";
+	$pod_string .= "\n\n=end html\n\n";
 
 	return $pod_string;
 }
