@@ -89,9 +89,9 @@ sub _pod_html {
 }
 
 sub _ansi_html {
-	my ($self, $ansi_input) = @_;
+	my ($self, $ansi_input, $css) = @_;
 
-	my $ansi_css = $self->ansi_css;
+	my $ansi_css = join '; ', $self->ansi_css, (defined $css ? $css : () );
 
 	local $HTML::FromANSI::Options{fill_cols} = 1; # fill all 80 cols
 	local $HTML::FromANSI::Options{font_face} = '';
