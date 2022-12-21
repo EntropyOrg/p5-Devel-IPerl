@@ -42,7 +42,7 @@ sub to_pod {
 
 	my $pod_string;
 
-	$pod_string .= "=encoding UTF-8\n";
+	$pod_string .= "=encoding UTF-8\n\n";
 
 	my %stream_names_config = (
 		stdout => {
@@ -72,7 +72,7 @@ sub to_pod {
 				markdown => $md,
 				encoding => $md2pod_encoding,
 			);
-			$pod_converted =~ s/\A\Q=encoding $md2pod_encoding\E\n\n//ms;
+			$pod_converted =~ s/\A\Q=encoding $md2pod_encoding\E\n\n?//ms;
 			$pod_string .= $pod_converted;
 		} elsif( $cell->{cell_type} eq 'code' ) {
 			my $code = join '', @{ $cell->{source} };
