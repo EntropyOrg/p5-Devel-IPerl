@@ -10,6 +10,7 @@ use JSON::MaybeXS;
 use Markdown::Pod;
 use HTML::FromANSI;
 use HTML::FromANSI::Tiny;
+use Term::ANSIColor 2.01 qw(colorstrip);
 use Moo;
 
 has ansi_css => ( is => 'ro',
@@ -93,14 +94,12 @@ sub to_pod {
 					$pod_string .= $self->_pod_html( $self->_html_span_indent($html) );
 				} elsif( exists $data->{"text/plain"} ) {
 					my $ansi_input = join '', @{ $data->{"text/plain"} };
-					my $html = $self->_ansi_html( $ansi_input );
 					$pod_string .= "\nB<@{[ $output_type_config{$output->{output_type}}{title} ]}>:\n\n";
-					$pod_string .= $self->_pod_html( $self->_html_span_indent($html) );
+					$pod_string .= $self->_pod_indent_maybe_ansi_html( $ansi_input );
 				} elsif( exists $output->{output_type} && $output->{output_type} eq 'stream' ) {
 					if( exists $stream_names_config{ $output->{name} } ) {
 						my $stream_name = $output->{name};
 						my $ansi_input = join '', @{ $output->{"text"} };
-						my $html = $self->_ansi_html( $ansi_input );
 						$pod_string .= "\nB<@{[
 							join('',
 								$output_type_config{$output->{output_type}}{title},
@@ -110,7 +109,7 @@ sub to_pod {
 								')',
 							)
 						]}>:\n\n";
-						$pod_string .= $self->_pod_html( $self->_html_span_indent($html) );
+						$pod_string .= $self->_pod_indent_maybe_ansi_html( $ansi_input );
 					}
 				}
 			}
@@ -140,6 +139,18 @@ sub _pod_html {
 	$pod_string .= "\n\n=end html\n\n";
 
 	return $pod_string;
+}
+
+sub _pod_indent_maybe_ansi_html {
+	my ($self, $maybe_ansi_input) = @_;
+	if( colorstrip($maybe_ansi_input) eq $maybe_ansi_input ) {
+		# indent
+		(my $pod = $maybe_ansi_input) =~ s/^/  /mg;
+		return $pod;
+	} {
+		my $html = $self->_ansi_html( $maybe_ansi_input );
+		return $self->_pod_html( $self->_html_span_indent($html) );
+	}
 }
 
 sub _ansi_html {
