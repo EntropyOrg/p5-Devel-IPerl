@@ -10,6 +10,7 @@ requires "File::Spec" => "0";
 requires "FindBin" => "0";
 requires "Getopt::Long" => "0";
 requires "HTML::FromANSI" => "0";
+requires "HTML::FromANSI::Tiny" => "0";
 requires "IO::Async::Handle" => "0";
 requires "IO::Async::Loop" => "0";
 requires "IO::Async::Routine" => "0";

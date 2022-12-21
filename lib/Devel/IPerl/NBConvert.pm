@@ -9,6 +9,7 @@ use Path::Tiny;
 use JSON::MaybeXS;
 use Markdown::Pod;
 use HTML::FromANSI;
+use HTML::FromANSI::Tiny;
 use Moo;
 
 has ansi_css => ( is => 'ro',
@@ -133,6 +134,12 @@ sub _pod_html {
 }
 
 sub _ansi_html {
+	my ($self, $ansi_input) = @_;
+
+	$self->_ansi_html_tiny( $ansi_input );
+}
+
+sub _ansi_html_original {
 	my ($self, $ansi_input, $css) = @_;
 
 	my $ansi_css = join '; ', $self->ansi_css, (defined $css ? $css : () );
@@ -143,6 +150,25 @@ sub _ansi_html {
 	my $html = ansi2html($ansi_input);
 	$html =~ s|^<tt>|<tt><span style='$ansi_css'>|;
 	$html =~ s|</tt>$|</span></tt>|;
+
+	return $html;
+}
+
+sub _ansi_html_tiny {
+	my ($self, $ansi_input) = @_;
+
+	(my $ansi_input_nbsp = $ansi_input) =~ s/ /\N{NBSP}/g;
+
+	my $h = HTML::FromANSI::Tiny->new(
+		auto_reverse => 1,
+		background => 'white',
+		foreground => 'black',
+		inline_style => 1,
+	);
+
+	my $html = $h->html( $ansi_input_nbsp );
+	$html =~ s/$/<br>/mg;
+	$html = "<tt>$html</tt>";
 
 	return $html;
 }
