@@ -28,7 +28,7 @@ sub run {
 	$self->notebook_file( path($file) );
 
 	my $json = JSON::MaybeXS->new;
-	my $data = $json->decode( $self->notebook_file->slurp_utf8 );
+	my $data = $json->utf8(0)->decode( $self->notebook_file->slurp_utf8 );
 
 	my $output = $self->to_pod( $data );
 
