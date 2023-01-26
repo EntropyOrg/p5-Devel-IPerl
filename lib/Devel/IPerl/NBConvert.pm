@@ -73,6 +73,7 @@ sub to_pod {
 				markdown => $md,
 				encoding => $md2pod_encoding,
 			);
+			$pod_converted = Encode::decode_utf8($pod_converted);
 			$pod_converted =~ s/\A\Q=encoding $md2pod_encoding\E\n\n?//ms;
 			$pod_string .= $pod_converted;
 		} elsif( $cell->{cell_type} eq 'code' ) {
